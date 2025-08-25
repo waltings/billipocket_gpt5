@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Arve {{ invoice.number }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 15mm;
+        }
+        
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            font-size: 11px;
+            line-height: 1.6;
+            color: #2d2d2d;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+        }
+        
+        /* PÄIS - Elegantne minimalistlik */
+        .header-elegant {
+            border-bottom: 3px double #1e3a5f;
+            padding-bottom: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+        }
+        
+        /* Logo ja ettevõtte info */
+        .company-section {
+            flex: 1;
+        }
+        
+        .company-logo img {
+            max-height: 50px;
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+        
+        .company-name {
+            font-size: 22px;
+            font-weight: 300;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #1a1a1a;
+            margin-bottom: 15px;
+        }
+        
+        .company-details {
+            font-size: 10px;
+            color: #666;
+            line-height: 1.8;
+            font-family: 'Helvetica Neue', sans-serif;
+        }
+        
+        .company-details div {
+            margin-bottom: 3px;
+        }
+        
+        /* Arve tiitel paremal */
+        .invoice-title-section {
+            text-align: right;
+            flex: 0.4;
+        }
+        
+        .invoice-title {
+            font-size: 36px;
+            font-weight: 300;
+            letter-spacing: 8px;
+            color: #1e3a5f;
+            margin-bottom: 10px;
+            font-family: 'Georgia', serif;
+            text-transform: uppercase;
+        }
+        
+        .invoice-number {
+            font-size: 18px;
+            color: #666;
+            letter-spacing: 2px;
+            font-weight: 300;
+        }
+        
+        /* KLIENDI JA ARVE INFO - Elegantne paigutus */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 50px;
+            padding: 30px;
+            background: linear-gradient(to bottom, #fafafa 0%, #ffffff 100%);
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+        }
+        
+        .info-block h3 {
+            font-size: 10px;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #999;
+            margin: 0 0 15px 0;
+            font-family: 'Helvetica Neue', sans-serif;
+            border-bottom: 1px solid #e8e8e8;
+            padding-bottom: 8px;
+        }
+        
+        .client-block .client-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+            font-family: 'Helvetica Neue', sans-serif;
+        }
+        
+        .client-block .client-detail {
+            font-size: 12px;
+            color: #555;
+            line-height: 1.8;
+            font-family: 'Helvetica Neue', sans-serif;
+        }
+        
+        /* Detailid tabel */
+        .detail-table {
+            width: 100%;
+        }
+        
+        .detail-table tr {
+            border-bottom: 1px dotted #e8e8e8;
+        }
+        
+        .detail-table tr:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-table td {
+            padding: 8px 0;
+            font-size: 11px;
+            font-family: 'Helvetica Neue', sans-serif;
+        }
+        
+        .detail-table .label {
+            color: #888;
+            font-size: 10px;
+        }
+        
+        .detail-table .value {
+            text-align: right;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        /* ARVE READ - Elegantne tabel */
+        .items-elegant {
+            margin-bottom: 40px;
+        }
+        
+        .items-elegant table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .items-elegant thead {
+            background: #f8f8f8;
+            border-top: 1px solid #1e3a5f;
+            border-bottom: 1px solid #1e3a5f;
+        }
+        
+        .items-elegant th {
+            padding: 15px 10px;
+            font-size: 10px;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #666;
+            font-family: 'Helvetica Neue', sans-serif;
+            text-align: left;
+        }
+        
+        .items-elegant th.align-center {
+            text-align: center;
+        }
+        
+        .items-elegant th.align-right {
+            text-align: right;
+        }
+        
+        .items-elegant tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.3s;
+        }
+        
+        .items-elegant tbody tr:hover {
+            background-color: #fafafa;
+        }
+        
+        .items-elegant tbody tr:last-child {
+            border-bottom: 2px solid #1e3a5f;
+        }
+        
+        .items-elegant td {
+            padding: 20px 10px;
+            font-size: 12px;
+            color: #333;
+            font-family: 'Helvetica Neue', sans-serif;
+        }
+        
+        .items-elegant .description {
+            font-size: 13px;
+            color: #1a1a1a;
+            font-weight: 500;
+        }
+        
+        .items-elegant .qty {
+            text-align: center;
+            color: #666;
+        }
+        
+        .items-elegant .price {
+            text-align: right;
+            color: #666;
+        }
+        
+        .items-elegant .total {
+            text-align: right;
+            font-weight: 600;
+            color: #1a1a1a;
+            font-size: 13px;
+        }
+        
+        /* SUMMADE SEKTSIOON - Elegantne */
+        .totals-elegant-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        /* Makseinfo vasak */
+        .payment-info-elegant {
+            flex: 1;
+            padding: 25px;
+            background: #f8f8f8;
+            border-left: 3px solid #1e3a5f;
+        }
+        
+        .payment-info-elegant h4 {
+            font-size: 11px;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #666;
+            margin: 0 0 20px 0;
+            font-family: 'Helvetica Neue', sans-serif;
+        }
+        
+        .payment-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 11px;
+            font-family: 'Helvetica Neue', sans-serif;
+        }
+        
+        .payment-row .label {
+            color: #888;
+        }
+        
+        .payment-row .value {
+            color: #333;
+            font-weight: 500;
+        }
+        
+        /* Summad paremal */
+        .totals-elegant {
+            width: 320px;
+            padding: 25px;
+            background: linear-gradient(135deg, #fafafa 0%, #f0f0f0 100%);
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+        }
+        
+        .total-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 12px;
+            font-family: 'Helvetica Neue', sans-serif;
+        }
+        
+        .total-line.subtotal {
+            padding-bottom: 12px;
+        }
+        
+        .total-line.vat {
+            color: #666;
+        }
+        
+        .total-line.grand-total {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #1e3a5f;
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        
+        .total-line.grand-total .amount {
+            color: #1e3a5f;
+        }
+        
+        /* JALUS - Elegantne */
+        .footer-elegant {
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 3px double #1e3a5f;
+            text-align: center;
+        }
+        
+        .footer-company-name {
+            font-size: 14px;
+            font-weight: 300;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .footer-details {
+            font-size: 10px;
+            color: #999;
+            line-height: 1.8;
+            font-family: 'Helvetica Neue', sans-serif;
+        }
+        
+        .footer-separator {
+            color: #1e3a5f;
+            margin: 0 10px;
+        }
+        
+        /* TEADAANDED - Elegantne kast */
+        .announcements-elegant {
+            margin: 40px 0;
+            padding: 25px;
+            background: #f0f4f8;
+            border: 1px solid #1e3a5f;
+            border-radius: 8px;
+            position: relative;
+        }
+        
+        .announcements-elegant::before {
+            content: "◆";
+            position: absolute;
+            top: -10px;
+            left: 30px;
+            background: white;
+            color: #1e3a5f;
+            padding: 0 10px;
+            font-size: 16px;
+        }
+        
+        .announcements-elegant h4 {
+            font-size: 11px;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #666;
+            margin: 0 0 15px 0;
+            font-family: 'Helvetica Neue', sans-serif;
+        }
+        
+        .announcements-elegant p {
+            font-size: 12px;
+            line-height: 1.8;
+            color: #555;
+            margin: 0;
+            font-family: 'Helvetica Neue', sans-serif;
+        }
+        
+        /* Märkus ja viivis info */
+        .note-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f8f8;
+            border-left: 2px solid #1e3a5f;
+            font-size: 11px;
+            color: #666;
+            font-family: 'Helvetica Neue', sans-serif;
+        }
+        
+        .note-section strong {
+            color: #333;
+            font-weight: 600;
+        }
+        
+        /* Marketing sõnum */
+        .marketing-message {
+            margin-top: 30px;
+            padding: 15px;
+            text-align: center;
+            font-style: italic;
+            color: #888;
+            font-size: 11px;
+            border-top: 1px dotted #1e3a5f;
+            border-bottom: 1px dotted #1e3a5f;
+        }
+    </style>
+</head>
+<body>
+    <!-- PÄIS -->
+    <div class="header-elegant">
+        <div class="header-top">
+            <!-- Ettevõtte info -->
+            <div class="company-section">
+                {% set template_logo = company.get_logo_for_template_new('elegant') %}
+                {% if company_logo_absolute %}
+                <div class="company-logo">
+                    <img src="{{ company_logo_absolute }}" alt="{{ company.company_name or 'Logo' }}">
+                </div>
+                {% elif template_logo %}
+                <div class="company-logo">
+                    <img src="{{ template_logo }}" alt="{{ company.company_name or 'Logo' }}">
+                </div>
+                {% else %}
+                <div class="company-name">{{ company.company_name or 'BilliPocket' }}</div>
+                {% endif %}
+                
+                <div class="company-details">
+                    <div>{{ company.company_address or '' }}</div>
+                    <div>Tel: {{ company.company_phone or '' }} • E-post: {{ company.company_email or '' }}</div>
+                    <div>Reg.kood: {{ company.company_registry_code or '' }} • KMKR: {{ company.company_vat_number or '' }}</div>
+                </div>
+            </div>
+            
+            <!-- Arve tiitel -->
+            <div class="invoice-title-section">
+                <div class="invoice-title">ARVE</div>
+                <div class="invoice-number">№ {{ invoice.number }}</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- KLIENDI JA ARVE INFO -->
+    <div class="info-grid">
+        <!-- Kliendi info -->
+        <div class="info-block client-block">
+            <h3>Arve Saaja</h3>
+            <div class="client-name">{{ invoice.client.name }}</div>
+            {% if invoice.client.address %}
+            <div class="client-detail">{{ invoice.client.address | replace('\n', '<br>') | safe }}</div>
+            {% endif %}
+            {% if invoice.client_extra_info %}
+            <div class="client-detail">{{ invoice.client_extra_info | replace('\n', '<br>') | safe }}</div>
+            {% endif %}
+        </div>
+        
+        <!-- Arve detailid -->
+        <div class="info-block">
+            <h3>Arve Andmed</h3>
+            <table class="detail-table">
+                <tr>
+                    <td class="label">Kuupäev</td>
+                    <td class="value">{{ invoice.date.strftime('%d.%m.%Y') }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Tähtaeg</td>
+                    <td class="value">{{ invoice.due_date.strftime('%d.%m.%Y') }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Tingimus</td>
+                    <td class="value">{{ invoice.payment_terms or 'Kohe' }}</td>
+                </tr>
+            </table>
+        </div>
+        
+        <!-- Makseinfo lühidalt -->
+        <div class="info-block">
+            <h3>Makserekvisiidid</h3>
+            <table class="detail-table">
+                <tr>
+                    <td class="label">Pank</td>
+                    <td class="value">{{ company.company_bank or '' }}</td>
+                </tr>
+                <tr>
+                    <td class="label">IBAN</td>
+                    <td class="value" style="font-size: 10px;">{{ company.company_bank_account or '' }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Viitenr</td>
+                    <td class="value">{{ invoice.number }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    
+    <!-- ARVE READ -->
+    <div class="items-elegant">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 50%;">Kirjeldus</th>
+                    <th class="align-center" style="width: 12%;">Kogus</th>
+                    <th class="align-right" style="width: 18%;">Ühiku Hind</th>
+                    <th class="align-right" style="width: 20%;">Summa</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for line in invoice.lines %}
+                <tr>
+                    <td class="description">{{ line.description }}</td>
+                    <td class="qty">{{ line.qty|quantity }}</td>
+                    <td class="price">{{ line.unit_price|currency }}€</td>
+                    <td class="total">{{ line.line_total|currency }}€</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- SUMMAD JA MAKSEINFO -->
+    <div class="totals-elegant-container">
+        <!-- Makseinfo detailne -->
+        <div class="payment-info-elegant">
+            <h4>Makseandmed</h4>
+            <div class="payment-row">
+                <span class="label">Saaja nimi:</span>
+                <span class="value">{{ company.company_name }}</span>
+            </div>
+            <div class="payment-row">
+                <span class="label">Pangakonto:</span>
+                <span class="value">{{ company.company_bank_account }}</span>
+            </div>
+            <div class="payment-row">
+                <span class="label">Pank:</span>
+                <span class="value">{{ company.company_bank }}</span>
+            </div>
+            <div class="payment-row">
+                <span class="label">Summa:</span>
+                <span class="value">{{ invoice.total|currency }}€</span>
+            </div>
+            <div class="payment-row">
+                <span class="label">Selgitus:</span>
+                <span class="value">ARVE {{ invoice.number }}</span>
+            </div>
+            <div class="payment-row" style="margin-top: 15px; padding-top: 15px; border-top: 1px dotted #ddd;">
+                <span class="label">Viivis:</span>
+                <span class="value">
+                    {% if company.default_penalty_rate_obj %}
+                        {{ "%.3f"|format(company.default_penalty_rate_obj.rate_per_day|float) }}% päevas
+                    {% else %}
+                        0.05% päevas
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+        
+        <!-- Summad -->
+        <div class="totals-elegant">
+            <div class="total-line subtotal">
+                <span>Vahesumma:</span>
+                <span>{{ invoice.subtotal|currency }}€</span>
+            </div>
+            <div class="total-line vat">
+                <span>Käibemaks ({{ "%.2f"|format(invoice.vat_rate|float) }}%):</span>
+                <span>{{ invoice.vat_amount|currency }}€</span>
+            </div>
+            <div class="total-line grand-total">
+                <span>KOKKU TASUDA:</span>
+                <span class="amount">{{ invoice.total|currency }}€</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MÄRKUS -->
+    {% if invoice.note and note_label %}
+    <div class="note-section">
+        <strong>{{ note_label }}:</strong> {{ invoice.note }}
+    </div>
+    {% endif %}
+    
+    <!-- TEADAANDED -->
+    {% if invoice.announcements %}
+    <div class="announcements-elegant">
+        <h4>Info ja Teadaanded</h4>
+        <p>{{ invoice.announcements | replace('\n', '<br>') | safe }}</p>
+    </div>
+    {% endif %}
+    
+    <!-- MARKETING SÕNUM -->
+    {% if company.marketing_messages %}
+    <div class="marketing-message">
+        {{ company.marketing_messages }}
+    </div>
+    {% endif %}
+    
+    <!-- JALUS -->
+    <div class="footer-elegant">
+        <div class="footer-company-name">{{ company.company_name or 'BilliPocket' }}</div>
+        <div class="footer-details">
+            {{ company.company_address or '' }}
+            <span class="footer-separator">•</span>
+            Tel: {{ company.company_phone or '' }}
+            <span class="footer-separator">•</span>
+            E-post: {{ company.company_email or '' }}
+            <br>
+            Reg.kood: {{ company.company_registry_code or '' }}
+            <span class="footer-separator">•</span>
+            KMKR: {{ company.company_vat_number or '' }}
+            <span class="footer-separator">•</span>
+            IBAN: {{ company.company_bank_account or '' }}
+        </div>
+    </div>
+</body>
+</html>

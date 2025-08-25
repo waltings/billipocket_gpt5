@@ -1,0 +1,402 @@
+{% extends 'layout.html' %}
+{% block title %}{{ template.name }} Malli Redigeerimine – Billipocket{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/monokai.min.css">
+<style>
+.editor-container {
+    height: 70vh;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.CodeMirror {
+    height: 100%;
+    font-size: 14px;
+}
+.preview-container {
+    height: 70vh;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background: #fff;
+    overflow: hidden;
+}
+.preview-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+.editor-toolbar {
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    gap: 1rem;
+}
+.editor-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+.unsaved-changes {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1050;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section id="pdf-template-editor" class="mb-4">
+  <!-- Page Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="h3 mb-1">{{ template.name }} Malli Redigeerimine</h1>
+      <p class="text-muted mb-0">{{ template.description }}</p>
+    </div>
+    <div class="d-flex gap-2">
+      <button type="button" class="btn btn-success" onclick="saveTemplate()" id="saveBtn">
+        <i class="bi bi-check-lg me-1"></i>Salvesta
+      </button>
+      <button type="button" class="btn btn-outline-warning" onclick="resetTemplate()">
+        <i class="bi bi-arrow-clockwise me-1"></i>Taasta
+      </button>
+      <a href="{{ url_for('dashboard.pdf_templates') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>Tagasi
+      </a>
+    </div>
+  </div>
+
+  <!-- Editor Layout -->
+  <div class="row g-4">
+    <!-- Editor Panel -->
+    <div class="col-lg-6">
+      <div class="bp-card">
+        <div class="editor-toolbar">
+          <div class="d-flex align-items-center">
+            <i class="bi bi-code-slash me-2"></i>
+            <strong>HTML/CSS Redaktor</strong>
+          </div>
+          <div class="editor-actions">
+            <button type="button" class="btn btn-sm btn-outline-primary" onclick="formatCode()">
+              <i class="bi bi-braces me-1"></i>Vorminda
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleTheme()">
+              <i class="bi bi-moon me-1"></i>Tume teema
+            </button>
+          </div>
+        </div>
+        <div class="editor-container">
+          <textarea id="codeEditor">{{ template.content }}</textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview Panel -->
+    <div class="col-lg-6">
+      <div class="bp-card">
+        <div class="editor-toolbar">
+          <div class="d-flex align-items-center">
+            <i class="bi bi-eye me-2"></i>
+            <strong>Reaalajas Eelvaade</strong>
+          </div>
+          <div class="editor-actions">
+            <button type="button" class="btn btn-sm btn-outline-primary" onclick="refreshPreview()" id="refreshBtn">
+              <i class="bi bi-arrow-clockwise me-1"></i>Värska
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-info" onclick="openPreviewInNewTab()">
+              <i class="bi bi-box-arrow-up-right me-1"></i>Ava uuel kaardil
+            </button>
+          </div>
+        </div>
+        <div class="preview-container">
+          <iframe id="previewFrame" class="preview-frame" 
+                  src="about:blank"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Template Variables Help -->
+  <div class="bp-card mt-4">
+    <div class="bp-card-header">
+      <h5 class="mb-0">
+        <i class="bi bi-info-circle me-2"></i>Saadaolevad muutujad
+      </h5>
+    </div>
+    <div class="bp-card-body">
+      <div class="row">
+        <div class="col-md-3">
+          <h6>Arve andmed:</h6>
+          <ul class="list-unstyled small">
+            <li><code>{{ "{{ invoice.number }}" }}</code> - Arve number</li>
+            <li><code>{{ "{{ invoice.date }}" }}</code> - Arve kuupäev</li>
+            <li><code>{{ "{{ invoice.due_date }}" }}</code> - Maksetähtaeg</li>
+            <li><code>{{ "{{ invoice.subtotal }}" }}</code> - Vahesumma</li>
+            <li><code>{{ "{{ invoice.total }}" }}</code> - Kogusumma</li>
+            <li><code>{{ "{{ invoice.vat_amount }}" }}</code> - KM summa</li>
+            <li><code>{{ "{{ invoice.status }}" }}</code> - Staatus</li>
+            <li><code>{{ "{{ invoice.note }}" }}</code> - Märkus</li>
+            <li><code>{{ "{{ invoice.announcements }}" }}</code> - Info ja Teadaanded</li>
+          </ul>
+        </div>
+        <div class="col-md-3">
+          <h6>Kliendi andmed:</h6>
+          <ul class="list-unstyled small">
+            <li><code>{{ "{{ invoice.client.name }}" }}</code> - Nimi</li>
+            <li><code>{{ "{{ invoice.client.email }}" }}</code> - E-post</li>
+            <li><code>{{ "{{ invoice.client.phone }}" }}</code> - Telefon</li>
+            <li><code>{{ "{{ invoice.client.address }}" }}</code> - Aadress</li>
+            <li><code>{{ "{{ invoice.client.registry_code }}" }}</code> - Registrikood</li>
+            <li><code>{{ "{{ invoice.client_extra_info }}" }}</code> - Kliendi lisainfo</li>
+          </ul>
+        </div>
+        <div class="col-md-3">
+          <h6>Ettevõtte andmed:</h6>
+          <ul class="list-unstyled small">
+            <li><code>{{ "{{ company.company_name }}" }}</code> - Nimi</li>
+            <li><code>{{ "{{ company.company_email }}" }}</code> - E-post</li>
+            <li><code>{{ "{{ company.company_phone }}" }}</code> - Telefon</li>
+            <li><code>{{ "{{ company.company_address }}" }}</code> - Aadress</li>
+            <li><code>{{ "{{ company.company_logo_url }}" }}</code> - Logo URL</li>
+            <li><code>{{ "{{ company.company_bank_account }}" }}</code> - Pangakonto</li>
+            <li><code>{{ "{{ company.marketing_messages }}" }}</code> - Turundussõnumid</li>
+          </ul>
+        </div>
+        <div class="col-md-3">
+          <h6>Arve read:</h6>
+          <ul class="list-unstyled small">
+            <li><code>{% raw %}{% for line in invoice.lines %}{% endraw %}</code></li>
+            <li><code>{{ "{{ line.description }}" }}</code> - Kirjeldus</li>
+            <li><code>{{ "{{ line.qty }}" }}</code> - Kogus</li>
+            <li><code>{{ "{{ line.unit_price }}" }}</code> - Ühiku hind</li>
+            <li><code>{{ "{{ line.line_total }}" }}</code> - Rea summa</li>
+            <li><code>{% raw %}{% endfor %}{% endraw %}</code></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Unsaved Changes Indicator -->
+<div id="unsavedChanges" class="unsaved-changes" style="display: none;">
+  <div class="alert alert-warning alert-dismissible">
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    Teil on salvestamata muudatusi
+    <button type="button" class="btn-close" onclick="hideUnsavedIndicator()"></button>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/edit/closetag.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/addon/fold/foldcode.min.js"></script>
+
+<script>
+let editor;
+let hasUnsavedChanges = false;
+let darkTheme = false;
+
+document.addEventListener('DOMContentLoaded', function() {
+  initializeEditor();
+  initializePreview();
+  
+  // Warn before leaving with unsaved changes
+  window.addEventListener('beforeunload', function(e) {
+    if (hasUnsavedChanges) {
+      e.preventDefault();
+      e.returnValue = 'Teil on salvestamata muudatusi. Kas olete kindel, et soovite lahkuda?';
+    }
+  });
+});
+
+function initializeEditor() {
+  const textarea = document.getElementById('codeEditor');
+  
+  editor = CodeMirror.fromTextArea(textarea, {
+    mode: 'htmlmixed',
+    theme: 'default',
+    lineNumbers: true,
+    autoCloseTags: true,
+    indentUnit: 2,
+    tabSize: 2,
+    lineWrapping: true,
+    foldGutter: true,
+    gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter']
+  });
+  
+  // Track changes
+  editor.on('change', function() {
+    if (!hasUnsavedChanges) {
+      hasUnsavedChanges = true;
+      showUnsavedIndicator();
+      updateSaveButton();
+    }
+  });
+  
+  // Auto-refresh preview on change (debounced)
+  let refreshTimeout;
+  editor.on('change', function() {
+    clearTimeout(refreshTimeout);
+    refreshTimeout = setTimeout(refreshPreview, 1000);
+  });
+}
+
+function initializePreview() {
+  // Initial preview load
+  refreshPreview();
+}
+
+function refreshPreview() {
+  const content = editor.getValue();
+  const previewFrame = document.getElementById('previewFrame');
+  
+  // Create a blob with the HTML content
+  const blob = new Blob([content], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  
+  previewFrame.src = url;
+  
+  // Clean up the blob URL after loading
+  previewFrame.onload = function() {
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+}
+
+function saveTemplate() {
+  const saveBtn = document.getElementById('saveBtn');
+  const originalText = saveBtn.innerHTML;
+  
+  // Show loading state
+  saveBtn.innerHTML = '<i class="bi bi-spinner spin me-1"></i>Salvestamine...';
+  saveBtn.disabled = true;
+  
+  const templateContent = editor.getValue();
+  
+  fetch(`/settings/pdf-templates/{{ template.id }}/save`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+    },
+    body: JSON.stringify({
+      content: templateContent
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      BilliPocket.showMessage('Mall edukalt salvestatud', 'success');
+      hasUnsavedChanges = false;
+      hideUnsavedIndicator();
+      updateSaveButton();
+    } else {
+      BilliPocket.showMessage(data.message || 'Salvestamise viga', 'error');
+    }
+  })
+  .catch(error => {
+    console.error('Save error:', error);
+    BilliPocket.showMessage('Salvestamise viga', 'error');
+  })
+  .finally(() => {
+    // Restore button state
+    saveBtn.innerHTML = originalText;
+    saveBtn.disabled = false;
+  });
+}
+
+function resetTemplate() {
+  if (!confirm('Kas olete kindel, et soovite taastada eelmise versiooni? Kõik salvestamata muudatused lähevad kaotsi.')) {
+    return;
+  }
+  
+  fetch(`/settings/pdf-templates/{{ template.id }}/reset`, {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      BilliPocket.showMessage('Mall taastatud', 'success');
+      // Reload the page to get the restored content
+      setTimeout(() => location.reload(), 1000);
+    } else {
+      BilliPocket.showMessage(data.message || 'Taastamise viga', 'error');
+    }
+  })
+  .catch(error => {
+    console.error('Reset error:', error);
+    BilliPocket.showMessage('Taastamise viga', 'error');
+  });
+}
+
+function formatCode() {
+  // Simple code formatting - in production you might want to use a proper formatter
+  const content = editor.getValue();
+  editor.setValue(content);
+  editor.autoFormatRange({ line: 0, ch: 0 }, { line: editor.lineCount(), ch: 0 });
+}
+
+function toggleTheme() {
+  darkTheme = !darkTheme;
+  editor.setOption('theme', darkTheme ? 'monokai' : 'default');
+  
+  const themeBtn = document.querySelector('[onclick="toggleTheme()"]');
+  if (darkTheme) {
+    themeBtn.innerHTML = '<i class="bi bi-sun me-1"></i>Hele teema';
+  } else {
+    themeBtn.innerHTML = '<i class="bi bi-moon me-1"></i>Tume teema';
+  }
+}
+
+function openPreviewInNewTab() {
+  const content = editor.getValue();
+  const newWindow = window.open();
+  newWindow.document.write(content);
+  newWindow.document.close();
+}
+
+function showUnsavedIndicator() {
+  document.getElementById('unsavedChanges').style.display = 'block';
+}
+
+function hideUnsavedIndicator() {
+  document.getElementById('unsavedChanges').style.display = 'none';
+}
+
+function updateSaveButton() {
+  const saveBtn = document.getElementById('saveBtn');
+  if (hasUnsavedChanges) {
+    saveBtn.classList.remove('btn-success');
+    saveBtn.classList.add('btn-warning');
+  } else {
+    saveBtn.classList.remove('btn-warning');
+    saveBtn.classList.add('btn-success');
+  }
+}
+
+// Add some useful CSS classes for the editor
+const style = document.createElement('style');
+style.textContent = `
+  .spin {
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %}

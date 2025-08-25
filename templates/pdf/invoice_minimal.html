@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Arve {{ invoice.number }}</title>
+    <style>
+        /* =================================================================
+           1. PDF & BASE SETUP
+           ================================================================= */
+        @page {
+            size: A4;
+            margin: 10mm;
+        }
+        
+        body {
+            font-family: 'Open Sans', 'Arial', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.6;
+            color: #333333;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* =================================================================
+           2. MAIN CONTAINER
+           ================================================================= */
+        .invoice-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding-left: 30px;
+            padding-right: 30px;
+        }
+        
+        /* =================================================================
+           3. HEADER LAYOUT (Two-column table)
+           ================================================================= */
+        .header {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .header-left {
+            width: 50%;
+            vertical-align: top;
+            padding-right: 20px;
+        }
+        
+        .header-right {
+            width: 40%;
+            vertical-align: top;
+            text-align: right;
+        }
+        
+        /* =================================================================
+           4. LEFT COLUMN - COMPANY & CLIENT
+           ================================================================= */
+        
+        /* Company Section */
+        .company-section {
+            padding-top: 20px;
+        }
+        
+        .company-name {
+            font-size: 37px;
+            font-weight: 700;
+            color: #999999;
+            margin: 0 0 8px 0;
+            letter-spacing: -1.5px;
+            line-height: 1.1;
+        }
+        
+        .company-details {
+            margin-bottom: 15px;
+        }
+        
+        .company-contact {
+            color: #999999;
+            margin: 2px 0;
+            font-size: 14px;
+        }
+        
+        /* Billed To Section - CRITICAL: Extends to page edges */
+        .billed-to-wrapper {
+            margin-top: 20px;
+        }
+        
+        .billed-to-label {
+            font-size: 16px;
+            font-weight: 700;
+            color: #999999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0 0 8px 0;
+            border-bottom: 1px dashed #999999;
+            padding-bottom: 8px;
+            /* CRITICAL: Negative margins to reach page edges */
+            margin-left: -30px;
+            padding-left: 30px;
+        }
+        
+        .client-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333333;
+            margin: 8px 0;
+            line-height: 1.3;
+        }
+        
+        .client-detail {
+            color: #999999;
+            margin: 4px 0;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        
+        /* =================================================================
+           5. RIGHT COLUMN - INVOICE META
+           ================================================================= */
+        .invoice-meta-section {
+            text-align: right;
+            padding-top: 40px;
+        }
+        
+        .invoice-title {
+            font-size: 56px;
+            font-weight: 700;
+            color: #999999;
+            margin: 0;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        
+        .meta-list {
+            margin: 20px 0;
+        }
+        
+        .meta-row {
+            margin-bottom: 2px;
+            text-align: right;
+        }
+        
+        .meta-label {
+            font-size: 16px;
+            font-weight: 500;
+            color: #999999;
+            margin-right: 20px;
+        }
+        
+        .meta-value {
+            font-size: 16px;
+            color: #333333;
+            font-weight: 600;
+        }
+        
+        /* =================================================================
+           6. ITEMS TABLE - CRITICAL: Full width with edge borders
+           ================================================================= */
+        .items-section {
+            margin: 0;
+        }
+        
+        .items-table {
+            /* CRITICAL: Extend table to page edges */
+            width: calc(100% + 60px);
+            border-collapse: collapse;
+            margin-left: -30px;
+            margin-right: -30px;
+            margin-bottom: 0;
+        }
+        
+        /* Table Header */
+        .items-table th {
+            font-size: 16px;
+            font-weight: 600;
+            color: #999999;
+            padding: 20px 0;
+            text-align: left;
+            border-bottom: 1px dashed #999999;
+            background-color: #ffffff;
+        }
+        
+        /* CRITICAL: Edge padding for first/last columns */
+        .items-table th:first-child {
+            padding-left: 30px;
+        }
+        
+        .items-table th:last-child {
+            padding-right: 30px;
+            text-align: right;
+        }
+        
+        /* Column Definitions */
+        .items-table th.description-col { 
+            width: 50%; 
+            text-align: left;
+        }
+        
+        .items-table th.unit-col { 
+            width: 12%; 
+            text-align: right;
+        }
+        
+        .items-table th.qty-col { 
+            width: 10%; 
+            text-align: right;
+        }
+        
+        .items-table th.total-col { 
+            width: 17%; 
+            text-align: right;
+        }
+        
+        /* Table Body */
+        .items-table td {
+            padding: 12px 0;
+            border-bottom: 1px dashed #999999;
+            color: #333333;
+            font-size: 14px;
+            vertical-align: top;
+            background-color: #ffffff;
+        }
+        
+        /* CRITICAL: Edge padding for data cells */
+        .items-table td:first-child {
+            padding-left: 30px;
+        }
+        
+        .items-table td:last-child {
+            padding-right: 30px;
+        }
+        
+        /* Cell Content Styling */
+        .description-text {
+            max-width: 380px;
+            font-weight: 400;
+            word-wrap: break-word;
+        }
+        
+        .unit-col,
+        .qty-col,
+        .total-col {
+            font-weight: 400;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .unit-col {
+            text-align: right;
+        }
+        
+        .qty-col {
+            text-align: right;
+        }
+        
+        .total-col {
+            text-align: right;
+        }
+        
+        /* =================================================================
+           7. TOTALS SECTION - Right-aligned block with edge-to-edge divider
+           ================================================================= */
+        .totals-section {
+            page-break-inside: avoid;
+            margin-top: 10px;
+        }
+        
+        .totals-block {
+            width: 250px;
+            margin-left: auto;
+            margin-right: 0;
+            padding-right: 10px;
+        }
+        
+        .totals-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .totals-table td {
+            padding: 8px 0;
+            border: none;
+            font-size: 14px;
+        }
+        
+        .totals-label {
+            color: #333333;
+            text-align: right;
+            padding-right: 30px;
+            font-weight: 400;
+        }
+        
+        .totals-amount {
+            text-align: right;
+            font-weight: 400;
+            color: #333333;
+            font-variant-numeric: tabular-nums;
+            min-width: 120px;
+        }
+        
+        /* Total Divider - CRITICAL: Full width matching items table */
+        .total-divider {
+            border-top: 1px dashed #999999;
+            /* CRITICAL: Extend exactly like items table borders */
+            width: calc(100% + 60px);
+            margin-left: -30px;
+            margin-right: -30px;
+            margin-top: 4px;
+            margin-bottom: 0;
+        }
+        
+        /* Final Total Row - Remove border since handled by divider */
+        .total-final {
+            margin-top: 0;
+        }
+        
+        .total-final .totals-label {
+            font-weight: 700;
+            font-size: 16px;
+            color: #333333;
+            padding-top: 8px;
+        }
+        
+        .total-final .totals-amount {
+            font-weight: 600;
+            font-size: 16px;
+            color: #333333;
+            padding-top: 8px;
+        }
+        
+        /* =================================================================
+           8. FOOTER SECTION - Full width with edge borders
+           ================================================================= */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 8px 30px;
+            border-top: 1px dashed #999999;
+            background: white;
+        }
+        
+        .footer-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .footer-left {
+            width: 33%;
+            vertical-align: top;
+            color: #999999;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .footer-center {
+            width: 34%;
+            vertical-align: top;
+            color: #666666;
+            text-align: center;
+            font-size: 10px;
+        }
+        
+        .footer-right {
+            width: 33%;
+            vertical-align: top;
+            color: #666666;
+            text-align: center;
+            font-size: 10px;
+        }
+        
+        .payment-info {
+            margin-bottom: 4px;
+        }
+        
+        .payment-terms {
+            color: #333333;
+            font-size: 11px;
+            margin-top: 6px;
+        }
+        
+        /* =================================================================
+           9. OPTIONAL INFO SECTIONS (Announcements, etc.)
+           ================================================================= */
+        .info-paragraph {
+            position: fixed;
+            bottom: 100px;
+            left: 0;
+            right: 0;
+            margin: 0;
+            padding: 20px 30px;
+            color: #333333;
+            font-size: 12px;
+            line-height: 1.6;
+            page-break-inside: avoid;
+            background: white;
+        }
+        
+        .info-title {
+            font-weight: 700;
+            color: #999999;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .info-content {
+            width: 48%;
+            margin-left: auto;
+        }
+        
+        /* =================================================================
+           10. UTILITY CLASSES
+           ================================================================= */
+        .font-tabular {
+            font-variant-numeric: tabular-nums;
+        }
+        
+        /* =================================================================
+           11. PRINT OPTIMIZATIONS
+           ================================================================= */
+        @media print {
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .header,
+            .items-section,
+            .totals-section,
+            .info-paragraph {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <!-- HEADER: Two-column layout -->
+        <div class="header">
+            <table class="header-table">
+                <tr>
+                    <td class="header-left">
+                        <!-- Company Info -->
+                        <div class="company-section">
+                            <div class="company-name">
+                                {{ company.company_name.replace(' OÜ', '').replace(' AS', '').replace(' MTÜ', '') }}
+                            </div>
+                            
+                            <div class="company-details">
+                                {% if company.company_email %}
+                                <div class="company-contact">{{ company.company_email }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Client Info -->
+                            <div class="billed-to-wrapper">
+                                <div class="billed-to-label">ARVE SAAJA:</div>
+                                <div class="client-name">{{ invoice.client.name }}</div>
+                                {% if invoice.client.address %}
+                                <div class="client-detail">
+                                    {{ invoice.client.address | replace('\n', '<br>') | safe }}
+                                </div>
+                                {% endif %}
+                                {% if invoice.client_extra_info %}
+                                <div class="client-detail">
+                                    {{ invoice.client_extra_info | replace('\n', '<br>') | safe }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    
+                    <td class="header-right">
+                        <!-- Invoice Meta -->
+                        <div class="invoice-meta-section">
+                            <h1 class="invoice-title">ARVE</h1>
+                            <div class="meta-list">
+                                <div class="meta-row">
+                                    <span class="meta-label">Arve nr:</span>
+                                    <span class="meta-value">{{ invoice.number }}</span>
+                                </div>
+                                <div class="meta-row">
+                                    <span class="meta-label">Kuupäev:</span>
+                                    <span class="meta-value">{{ invoice.date.strftime('%d.%m.%Y') }}</span>
+                                </div>
+                                <div class="meta-row">
+                                    <span class="meta-label">Tähtaeg:</span>
+                                    <span class="meta-value">{{ invoice.due_date.strftime('%d.%m.%Y') }}</span>
+                                </div>
+                                {% if invoice.note and note_label %}
+                                <div class="meta-row">
+                                    <span class="meta-label">{{ note_label }}:</span>
+                                    <span class="meta-value">{{ invoice.note }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- ITEMS TABLE -->
+        <div class="items-section">
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th class="description-col">Toote / Teenuse nimetus</th>
+                        <th class="qty-col">Kogus</th>
+                        <th class="unit-col">Ühiku hind</th>
+                        <th class="total-col">Kokku</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for line in invoice.lines %}
+                    <tr>
+                        <td class="description-col">
+                            <div class="description-text">{{ line.description }}</div>
+                        </td>
+                        <td class="qty-col font-tabular">{{ line.qty|quantity }}</td>
+                        <td class="unit-col font-tabular">{{ line.unit_price|currency }} €</td>
+                        <td class="total-col font-tabular">{{ line.line_total|currency }} €</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- TOTALS -->
+        <div class="totals-section">
+            <div class="totals-block">
+                <table class="totals-table">
+                    <tbody>
+                        <tr>
+                            <td class="totals-label">Summa km-ta</td>
+                            <td class="totals-amount font-tabular">{{ invoice.subtotal|currency }} €</td>
+                        </tr>
+                        <tr>
+                            <td class="totals-label">Käibemaks {{ "%.0f"|format(invoice.vat_rate|float) }}%</td>
+                            <td class="totals-amount font-tabular">{{ invoice.vat_amount|currency }} €</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <!-- Total Divider - extends to page edges like items table -->
+                <div class="total-divider"></div>
+                
+                <table class="totals-table">
+                    <tbody>
+                        <tr class="total-final">
+                            <td class="totals-label">Arve Summa</td>
+                            <td class="totals-amount font-tabular">{{ invoice.total|currency }} €</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- PAYMENT INFO & ANNOUNCEMENTS -->
+        <div class="info-paragraph">
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <td style="width: 50%; vertical-align: top;">
+                        <!-- Payment Information - Left side -->
+                        <div class="info-title">Makseandmed</div>
+                        {% if company.company_bank_account %}
+                        <div style="margin-bottom: 4px;">
+                            <strong>Konto nr:</strong> {{ company.company_bank_account }}
+                        </div>
+                        {% endif %}
+                        <div style="margin-bottom: 4px;">
+                            <strong>Summa:</strong> {{ invoice.total|currency }} €
+                        </div>
+                        <div style="margin-bottom: 4px;">
+                            <strong>Arve number:</strong> {{ invoice.number }}
+                        </div>
+                        <div style="margin-bottom: 4px;">
+                            <strong>Maksetähtaeg:</strong> {{ invoice.due_date.strftime('%d.%m.%Y') }}
+                        </div>
+                    </td>
+                    <td style="width: 50%; vertical-align: top; text-align: right;">
+                        <!-- Announcements - Right side -->
+                        {% if invoice.announcements %}
+                        <div style="text-align: right; margin-top: 26px;">{{ invoice.announcements | replace('\n', '<br>') | safe }}</div>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <table class="footer-table">
+                <tr>
+                    <td class="footer-left">
+                        <div>Täname meeldiva</div>
+                        <div>koostöö eest! ✓</div>
+                    </td>
+                    <td class="footer-center">
+                        <div>{{ company.company_name }}</div>
+                        {% if company.company_address %}
+                        <div>{{ company.company_address.replace('\n', ' · ') }}</div>
+                        {% endif %}
+                        {% if company.company_phone %}
+                        <div>{{ company.company_phone }}</div>
+                        {% endif %}
+                        {% if company.company_email %}
+                        <div>{{ company.company_email }}</div>
+                        {% endif %}
+                        {% if company.company_reg_number %}
+                        <div>Reg.nr {{ company.company_reg_number }}</div>
+                        {% endif %}
+                    </td>
+                    <td class="footer-right">
+                        <div>
+                            {% if company.company_registry_code %}Reg.kood: {{ company.company_registry_code }}{% else %}&nbsp;{% endif %}
+                        </div>
+                        <div>
+                            {% if company.company_vat_number %}KMKR number: {{ company.company_vat_number }}{% else %}&nbsp;{% endif %}
+                        </div>
+                        <div>
+                            {% if company.company_bank %}Pank: {{ company.company_bank }}{% else %}&nbsp;{% endif %}
+                        </div>
+                        <div>
+                            {% if company.company_bank_account %}Konto: {{ company.company_bank_account }}{% else %}&nbsp;{% endif %}
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,2119 @@
+{% extends 'layout.html' %}
+{% block title %}Seaded – Billipocket{% endblock %}
+{% block content %}
+<form method="POST">
+  {{ form.hidden_tag() }}
+  
+  <!-- Ettevõtte kaart -->
+  <div class="bp-card mb-4">
+    <div class="bp-card-header">
+      <h2 class="h6 m-0"><i class="bi bi-building me-2"></i>Ettevõtte kaart</h2>
+    </div>
+    <div class="bp-card-body">
+      <div class="row g-3">
+        <!-- Esimene veerg -->
+        <div class="col-md-4">
+          <!-- Ettevõtte nimi -->
+          <div class="mb-3">
+            <label for="{{ form.company_name.id }}" class="form-label">
+              {{ form.company_name.label.text }} <span class="text-danger">*</span>
+            </label>
+            {{ form.company_name(class_="form-control" + (" is-invalid" if form.company_name.errors else "")) }}
+            {% if form.company_name.errors %}
+            <div class="invalid-feedback">
+              {{ form.company_name.errors[0] }}
+            </div>
+            {% endif %}
+          </div>
+          
+          <!-- Aadress -->
+          <div class="mb-3">
+            <label for="{{ form.company_address.id }}" class="form-label">
+              {{ form.company_address.label.text }}
+            </label>
+            {{ form.company_address(class_="form-control" + (" is-invalid" if form.company_address.errors else ""), rows="3") }}
+            {% if form.company_address.errors %}
+            <div class="invalid-feedback">
+              {{ form.company_address.errors[0] }}
+            </div>
+            {% endif %}
+          </div>
+          
+          <!-- Telefon -->
+          <div class="mb-3">
+            <label for="{{ form.company_phone.id }}" class="form-label">
+              {{ form.company_phone.label.text }}
+            </label>
+            {{ form.company_phone(class_="form-control" + (" is-invalid" if form.company_phone.errors else "")) }}
+            {% if form.company_phone.errors %}
+            <div class="invalid-feedback">
+              {{ form.company_phone.errors[0] }}
+            </div>
+            {% endif %}
+          </div>
+          
+          <!-- Email -->
+          <div class="mb-3">
+            <label for="{{ form.company_email.id }}" class="form-label">
+              {{ form.company_email.label.text }}
+            </label>
+            {{ form.company_email(class_="form-control" + (" is-invalid" if form.company_email.errors else ""), type="email") }}
+            {% if form.company_email.errors %}
+            <div class="invalid-feedback">
+              {{ form.company_email.errors[0] }}
+            </div>
+            {% endif %}
+          </div>
+          
+          <!-- Koduleht -->
+          <div class="mb-3">
+            <label for="{{ form.company_website.id }}" class="form-label">
+              {{ form.company_website.label.text }}
+            </label>
+            {{ form.company_website(class_="form-control" + (" is-invalid" if form.company_website.errors else ""), placeholder="https://www.example.com") }}
+            {% if form.company_website.errors %}
+            <div class="invalid-feedback">
+              {{ form.company_website.errors[0] }}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        
+        <!-- Teine veerg -->
+        <div class="col-md-4">
+          <!-- Registrikood -->
+          <div class="mb-3">
+            <label for="{{ form.company_registry_code.id }}" class="form-label">
+              {{ form.company_registry_code.label.text }}
+            </label>
+            {{ form.company_registry_code(class_="form-control" + (" is-invalid" if form.company_registry_code.errors else "")) }}
+            {% if form.company_registry_code.errors %}
+            <div class="invalid-feedback">
+              {{ form.company_registry_code.errors[0] }}
+            </div>
+            {% endif %}
+          </div>
+          
+          <!-- Käibemaksu number -->
+          <div class="mb-3">
+            <label for="{{ form.company_vat_number.id }}" class="form-label">
+              {{ form.company_vat_number.label.text }}
+            </label>
+            {{ form.company_vat_number(class_="form-control" + (" is-invalid" if form.company_vat_number.errors else "")) }}
+            {% if form.company_vat_number.errors %}
+            <div class="invalid-feedback">
+              {{ form.company_vat_number.errors[0] }}
+            </div>
+            {% endif %}
+          </div>
+          
+          <!-- Pank -->
+          <div class="mb-3">
+            <label for="{{ form.company_bank.id }}" class="form-label">
+              {{ form.company_bank.label.text }}
+            </label>
+            {{ form.company_bank(class_="form-control" + (" is-invalid" if form.company_bank.errors else "")) }}
+            {% if form.company_bank.errors %}
+            <div class="invalid-feedback">
+              {{ form.company_bank.errors[0] }}
+            </div>
+            {% endif %}
+          </div>
+          
+          <!-- Pangakonto -->
+          <div class="mb-3">
+            <label for="{{ form.company_bank_account.id }}" class="form-label">
+              {{ form.company_bank_account.label.text }}
+            </label>
+            {{ form.company_bank_account(class_="form-control" + (" is-invalid" if form.company_bank_account.errors else "")) }}
+            {% if form.company_bank_account.errors %}
+            <div class="invalid-feedback">
+              {{ form.company_bank_account.errors[0] }}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        
+        <!-- Kolmas veerg - Logo Galerii -->
+        <div class="col-md-4">
+          <div class="mb-3">
+            <!-- Logo Galerii Header -->
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <label class="form-label mb-0">
+                <i class="bi bi-images me-2"></i>Logo Galerii
+              </label>
+              <button type="button" class="btn btn-outline-primary btn-sm" onclick="toggleLogoUpload()">
+                <i class="bi bi-plus-lg me-1"></i>Lisa uus logo
+              </button>
+            </div>
+            
+            <!-- Logo Upload Zone (Initially Hidden) -->
+            <div class="bp-logo-upload-section" id="logoUploadSection" style="display: none;">
+              <div class="bp-file-upload-container">
+                <h6 class="mb-3">Lisa logosid</h6>
+                
+                <!-- Drop Zone -->
+                <div class="bp-file-drop-zone" id="logoDropArea">
+                  <div class="bp-drop-zone-content">
+                    <i class="bi bi-cloud-upload-fill bp-drop-icon"></i>
+                    <p class="bp-drop-text mb-1">
+                      Lohista failid siia või <button type="button" class="btn-link p-0 bp-browse-link" onclick="triggerLogoFileInput()">vali failid</button>
+                    </p>
+                    <small class="bp-drop-hint">
+                      Kuni 2MB • Failinimed ilma erimärkideta
+                    </small>
+                  </div>
+                </div>
+                <input type="file" id="logoFileInput" accept="image/*" multiple style="display: none;" />
+                
+                <!-- File List Container -->
+                <div class="bp-file-list" id="logoFileList">
+                  <!-- Dynamic file items will be added here -->
+                </div>
+              </div>
+            </div>
+            
+            <!-- Logo Gallery Grid -->
+            <div class="bp-logo-gallery" id="logoGallery">
+              <div class="bp-logo-gallery-loading" id="logoGalleryLoading">
+                <div class="text-center py-4">
+                  <div class="spinner-border spinner-border-sm text-primary" role="status">
+                    <span class="visually-hidden">Laadin...</span>
+                  </div>
+                  <div class="mt-2 text-muted">Laadin logosid...</div>
+                </div>
+              </div>
+              
+              <!-- Logo cards will be populated by JavaScript -->
+              <div class="bp-logo-cards" id="logoCards">
+                <!-- Dynamic content -->
+              </div>
+              
+              <!-- Empty state -->
+              <div class="bp-logo-empty" id="logoEmpty" style="display: none;">
+                <div class="text-center py-4">
+                  <i class="bi bi-image text-muted" style="font-size: 2rem;"></i>
+                  <p class="text-muted mt-2">Logod puuduvad</p>
+                  <button type="button" class="btn btn-outline-primary btn-sm" onclick="toggleLogoUpload()">
+                    <i class="bi bi-plus-lg me-1"></i>Lisa esimene logo
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Hidden URL field for backward compatibility -->
+            {{ form.company_logo_url(class_="d-none", id="logoUrlField") }}
+            {% if form.company_logo_url.errors %}
+            <div class="invalid-feedback d-block">
+              {{ form.company_logo_url.errors[0] }}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Seadete kaart -->
+  <div class="bp-card mb-4">
+    <div class="bp-card-header">
+      <h2 class="h6 m-0"><i class="bi bi-gear me-2"></i>Seadete kaart</h2>
+    </div>
+    <div class="bp-card-body">
+      <div class="row g-3">
+        <!-- Esimene veerg -->
+        <div class="col-md-4">
+          <!-- Vaikimisi KM määr -->
+          <div class="mb-3">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <label class="form-label mb-0">
+                Vaikimisi KM määr <span class="text-danger">*</span>
+              </label>
+              <button type="button" class="btn btn-outline-secondary" style="font-size: 14px; background-color: transparent !important; color: #114f68 !important; border: 1px solid #114f68 !important; border-radius: 8px !important; padding: 0.25rem 0.5rem;" onclick="showManageVatRatesModal()">
+                <i class="bi bi-gear-fill me-1"></i>Halda
+              </button>
+            </div>
+            <div class="dropdown w-100">
+              <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start" type="button" id="vatRateSelector" data-bs-toggle="dropdown" aria-expanded="false">
+                <span id="vatRateLabel">Vali KM määr...</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="vatRateSelector" id="vatRateDropdown" style="width: max-content; min-width: 100%;">
+                {% for value, label in form.default_vat_rate_id.choices %}
+                <li><a class="dropdown-item vat-rate-option{% if form.default_vat_rate_id.data|string == value|string %} active{% endif %}" href="#" data-rate-id="{{ value }}" {% if form.default_vat_rate_id.data|string == value|string %}data-selected="true"{% endif %}>{{ label }}</a></li>
+                {% endfor %}
+              </ul>
+            </div>
+            <input type="hidden" name="default_vat_rate_id" id="default_vat_rate_id" value="{{ form.default_vat_rate_id.data or '' }}">
+            {% if form.default_vat_rate_id.errors %}
+            <div class="invalid-feedback">
+              {{ form.default_vat_rate_id.errors[0] }}
+            </div>
+            {% endif %}
+            <div class="form-text">Valitud KM määr kasutatakse vaikimisi uute arvete koostamisel</div>
+          </div>
+          
+          <!-- Vaikimisi PDF template -->
+          <div class="mb-3">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <label class="form-label mb-0">
+                Vaikimisi PDF mall <span class="text-danger">*</span>
+              </label>
+              <a href="{{ url_for('dashboard.pdf_templates') }}" class="btn btn-outline-secondary" style="font-size: 14px; background-color: transparent !important; color: #114f68 !important; border: 1px solid #114f68 !important; border-radius: 8px !important; padding: 0.25rem 0.5rem;">
+                <i class="bi bi-gear-fill me-1"></i>Halda
+              </a>
+            </div>
+            <div class="dropdown w-100">
+              <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start" type="button" id="pdfTemplateSelector" data-bs-toggle="dropdown" aria-expanded="false">
+                <span id="pdfTemplateLabel">{{ form.default_pdf_template.data or 'Vali PDF mall...' }}</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="pdfTemplateSelector" id="pdfTemplateDropdown" style="width: max-content; min-width: 100%;">
+                {% for value, label in form.default_pdf_template.choices %}
+                <li><a class="dropdown-item pdf-template-option{% if form.default_pdf_template.data == value %} active{% endif %}" href="#" data-template="{{ value }}" {% if form.default_pdf_template.data == value %}data-selected="true"{% endif %}>{{ label }}</a></li>
+                {% endfor %}
+              </ul>
+            </div>
+            <input type="hidden" name="default_pdf_template" id="default_pdf_template" value="{{ form.default_pdf_template.data or '' }}">
+            {% if form.default_pdf_template.errors %}
+            <div class="invalid-feedback">
+              {{ form.default_pdf_template.errors[0] }}
+            </div>
+            {% endif %}
+            <div class="form-text">Valitud mall kasutatakse vaikimisi PDF-ide genereerimisel</div>
+          </div>
+          
+        </div>
+        
+        <!-- Teine veerg -->
+        <div class="col-md-4">
+          <!-- Vaikimisi maksetingimus -->
+          <div class="mb-3">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <label class="form-label mb-0">
+                Vaikimisi maksetingimus <span class="text-danger">*</span>
+              </label>
+              <button type="button" class="btn btn-outline-secondary" style="font-size: 14px; background-color: transparent !important; color: #114f68 !important; border: 1px solid #114f68 !important; border-radius: 8px !important; padding: 0.25rem 0.5rem;" onclick="showManagePaymentTermsModal()">
+                <i class="bi bi-gear-fill me-1"></i>Halda
+              </button>
+            </div>
+            <div class="dropdown w-100">
+              <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start" type="button" id="paymentTermsSelector" data-bs-toggle="dropdown" aria-expanded="false">
+                <span id="paymentTermsLabel">Vali maksetingimus...</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="paymentTermsSelector" id="paymentTermsDropdown" style="width: max-content; min-width: 100%;">
+                {% for value, label in form.default_payment_terms_id.choices %}
+                <li><a class="dropdown-item payment-terms-option{% if form.default_payment_terms_id.data|string == value|string %} active{% endif %}" href="#" data-terms-id="{{ value }}" {% if form.default_payment_terms_id.data|string == value|string %}data-selected="true"{% endif %}>{{ label }}</a></li>
+                {% endfor %}
+              </ul>
+            </div>
+            <input type="hidden" name="default_payment_terms_id" id="default_payment_terms_id" value="{{ form.default_payment_terms_id.data or '' }}">
+            {% if form.default_payment_terms_id.errors %}
+            <div class="invalid-feedback">
+              {{ form.default_payment_terms_id.errors[0] }}
+            </div>
+            {% endif %}
+            <div class="form-text">Valitud maksetingimus kasutatakse vaikimisi uute arvete koostamisel</div>
+          </div>
+          
+          <!-- Vaikimisi viivis -->
+          <div class="mb-3">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <label class="form-label mb-0">
+                Vaikimisi viivis <span class="text-danger">*</span>
+              </label>
+              <button type="button" class="btn btn-outline-secondary" style="font-size: 14px; background-color: transparent !important; color: #114f68 !important; border: 1px solid #114f68 !important; border-radius: 8px !important; padding: 0.25rem 0.5rem;" onclick="showManagePenaltyRatesModal()">
+                <i class="bi bi-gear-fill me-1"></i>Halda
+              </button>
+            </div>
+            <div class="dropdown w-100">
+              <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start" type="button" id="penaltyRateSelector" data-bs-toggle="dropdown" aria-expanded="false">
+                <span id="penaltyRateLabel">Vali viivis...</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="penaltyRateSelector" id="penaltyRateDropdown" style="width: max-content; min-width: 100%;">
+                {% for value, label in form.default_penalty_rate_id.choices %}
+                <li><a class="dropdown-item penalty-rate-option{% if form.default_penalty_rate_id.data|string == value|string %} active{% endif %}" href="#" data-rate-id="{{ value }}" {% if form.default_penalty_rate_id.data|string == value|string %}data-selected="true"{% endif %}>{{ label }}</a></li>
+                {% endfor %}
+              </ul>
+            </div>
+            <input type="hidden" name="default_penalty_rate_id" id="default_penalty_rate_id" value="{{ form.default_penalty_rate_id.data or '' }}">
+            {% if form.default_penalty_rate_id.errors %}
+            <div class="invalid-feedback">
+              {{ form.default_penalty_rate_id.errors[0] }}
+            </div>
+            {% endif %}
+            <div class="form-text">Valitud viivis kasutatakse vaikimisi arvete tähtaja ületamisel</div>
+          </div>
+          
+          <!-- Vaikimisi märkuse silt -->
+          <div class="mb-3">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <label class="form-label mb-0">
+                Arve märkuste silt <span class="text-danger">*</span>
+              </label>
+              <button type="button" class="btn btn-outline-secondary" style="font-size: 14px; background-color: transparent !important; color: #114f68 !important; border: 1px solid #114f68 !important; border-radius: 8px !important; padding: 0.25rem 0.5rem;" onclick="showManageNoteLabelsModal()">
+                <i class="bi bi-gear-fill me-1"></i>Halda
+              </button>
+            </div>
+            <div class="dropdown w-100">
+              <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start" type="button" id="noteLabelSelector" data-bs-toggle="dropdown" aria-expanded="false">
+                <span id="noteLabelLabel">Vali märkuse silt...</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="noteLabelSelector" id="noteLabelDropdown" style="width: max-content; min-width: 100%;">
+                {% for value, label in note_label_choices %}
+                <li><a class="dropdown-item note-label-option{% if default_note_label_id|string == value|string %} active{% endif %}" href="#" data-label-id="{{ value }}" {% if default_note_label_id|string == value|string %}data-selected="true"{% endif %}>{{ label }}</a></li>
+                {% endfor %}
+              </ul>
+            </div>
+            <input type="hidden" name="default_note_label_id" id="default_note_label_id" value="{{ default_note_label_id or '' }}">
+            <div class="form-text">Valitud silt kuvatakse arvetes märkuste välja asemel (nt "Viitenumber", "Projektinumber")</div>
+          </div>
+        </div>
+        
+        <!-- Kolmas veerg - Turundussõnumid -->
+        <div class="col-md-4">
+          <div class="mb-3">
+            <label for="{{ form.marketing_messages.id }}" class="form-label">
+              {{ form.marketing_messages.label.text }}
+            </label>
+            {{ form.marketing_messages(class_="form-control" + (" is-invalid" if form.marketing_messages.errors else ""), rows="8", placeholder="Turundussõnumid ja teadaanded...") }}
+            {% if form.marketing_messages.errors %}
+            <div class="invalid-feedback">
+              {{ form.marketing_messages.errors[0] }}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+        
+      </div>
+    </div>
+  </div>
+
+  <!-- Arve andmete dokumentatsioon -->
+  <div class="bp-card mb-4">
+    <div class="bp-card-header">
+      <h2 class="h6 m-0"><i class="bi bi-file-text me-2"></i>Arve andmete dokumentatsioon</h2>
+    </div>
+    <div class="bp-card-body">
+      <p class="text-muted mb-4">PDF mallide koostamiseks kasutatavad muutujad (kopeeri ja kleebi PDF template'itesse):</p>
+      
+      <div class="row g-4">
+        <!-- Ettevõtte andmed -->
+        <div class="col-lg-6">
+          <h6 class="text-primary mb-3"><i class="bi bi-building me-2"></i>Ettevõtte andmed:</h6>
+          <div class="bg-light p-3 rounded">
+            <code class="d-block mb-1">&#123;&#123; company.company_name &#125;&#125;</code> - Ettevõtte nimi<br>
+            <code class="d-block mb-1">&#123;&#123; company.company_address &#125;&#125;</code> - Aadress<br>
+            <code class="d-block mb-1">&#123;&#123; company.company_registry_code &#125;&#125;</code> - Registrikood<br>
+            <code class="d-block mb-1">&#123;&#123; company.company_vat_number &#125;&#125;</code> - KMKR number<br>
+            <code class="d-block mb-1">&#123;&#123; company.company_phone &#125;&#125;</code> - Telefon<br>
+            <code class="d-block mb-1">&#123;&#123; company.company_email &#125;&#125;</code> - E-post<br>
+            <code class="d-block mb-1">&#123;&#123; company.company_website &#125;&#125;</code> - Veebileht<br>
+            <code class="d-block mb-1">&#123;&#123; company.company_logo_url &#125;&#125;</code> - Logo URL<br>
+            <code class="d-block mb-1">&#123;&#123; company.company_bank &#125;&#125;</code> - Pank<br>
+            <code class="d-block mb-1">&#123;&#123; company.company_bank_account &#125;&#125;</code> - Pangakonto
+          </div>
+        </div>
+        
+        <!-- Kliendi andmed -->
+        <div class="col-lg-6">
+          <h6 class="text-success mb-3"><i class="bi bi-person me-2"></i>Kliendi andmed:</h6>
+          <div class="bg-light p-3 rounded">
+            <code class="d-block mb-1">&#123;&#123; client.name &#125;&#125;</code> - Kliendi nimi<br>
+            <code class="d-block mb-1">&#123;&#123; client.registry_code &#125;&#125;</code> - Registrikood<br>
+            <code class="d-block mb-1">&#123;&#123; client.email &#125;&#125;</code> - E-post<br>
+            <code class="d-block mb-1">&#123;&#123; client.phone &#125;&#125;</code> - Telefon<br>
+            <code class="d-block mb-1">&#123;&#123; client.address &#125;&#125;</code> - Aadress
+          </div>
+        </div>
+        
+        <!-- Arve andmed -->
+        <div class="col-lg-6">
+          <h6 class="text-warning mb-3"><i class="bi bi-receipt me-2"></i>Arve andmed:</h6>
+          <div class="bg-light p-3 rounded">
+            <code class="d-block mb-1">&#123;&#123; invoice.number &#125;&#125;</code> - Arve number<br>
+            <code class="d-block mb-1">&#123;&#123; invoice.date &#125;&#125;</code> - Arve kuupäev<br>
+            <code class="d-block mb-1">&#123;&#123; invoice.due_date &#125;&#125;</code> - Maksetähtaeg<br>
+            <code class="d-block mb-1">&#123;&#123; invoice.subtotal &#125;&#125;</code> - Vahesumma<br>
+            <code class="d-block mb-1">&#123;&#123; invoice.total &#125;&#125;</code> - Kogusumma<br>
+            <code class="d-block mb-1">&#123;&#123; invoice.vat_amount &#125;&#125;</code> - KM summa<br>
+            <code class="d-block mb-1">&#123;&#123; invoice.status &#125;&#125;</code> - Staatus<br>
+            <code class="d-block mb-1">&#123;&#123; invoice.note &#125;&#125;</code> - Märkus<br>
+            <code class="d-block mb-1">&#123;&#123; invoice.announcements &#125;&#125;</code> - Info ja teadaanded<br>
+            <code class="d-block mb-1">&#123;&#123; invoice.client_extra_info &#125;&#125;</code> - Klienti lisainfo
+          </div>
+        </div>
+        
+        <!-- Maksetingimused ja viivis -->
+        <div class="col-lg-6">
+          <h6 class="text-info mb-3"><i class="bi bi-calendar-check me-2"></i>Maksetingimused ja viivis:</h6>
+          <div class="bg-light p-3 rounded">
+            <code class="d-block mb-1">&#123;&#123; invoice.payment_terms &#125;&#125;</code> - Maksetingimus<br>
+            <code class="d-block mb-1">&#123;&#123; company.default_penalty_rate_obj.name &#125;&#125;</code> - Viivis<br>
+            <code class="d-block mb-1">&#123;&#123; company.default_penalty_rate_obj.rate_per_day &#125;&#125;</code> - Viivise määr päevas<br>
+            <code class="d-block mb-1">&#123;&#123; invoice.get_effective_vat_rate() &#125;&#125;</code> - Rakendatud KM määr
+          </div>
+        </div>
+        
+        <!-- Arve read -->
+        <div class="col-12">
+          <h6 class="text-danger mb-3"><i class="bi bi-list-ul me-2"></i>Arve read (tsükkel):</h6>
+          <div class="bg-light p-3 rounded">
+            <code class="d-block mb-2">&#123;% for line in invoice.lines %&#125;</code>
+            <div class="ms-4">
+              <code class="d-block mb-1">&#123;&#123; line.description &#125;&#125;</code> - Kirjeldus<br>
+              <code class="d-block mb-1">&#123;&#123; line.qty &#125;&#125;</code> - Kogus<br>
+              <code class="d-block mb-1">&#123;&#123; line.unit_price &#125;&#125;</code> - Ühiku hind<br>
+              <code class="d-block mb-1">&#123;&#123; line.line_total &#125;&#125;</code> - Rea summa
+            </div>
+            <code class="d-block">&#123;% endfor %&#125;</code>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mt-4 p-3 bg-info-subtle rounded">
+        <h6 class="text-info mb-2"><i class="bi bi-info-circle me-2"></i>Kasutusnäited:</h6>
+        <p class="mb-2"><strong>Tingimuslik kuvamine:</strong> <code>&#123;% if invoice.note %&#125;&#123;&#123; invoice.note &#125;&#125;&#123;% endif %&#125;</code></p>
+        <p class="mb-2"><strong>Kuupäeva vormindus:</strong> <code>&#123;&#123; invoice.date.strftime('%d.%m.%Y') &#125;&#125;</code></p>
+        <p class="mb-0"><strong>Summade vormindus:</strong> <code>&#123;&#123; "%.2f"|format(invoice.total) &#125;&#125; €</code></p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- KM määrade haldamise modal -->
+  <div class="modal fade" id="manageVatRatesModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog" style="max-width: 25%; width: 25%;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">KM määrade haldamine</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Sulge"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Add new VAT rate section -->
+          <div class="d-flex align-items-center gap-1 mb-2 bp-management-add-section">
+            <div class="flex-shrink-0">
+              <i class="bi bi-plus-lg"></i>
+            </div>
+            <div class="flex-grow-1">
+              <input type="number" class="form-control" id="newVatRateInput" placeholder="Sisesta KM määr (nt. 24)" min="0" max="100" step="0.01">
+            </div>
+            <div class="flex-shrink-0">
+              <button type="button" class="btn btn-primary" style="font-size: 12px; padding: 0.25rem 0.5rem;" onclick="addNewVatRate()">
+                <i class="bi bi-check-lg me-1"></i>Lisa
+              </button>
+            </div>
+          </div>
+          
+          <!-- Existing VAT rates list -->
+          <div id="vatRatesManagementList">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sulge</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Maksetingimuste haldamise modal -->
+  <div class="modal fade" id="managePaymentTermsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog" style="max-width: 25%; width: 25%;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Maksetingimuste haldamine</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Sulge"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Add new payment term section -->
+          <div class="d-flex align-items-center gap-1 mb-2 bp-management-add-section">
+            <div class="flex-shrink-0">
+              <i class="bi bi-plus-lg"></i>
+            </div>
+            <div class="flex-grow-1">
+              <input type="number" class="form-control" id="newPaymentTermInput" placeholder="Sisesta päevade arv (nt. 30)" min="0" max="365">
+            </div>
+            <div class="flex-shrink-0">
+              <button type="button" class="btn btn-primary" style="font-size: 12px; padding: 0.25rem 0.5rem;" onclick="addNewPaymentTerm()">
+                <i class="bi bi-check-lg me-1"></i>Lisa
+              </button>
+            </div>
+          </div>
+          
+          <!-- Existing payment terms list -->
+          <div id="paymentTermsManagementList">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sulge</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Märkuste siltide haldamise modal -->
+  <div class="modal fade" id="manageNoteLabelsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog" style="max-width: 25%; width: 25%;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Märkuste siltide haldamine</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Sulge"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Add new note label section -->
+          <div class="d-flex align-items-center gap-1 mb-2 bp-management-add-section">
+            <div class="flex-shrink-0">
+              <i class="bi bi-plus-lg"></i>
+            </div>
+            <div class="flex-grow-1">
+              <input type="text" class="form-control" id="newNoteLabelInput" placeholder="Sisesta märkuse silt (nt. Viitenumber)" maxlength="50">
+            </div>
+            <div class="flex-shrink-0">
+              <button type="button" class="btn btn-primary" style="font-size: 12px; padding: 0.25rem 0.5rem;" onclick="addNewNoteLabel()">
+                <i class="bi bi-check-lg me-1"></i>Lisa
+              </button>
+            </div>
+          </div>
+          
+          <!-- Existing note labels list -->
+          <div id="noteLabelsManagementList">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sulge</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Viiviste haldamise modal -->
+  <div class="modal fade" id="managePenaltyRatesModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog" style="max-width: 25%; width: 25%;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Viiviste haldamine</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Sulge"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Add new penalty rate section -->
+          <div class="d-flex align-items-center gap-1 mb-2 bp-management-add-section">
+            <div class="flex-shrink-0">
+              <i class="bi bi-plus-lg"></i>
+            </div>
+            <div class="flex-grow-1">
+              <input type="number" class="form-control" id="newPenaltyRateInput" placeholder="Sisesta viivise määr (nt. 0.5)" min="0" max="10" step="0.1">
+            </div>
+            <div class="flex-shrink-0">
+              <button type="button" class="btn btn-primary" style="font-size: 12px; padding: 0.25rem 0.5rem;" onclick="addNewPenaltyRate()">
+                <i class="bi bi-check-lg me-1"></i>Lisa
+              </button>
+            </div>
+          </div>
+          
+          <!-- Existing penalty rates list -->
+          <div id="penaltyRatesManagementList">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sulge</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Action Buttons -->
+  <div class="d-flex gap-2">
+    <button class="btn btn-primary" type="submit">
+      <i class="bi bi-check-lg me-1"></i>Salvesta seaded
+    </button>
+    <a href="{{ url_for('dashboard.overview') }}" class="btn btn-outline-secondary">
+      <i class="bi bi-arrow-left me-1"></i>Tagasi
+    </a>
+  </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize new logo gallery system
+  initLogoGallery();
+  
+  // Load existing logo if URL is provided (backward compatibility)
+  const existingLogoUrl = document.getElementById('logoUrlField').value;
+  if (existingLogoUrl && existingLogoUrl.trim()) {
+    // For backward compatibility, but this will be handled by gallery
+    console.log('Legacy logo URL found:', existingLogoUrl);
+  }
+  
+  // Systematic hover effect system - works for all blue buttons including dynamic ones
+  window.applyHoverEffect = function(element) {
+    if (element.dataset.hoverApplied) return; // Avoid duplicate listeners
+    
+    console.log('Applying hover effect to:', element);
+    element.dataset.hoverApplied = 'true';
+    
+    element.addEventListener('mouseenter', function() {
+      this.style.setProperty('background-color', '#114f68', 'important');
+      this.style.setProperty('color', '#ffffff', 'important');
+      this.style.setProperty('border-color', '#114f68', 'important');
+      this.style.setProperty('transform', 'translateY(-1px)', 'important');
+      this.style.setProperty('box-shadow', '0 2px 4px rgba(8, 145, 178, 0.3)', 'important');
+    });
+    
+    element.addEventListener('mouseleave', function() {
+      this.style.setProperty('background-color', 'transparent', 'important');
+      this.style.setProperty('color', '#114f68', 'important');
+      this.style.setProperty('border-color', '#114f68', 'important');
+      this.style.setProperty('transform', 'translateY(0)', 'important');
+      this.style.setProperty('box-shadow', 'none', 'important');
+    });
+  }
+  
+  // Function to find and apply effects to all blue buttons
+  function applyHoverToAllBlueButtons() {
+    const allBlueButtons = document.querySelectorAll('button[style*="color: #114f68"], a[style*="color: #114f68"], .btn[style*="color: #114f68"]');
+    console.log('Found blue buttons:', allBlueButtons.length);
+    
+    allBlueButtons.forEach(button => {
+      window.applyHoverEffect(button);
+    });
+  }
+  
+  // Initial application
+  applyHoverToAllBlueButtons();
+  
+  // Observer for dynamic content
+  const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      mutation.addedNodes.forEach(function(node) {
+        if (node.nodeType === 1) { // Element node
+          // Check the node itself
+          if (node.style && node.style.color && node.style.color.includes('#114f68')) {
+            window.applyHoverEffect(node);
+          }
+          // Check descendants
+          const childButtons = node.querySelectorAll ? node.querySelectorAll('button[style*="color: #114f68"], a[style*="color: #114f68"], .btn[style*="color: #114f68"]') : [];
+          childButtons.forEach(button => {
+            window.applyHoverEffect(button);
+          });
+        }
+      });
+    });
+  });
+  
+  // Start observing
+  observer.observe(document.body, { childList: true, subtree: true });
+  
+  // PDF Template Dropdown Functionality
+  const pdfTemplateOptions = document.querySelectorAll('.pdf-template-option');
+  const pdfTemplateLabel = document.getElementById('pdfTemplateLabel');
+  const pdfTemplateInput = document.getElementById('default_pdf_template');
+  
+  pdfTemplateOptions.forEach(option => {
+      // Set initial selected state
+      if (option.dataset.selected === 'true') {
+          pdfTemplateLabel.textContent = option.textContent;
+          pdfTemplateInput.value = option.dataset.template;
+      }
+      
+      option.addEventListener('click', function(e) {
+          e.preventDefault();
+          const template = this.dataset.template;
+          const label = this.textContent;
+          
+          // Update UI
+          pdfTemplateLabel.textContent = label;
+          pdfTemplateInput.value = template;
+          
+          // Remove active state from all options
+          pdfTemplateOptions.forEach(opt => opt.classList.remove('active'));
+          // Add active state to selected option
+          this.classList.add('active');
+          
+          // Close dropdown
+          const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('pdfTemplateSelector'));
+          if (dropdown) dropdown.hide();
+      });
+  });
+  
+  // VAT Rate Dropdown Functionality
+  const vatRateOptions = document.querySelectorAll('.vat-rate-option');
+  const vatRateLabel = document.getElementById('vatRateLabel');
+  const vatRateInput = document.getElementById('default_vat_rate_id');
+  
+  vatRateOptions.forEach(option => {
+      // Set initial selected state
+      if (option.dataset.selected === 'true') {
+          vatRateLabel.textContent = option.textContent;
+          vatRateInput.value = option.dataset.rateId;
+      }
+      
+      option.addEventListener('click', function(e) {
+          e.preventDefault();
+          const rateId = this.dataset.rateId;
+          const label = this.textContent;
+          
+          // Update UI
+          vatRateLabel.textContent = label;
+          vatRateInput.value = rateId;
+          
+          // Remove active state from all options
+          vatRateOptions.forEach(opt => opt.classList.remove('active'));
+          // Add active state to selected option
+          this.classList.add('active');
+          
+          // Close dropdown
+          const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('vatRateSelector'));
+          if (dropdown) dropdown.hide();
+      });
+  });
+  
+  // Payment Terms Dropdown Functionality
+  const paymentTermsOptions = document.querySelectorAll('.payment-terms-option');
+  const paymentTermsLabel = document.getElementById('paymentTermsLabel');
+  const paymentTermsInput = document.getElementById('default_payment_terms_id');
+  
+  paymentTermsOptions.forEach(option => {
+      // Set initial selected state
+      if (option.dataset.selected === 'true') {
+          paymentTermsLabel.textContent = option.textContent;
+          paymentTermsInput.value = option.dataset.termsId;
+      }
+      
+      option.addEventListener('click', function(e) {
+          e.preventDefault();
+          const termsId = this.dataset.termsId;
+          const label = this.textContent;
+          
+          // Update UI
+          paymentTermsLabel.textContent = label;
+          paymentTermsInput.value = termsId;
+          
+          // Remove active state from all options
+          paymentTermsOptions.forEach(opt => opt.classList.remove('active'));
+          // Add active state to selected option
+          this.classList.add('active');
+          
+          // Close dropdown
+          const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('paymentTermsSelector'));
+          if (dropdown) dropdown.hide();
+      });
+  });
+  
+  // Penalty Rate Dropdown Functionality
+  const penaltyRateOptions = document.querySelectorAll('.penalty-rate-option');
+  const penaltyRateLabel = document.getElementById('penaltyRateLabel');
+  const penaltyRateInput = document.getElementById('default_penalty_rate_id');
+  
+  penaltyRateOptions.forEach(option => {
+      // Set initial selected state
+      if (option.dataset.selected === 'true') {
+          penaltyRateLabel.textContent = option.textContent;
+          penaltyRateInput.value = option.dataset.rateId;
+      }
+      
+      option.addEventListener('click', function(e) {
+          e.preventDefault();
+          const rateId = this.dataset.rateId;
+          const label = this.textContent;
+          
+          // Update UI
+          penaltyRateLabel.textContent = label;
+          penaltyRateInput.value = rateId;
+          
+          // Remove active state from all options
+          penaltyRateOptions.forEach(opt => opt.classList.remove('active'));
+          // Add active state to selected option
+          this.classList.add('active');
+          
+          // Close dropdown
+          const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('penaltyRateSelector'));
+          if (dropdown) dropdown.hide();
+      });
+  });
+  
+  // Note Label dropdown event listeners
+  const noteLabelOptions = document.querySelectorAll('.note-label-option');
+  const noteLabelLabel = document.getElementById('noteLabelLabel');
+  const noteLabelInput = document.getElementById('default_note_label_id');
+  
+  noteLabelOptions.forEach(option => {
+      // Set initial selected state
+      if (option.dataset.selected === 'true') {
+          noteLabelLabel.textContent = option.textContent;
+          noteLabelInput.value = option.dataset.labelId;
+      }
+      
+      option.addEventListener('click', function(e) {
+          e.preventDefault();
+          const labelId = this.dataset.labelId;
+          const label = this.textContent;
+          
+          // Update UI
+          noteLabelLabel.textContent = label;
+          noteLabelInput.value = labelId;
+          
+          // Remove active state from all options
+          noteLabelOptions.forEach(opt => opt.classList.remove('active'));
+          // Add active state to selected option
+          this.classList.add('active');
+          
+          // Close dropdown
+          const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('noteLabelSelector'));
+          if (dropdown) dropdown.hide();
+      });
+  });
+  
+  
+  // Add Enter key support for management inputs
+  document.getElementById('newVatRateInput')?.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addNewVatRate();
+    }
+  });
+  
+  document.getElementById('newPaymentTermInput')?.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addNewPaymentTerm();
+    }
+  });
+  
+  document.getElementById('newPenaltyRateInput')?.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addNewPenaltyRate();
+    }
+  });
+  
+  document.getElementById('newNoteLabelInput')?.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addNewNoteLabel();
+    }
+  });
+});
+
+// Modern numerical-only approach - no separate add modals needed
+
+function showManageVatRatesModal() {
+  // Load VAT rates list
+  fetch('/settings/vat-rates-list')
+  .then(response => response.json())
+  .then(data => {
+    const listContainer = document.getElementById('vatRatesManagementList');
+    
+    if (data.vat_rates && data.vat_rates.length > 0) {
+      let html = '';
+      data.vat_rates.forEach(rate => {
+        html += `
+          <div class="bp-management-item d-flex align-items-center justify-content-between mb-1">
+            <div class="d-flex align-items-center gap-3">
+              <span class="badge bg-primary fs-6 px-3 py-2">${rate.rate}%</span>
+              ${!rate.is_active ? '<span class="badge bg-secondary">Mitteaktiivne</span>' : ''}
+            </div>
+            <button class="bp-management-remove-btn" onclick="deleteVatRate(${rate.id}, ${rate.rate})" title="Eemalda KM määr"></button>
+          </div>
+        `;
+      });
+      listContainer.innerHTML = html;
+    } else {
+      listContainer.innerHTML = '<div class="text-center text-muted py-3">KM määrad puuduvad</div>';
+    }
+    
+    // Clear the input field
+    document.getElementById('newVatRateInput').value = '';
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('manageVatRatesModal'));
+    modal.show();
+  })
+  .catch(error => {
+    console.error('Error loading VAT rates:', error);
+    BilliPocket.showMessage('Viga KM määrade laadimisel', 'error');
+  });
+}
+
+function showManagePaymentTermsModal() {
+  // Load payment terms list
+  fetch('/settings/payment-terms-list')
+  .then(response => response.json())
+  .then(data => {
+    const listContainer = document.getElementById('paymentTermsManagementList');
+    
+    if (data.payment_terms && data.payment_terms.length > 0) {
+      let html = '';
+      data.payment_terms.forEach(term => {
+        html += `
+          <div class="bp-management-item d-flex align-items-center justify-content-between mb-1">
+            <div class="d-flex align-items-center gap-3">
+              <span class="badge bg-success fs-6 px-3 py-2">${term.days} ${term.days === 1 ? 'päev' : 'päeva'}</span>
+              ${!term.is_active ? '<span class="badge bg-secondary">Mitteaktiivne</span>' : ''}
+            </div>
+            <button class="bp-management-remove-btn" onclick="deletePaymentTerm(${term.id}, ${term.days})" title="Eemalda maksetingimus"></button>
+          </div>
+        `;
+      });
+      listContainer.innerHTML = html;
+    } else {
+      listContainer.innerHTML = '<div class="text-center text-muted py-3">Maksetingimused puuduvad</div>';
+    }
+    
+    // Clear the input field
+    document.getElementById('newPaymentTermInput').value = '';
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('managePaymentTermsModal'));
+    modal.show();
+  })
+  .catch(error => {
+    console.error('Error loading payment terms:', error);
+    BilliPocket.showMessage('Viga maksetingimuste laadimisel', 'error');
+  });
+}
+
+function addNewVatRate() {
+  const rateInput = document.getElementById('newVatRateInput');
+  const rate = parseFloat(rateInput.value);
+  
+  if (isNaN(rate) || rate < 0 || rate > 100) {
+    BilliPocket.showMessage('Sisesta korrektne KM määr (0-100%)', 'error');
+    rateInput.focus();
+    return;
+  }
+  
+  // Auto-generate name based on rate
+  const name = `${rate}%`;
+  
+  fetch('/settings/vat-rates/new', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value
+    },
+    body: JSON.stringify({
+      name: name,
+      rate: rate,
+      description: '',
+      is_active: true
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      BilliPocket.showMessage('KM määr lisatud', 'success');
+      
+      // Add new option to main page dropdown
+      const dropdown = document.getElementById('vatRateDropdown');
+      if (dropdown) {
+        const newListItem = document.createElement('li');
+        newListItem.innerHTML = `<a class="dropdown-item vat-rate-option" href="#" data-rate-id="${data.vat_rate_id}" data-selected="false">${rate}%</a>`;
+        dropdown.appendChild(newListItem);
+        
+        // Add click event to new option
+        const newOption = newListItem.querySelector('.vat-rate-option');
+        newOption.addEventListener('click', function(e) {
+          e.preventDefault();
+          const rateId = this.getAttribute('data-rate-id');
+          const label = this.textContent;
+          
+          document.getElementById('vatRateLabel').textContent = label;
+          document.getElementById('default_vat_rate_id').value = rateId;
+          
+          document.querySelectorAll('.vat-rate-option').forEach(opt => opt.classList.remove('active'));
+          this.classList.add('active');
+          
+          const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('vatRateSelector'));
+          if (dropdown) dropdown.hide();
+        });
+      }
+      
+      // Clear input and refresh modal list
+      rateInput.value = '';
+      
+      // Close current modal and reopen refreshed one
+      const currentModal = bootstrap.Modal.getInstance(document.getElementById('manageVatRatesModal'));
+      if (currentModal) {
+        currentModal.hide();
+      }
+      
+      // Small delay to ensure modal is fully closed before reopening
+      setTimeout(() => {
+        // Clean up any remaining backdrop
+        const backdrops = document.querySelectorAll('.modal-backdrop');
+        backdrops.forEach(backdrop => backdrop.remove());
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+        
+        showManageVatRatesModal();
+      }, 300);
+    } else {
+      BilliPocket.showMessage(data.message || 'Viga KM määra lisamisel', 'error');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    BilliPocket.showMessage('Viga KM määra lisamisel', 'error');
+  });
+}
+
+function addNewPaymentTerm() {
+  const daysInput = document.getElementById('newPaymentTermInput');
+  const days = parseInt(daysInput.value);
+  
+  if (isNaN(days) || days < 0 || days > 365) {
+    BilliPocket.showMessage('Sisesta korrektne päevade arv (0-365)', 'error');
+    daysInput.focus();
+    return;
+  }
+  
+  // Auto-generate name based on days
+  const name = `${days} ${days === 1 ? 'päev' : 'päeva'}`;
+  
+  fetch('/settings/payment-terms', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value
+    },
+    body: JSON.stringify({
+      name: name,
+      days: days,
+      is_default: false,
+      is_active: true
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      BilliPocket.showMessage('Maksetingimus lisatud', 'success');
+      
+      // Add new option to main page dropdown
+      const dropdown = document.getElementById('paymentTermsDropdown');
+      if (dropdown) {
+        const newListItem = document.createElement('li');
+        newListItem.innerHTML = `<a class="dropdown-item payment-terms-option" href="#" data-terms-id="${data.payment_term_id}" data-selected="false">${name}</a>`;
+        dropdown.appendChild(newListItem);
+        
+        // Add click event to new option
+        const newOption = newListItem.querySelector('.payment-terms-option');
+        newOption.addEventListener('click', function(e) {
+          e.preventDefault();
+          const termsId = this.getAttribute('data-terms-id');
+          const label = this.textContent;
+          
+          document.getElementById('paymentTermsLabel').textContent = label;
+          document.getElementById('default_payment_terms_id').value = termsId;
+          
+          document.querySelectorAll('.payment-terms-option').forEach(opt => opt.classList.remove('active'));
+          this.classList.add('active');
+          
+          const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('paymentTermsSelector'));
+          if (dropdown) dropdown.hide();
+        });
+      }
+      
+      // Clear input and refresh modal list
+      daysInput.value = '';
+      
+      // Close current modal and reopen refreshed one
+      const currentModal = bootstrap.Modal.getInstance(document.getElementById('managePaymentTermsModal'));
+      if (currentModal) {
+        currentModal.hide();
+      }
+      
+      // Small delay to ensure modal is fully closed before reopening
+      setTimeout(() => {
+        // Clean up any remaining backdrop
+        const backdrops = document.querySelectorAll('.modal-backdrop');
+        backdrops.forEach(backdrop => backdrop.remove());
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+        
+        showManagePaymentTermsModal();
+      }, 300);
+    } else {
+      BilliPocket.showMessage(data.message || 'Viga maksetingimuse lisamisel', 'error');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    BilliPocket.showMessage('Viga maksetingimuse lisamisel', 'error');
+  });
+}
+
+// VAT Rate management functions - only add and delete needed
+
+function deleteVatRate(id, rate) {
+  // Directly delete without confirmation dialog
+  
+  fetch(`/settings/vat-rates/${id}/delete`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      BilliPocket.showMessage('KM määr kustutatud', 'success');
+      // Refresh the management modal
+      showManageVatRatesModal();
+      // Refresh the dropdown by reloading the page
+      setTimeout(() => location.reload(), 1000);
+    } else {
+      BilliPocket.showMessage(data.message || 'Viga KM määra kustutamisel', 'error');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    BilliPocket.showMessage('Viga KM määra kustutamisel', 'error');
+  });
+}
+
+// Payment term management functions - only add and delete needed
+
+function deletePaymentTerm(id, days) {
+  // Directly delete without confirmation dialog
+  
+  fetch(`/settings/payment-terms/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      BilliPocket.showMessage('Maksetingimus kustutatud', 'success');
+      // Refresh the management modal
+      showManagePaymentTermsModal();
+      // Refresh the dropdown by reloading the page
+      setTimeout(() => location.reload(), 1000);
+    } else {
+      BilliPocket.showMessage(data.message || 'Viga maksetingimuse kustutamisel', 'error');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    BilliPocket.showMessage('Viga maksetingimuse kustutamisel', 'error');
+  });
+}
+
+function initLogoUpload() {
+  const dropArea = document.getElementById('logoDropArea');
+  const fileInput = document.getElementById('logoFileInput');
+  const logoUrlField = document.getElementById('logoUrlField');
+  
+  // Prevent default drag behaviors
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    dropArea.addEventListener(eventName, preventDefaults, false);
+    document.body.addEventListener(eventName, preventDefaults, false);
+  });
+  
+  // Highlight drop area when item is dragged over it
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropArea.addEventListener(eventName, highlight, false);
+  });
+  
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropArea.addEventListener(eventName, unhighlight, false);
+  });
+  
+  // Handle dropped files
+  dropArea.addEventListener('drop', handleDrop, false);
+  
+  // Handle file input change
+  fileInput.addEventListener('change', function(e) {
+    if (e.target.files.length > 0) {
+      handleFiles(e.target.files);
+    }
+  });
+  
+  // Handle click on drop area
+  dropArea.addEventListener('click', function(e) {
+    if (e.target.closest('.bp-logo-actions')) return;
+    triggerFileInput();
+  });
+}
+
+function preventDefaults(e) {
+  e.preventDefault();
+  e.stopPropagation();
+}
+
+function highlight() {
+  document.getElementById('logoDropArea').classList.add('dragover');
+}
+
+function unhighlight() {
+  document.getElementById('logoDropArea').classList.remove('dragover');
+}
+
+function handleDrop(e) {
+  const dt = e.dataTransfer;
+  const files = dt.files;
+  handleFiles(files);
+}
+
+function handleFiles(files) {
+  if (files.length === 0) return;
+  
+  const file = files[0];
+  
+  // Validate file type
+  if (!file.type.startsWith('image/')) {
+    BilliPocket.showMessage('Palun valige pildifail (PNG, JPG või SVG)', 'error');
+    return;
+  }
+  
+  // Validate file size (2MB max)
+  if (file.size > 2 * 1024 * 1024) {
+    BilliPocket.showMessage('Faili suurus on liiga suur. Maksimaalne suurus on 2MB', 'error');
+    return;
+  }
+  
+  // Upload file to server
+  uploadLogoToServer(file);
+}
+
+function uploadLogoToServer(file) {
+  const formData = new FormData();
+  formData.append('logo', file);
+  
+  // Add CSRF token
+  const csrfToken = document.querySelector('input[name="csrf_token"]');
+  if (csrfToken) {
+    formData.append('csrf_token', csrfToken.value);
+  }
+  
+  // Show loading state
+  const dropArea = document.getElementById('logoDropArea');
+  const placeholder = document.getElementById('logoPlaceholder');
+  
+  dropArea.style.opacity = '0.5';
+  dropArea.style.pointerEvents = 'none';
+  
+  // Show upload progress
+  placeholder.innerHTML = `
+    <div class="bp-logo-icon">
+      <i class="bi bi-cloud-upload-fill"></i>
+    </div>
+    <h6 class="mt-3 mb-2">Failin üleslaadimine...</h6>
+    <div class="spinner-border spinner-border-sm text-primary" role="status">
+      <span class="visually-hidden">Laadimine...</span>
+    </div>
+  `;
+  
+  fetch('/settings/upload-logo', {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      showLogoPreview(data.url);
+      document.getElementById('logoUrlField').value = data.url;
+      BilliPocket.showMessage('Logo edukalt üles laaditud', 'success');
+    } else {
+      BilliPocket.showMessage(data.message, 'error');
+      resetPlaceholder();
+    }
+  })
+  .catch(error => {
+    console.error('Upload error:', error);
+    BilliPocket.showMessage('Faili üleslaadimisel tekkis viga', 'error');
+    
+    // Reset placeholder on error
+    resetPlaceholder();
+  })
+  .finally(() => {
+    // Reset loading state
+    dropArea.style.opacity = '1';
+    dropArea.style.pointerEvents = 'auto';
+  });
+}
+
+function resetPlaceholder() {
+  const placeholder = document.getElementById('logoPlaceholder');
+  placeholder.innerHTML = `
+    <div class="bp-logo-icon">
+      <i class="bi bi-cloud-upload"></i>
+    </div>
+    <h6 class="mt-3 mb-2">Ettevõtte logo</h6>
+    <p class="text-muted mb-3">Lohista fail siia või <button type="button" class="btn-link p-0" onclick="triggerFileInput()">kliki faili valimiseks</button></p>
+    <small class="text-muted">
+      <strong>Toetatud vormingud:</strong> PNG, JPG, JPEG, SVG, GIF<br>
+      <strong>Maksimaalne suurus:</strong> 2MB<br>
+      <strong>Soovituslik suurus:</strong> 300x100 pikslit
+    </small>
+  `;
+}
+
+function showLogoPreview(imageSrc) {
+  const logoPreview = document.getElementById('logoPreview');
+  const logoPlaceholder = document.getElementById('logoPlaceholder');
+  const logoImage = document.getElementById('logoImage');
+  const logoEditBtn = document.getElementById('logoEditBtn');
+  const logoRemoveBtn = document.getElementById('logoRemoveBtn');
+  
+  logoImage.src = imageSrc;
+  logoPreview.style.display = 'block';
+  logoPlaceholder.style.display = 'none';
+  
+  // Show action buttons in header
+  logoEditBtn.style.display = 'inline-block';
+  logoRemoveBtn.style.display = 'inline-block';
+  
+  // Apply hover effects to newly visible buttons
+  setTimeout(() => {
+    if (window.applyHoverEffect) {
+      window.applyHoverEffect(logoEditBtn);
+      window.applyHoverEffect(logoRemoveBtn);
+    }
+  }, 50);
+}
+
+function triggerFileInput() {
+  document.getElementById('logoFileInput').click();
+}
+
+// =============================================================================
+// LOGO GALLERY SYSTEM - New Centralized Logo Management
+// =============================================================================
+
+let logoGalleryData = [];
+let isUploadSectionVisible = false;
+
+function initLogoGallery() {
+  console.log('Initializing logo gallery system...');
+  
+  // Initialize drag & drop
+  initLogoDragDrop();
+  
+  // Load logos from server
+  loadLogosFromServer();
+  
+  // Initialize file input handler
+  const fileInput = document.getElementById('logoFileInput');
+  if (fileInput) {
+    fileInput.addEventListener('change', handleLogoFileSelection);
+  }
+}
+
+function toggleLogoUpload() {
+  const uploadSection = document.getElementById('logoUploadSection');
+  const toggleBtn = uploadSection.previousElementSibling.querySelector('button');
+  
+  isUploadSectionVisible = !isUploadSectionVisible;
+  
+  if (isUploadSectionVisible) {
+    uploadSection.style.display = 'block';
+    uploadSection.classList.add('active');
+    toggleBtn.innerHTML = '<i class="bi bi-x-lg me-1"></i>Sulge';
+    toggleBtn.classList.remove('btn-outline-primary');
+    toggleBtn.classList.add('btn-outline-secondary');
+  } else {
+    uploadSection.style.display = 'none';
+    uploadSection.classList.remove('active');
+    toggleBtn.innerHTML = '<i class="bi bi-plus-lg me-1"></i>Lisa uus logo';
+    toggleBtn.classList.remove('btn-outline-secondary');
+    toggleBtn.classList.add('btn-outline-primary');
+  }
+}
+
+function triggerLogoFileInput() {
+  document.getElementById('logoFileInput').click();
+}
+
+function loadLogosFromServer() {
+  const loadingElement = document.getElementById('logoGalleryLoading');
+  const cardsElement = document.getElementById('logoCards');
+  const emptyElement = document.getElementById('logoEmpty');
+  
+  // Show loading state
+  loadingElement.style.display = 'block';
+  cardsElement.style.display = 'none';
+  emptyElement.style.display = 'none';
+  
+  fetch('/settings/logos', {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest'
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Loaded logos:', data);
+    logoGalleryData = data.logos || [];
+    renderLogoGallery();
+  })
+  .catch(error => {
+    console.error('Error loading logos:', error);
+    BilliPocket.showMessage('Viga logode laadimisel', 'error');
+    renderLogoGallery(); // Show empty state
+  });
+}
+
+function renderLogoGallery() {
+  const loadingElement = document.getElementById('logoGalleryLoading');
+  const cardsElement = document.getElementById('logoCards');
+  const emptyElement = document.getElementById('logoEmpty');
+  
+  // Hide loading
+  loadingElement.style.display = 'none';
+  
+  if (logoGalleryData.length === 0) {
+    // Show empty state
+    cardsElement.style.display = 'none';
+    emptyElement.style.display = 'block';
+    return;
+  }
+  
+  // Show logo cards
+  cardsElement.style.display = 'grid';
+  emptyElement.style.display = 'none';
+  
+  // Generate HTML for logo cards
+  let html = '';
+  logoGalleryData.forEach(logo => {
+    const uploadDate = new Date(logo.upload_date).toLocaleDateString('et-EE');
+    const fileSize = (logo.file_size / 1024).toFixed(1) + ' KB';
+    
+    html += `
+      <div class="bp-logo-card" data-logo-id="${logo.id}" onclick="selectLogo(${logo.id})">
+        <div class="bp-logo-card-actions">
+          <button type="button" class="btn btn-outline-secondary btn-sm bp-logo-card-action" 
+                  onclick="event.stopPropagation(); renameLogoPrompt(${logo.id}, '${logo.original_name}')" 
+                  title="Nimeta ümber">
+            <i class="bi bi-pencil"></i>
+          </button>
+          <button type="button" class="btn btn-outline-danger btn-sm bp-logo-card-action" 
+                  onclick="event.stopPropagation(); deleteLogoFromGallery(${logo.id})" 
+                  title="Kustuta">
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
+        
+        <img src="${logo.file_path}" alt="${logo.original_name}" class="bp-logo-card-image" />
+        <div class="bp-logo-card-name">${logo.original_name}</div>
+        <div class="bp-logo-card-meta">${uploadDate} • ${fileSize}</div>
+      </div>
+    `;
+  });
+  
+  cardsElement.innerHTML = html;
+  
+  // Apply hover effects to new buttons
+  setTimeout(() => {
+    const actionButtons = cardsElement.querySelectorAll('.bp-logo-card-action');
+    actionButtons.forEach(button => {
+      if (window.applyHoverEffect) {
+        window.applyHoverEffect(button);
+      }
+    });
+  }, 100);
+}
+
+function selectLogo(logoId) {
+  // Remove previous selections
+  document.querySelectorAll('.bp-logo-card').forEach(card => {
+    card.classList.remove('selected');
+  });
+  
+  // Select clicked logo
+  const selectedCard = document.querySelector(`[data-logo-id="${logoId}"]`);
+  if (selectedCard) {
+    selectedCard.classList.add('selected');
+    
+    // Update hidden field for backward compatibility
+    const logoData = logoGalleryData.find(logo => logo.id === logoId);
+    if (logoData) {
+      document.getElementById('logoUrlField').value = logoData.file_path;
+      BilliPocket.showMessage(`Logo "${logoData.original_name}" valitud`, 'success');
+    }
+  }
+}
+
+function initLogoDragDrop() {
+  const dropArea = document.getElementById('logoDropArea');
+  if (!dropArea) return;
+  
+  // Prevent default drag behaviors
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    dropArea.addEventListener(eventName, preventDefaults, false);
+    document.body.addEventListener(eventName, preventDefaults, false);
+  });
+  
+  // Highlight drop area when item is dragged over it
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropArea.addEventListener(eventName, highlightDropArea, false);
+  });
+  
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropArea.addEventListener(eventName, unhighlightDropArea, false);
+  });
+  
+  // Handle dropped files
+  dropArea.addEventListener('drop', handleLogoDrop, false);
+  
+  // Handle click on drop area
+  dropArea.addEventListener('click', triggerLogoFileInput);
+}
+
+function preventDefaults(e) {
+  e.preventDefault();
+  e.stopPropagation();
+}
+
+function highlightDropArea() {
+  document.getElementById('logoDropArea').classList.add('dragover');
+}
+
+function unhighlightDropArea() {
+  document.getElementById('logoDropArea').classList.remove('dragover');
+}
+
+function handleLogoDrop(e) {
+  const files = e.dataTransfer.files;
+  handleLogoFiles(files);
+}
+
+function handleLogoFileSelection(e) {
+  const files = e.target.files;
+  handleLogoFiles(files);
+}
+
+function handleLogoFiles(files) {
+  if (files.length === 0) return;
+  
+  // Clear any existing file list
+  const fileList = document.getElementById('logoFileList');
+  fileList.innerHTML = '';
+  
+  // Process each file
+  const maxSize = 2 * 1024 * 1024; // 2MB
+  const allowedTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml', 'image/gif'];
+  
+  Array.from(files).forEach((file, index) => {
+    const fileItem = createFileItem(file, index);
+    fileList.appendChild(fileItem);
+    
+    // Validate file
+    let isValid = true;
+    let errorMessage = '';
+    
+    if (!allowedTypes.includes(file.type)) {
+      isValid = false;
+      errorMessage = 'Faili tüüp ei ole toetatud';
+    } else if (file.size > maxSize) {
+      isValid = false;
+      errorMessage = 'Faili suurus on liiga suur (max 2MB)';
+    }
+    
+    if (!isValid) {
+      updateFileItemStatus(fileItem, 'error', errorMessage);
+    } else {
+      // Start upload
+      uploadSingleLogoFile(file, fileItem);
+    }
+  });
+}
+
+function createFileItem(file, index) {
+  const fileItem = document.createElement('div');
+  fileItem.className = 'bp-file-item uploading';
+  fileItem.setAttribute('data-file-index', index);
+  
+  const fileSizeFormatted = (file.size / 1024 / 1024).toFixed(1) + ' MB';
+  
+  fileItem.innerHTML = `
+    <div class="bp-file-icon uploading">
+      <div class="bp-upload-progress"></div>
+    </div>
+    <div class="bp-file-info">
+      <div class="bp-file-name">${file.name}</div>
+      <div class="bp-file-size">${fileSizeFormatted}</div>
+    </div>
+    <div class="bp-file-actions">
+      <button type="button" class="bp-file-remove" onclick="removeFileItem(this)" title="Eemalda">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+  `;
+  
+  return fileItem;
+}
+
+function updateFileItemStatus(fileItem, status, message = '') {
+  // Remove old status classes
+  fileItem.classList.remove('uploading', 'error', 'success');
+  fileItem.classList.add(status);
+  
+  const icon = fileItem.querySelector('.bp-file-icon');
+  icon.classList.remove('uploading', 'error', 'success');
+  icon.classList.add(status);
+  
+  // Update icon content
+  let iconContent = '';
+  if (status === 'uploading') {
+    iconContent = '<div class="bp-upload-progress"></div>';
+  } else if (status === 'error') {
+    iconContent = '<i class="bi bi-exclamation-triangle-fill text-danger"></i>';
+  } else if (status === 'success') {
+    iconContent = '<i class="bi bi-check-circle-fill text-success"></i>';
+  }
+  
+  icon.innerHTML = iconContent;
+  
+  // Update message
+  const sizeElement = fileItem.querySelector('.bp-file-size');
+  if (status === 'error' && message) {
+    sizeElement.innerHTML = `<span class="bp-file-error">${message}</span>`;
+  }
+}
+
+function removeFileItem(button) {
+  const fileItem = button.closest('.bp-file-item');
+  if (fileItem) {
+    fileItem.remove();
+    
+    // Check if file list is empty
+    const fileList = document.getElementById('logoFileList');
+    if (fileList.children.length === 0) {
+      // Hide upload section if no files
+      setTimeout(() => {
+        const uploadSection = document.getElementById('logoUploadSection');
+        if (uploadSection.style.display !== 'none' && fileList.children.length === 0) {
+          toggleLogoUpload();
+        }
+      }, 1000);
+    }
+  }
+}
+
+function uploadSingleLogoFile(file, fileItem) {
+  const formData = new FormData();
+  formData.append('logo', file);
+  
+  // Add CSRF token
+  const csrfToken = document.querySelector('input[name="csrf_token"]');
+  if (csrfToken) {
+    formData.append('csrf_token', csrfToken.value);
+  }
+  
+  fetch('/settings/logos/upload', {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      updateFileItemStatus(fileItem, 'success');
+      console.log('Logo uploaded:', data.logo);
+      
+      // Auto-remove after 3 seconds
+      setTimeout(() => {
+        fileItem.remove();
+        
+        // Refresh gallery and check if list is empty
+        loadLogosFromServer();
+        
+        const fileList = document.getElementById('logoFileList');
+        if (fileList.children.length === 0) {
+          setTimeout(() => {
+            const uploadSection = document.getElementById('logoUploadSection');
+            if (uploadSection.style.display !== 'none') {
+              toggleLogoUpload();
+            }
+          }, 500);
+        }
+      }, 2000);
+      
+    } else {
+      updateFileItemStatus(fileItem, 'error', data.message || 'Üleslaadimise viga');
+    }
+  })
+  .catch(error => {
+    console.error('Upload error:', error);
+    updateFileItemStatus(fileItem, 'error', 'Üleslaadimise viga');
+  });
+}
+
+// Legacy function - now handled by individual file upload
+function uploadLogoFiles(files) {
+  console.log('Legacy uploadLogoFiles called, redirecting to new system');
+  handleLogoFiles(files);
+}
+
+function deleteLogoFromGallery(logoId) {
+  const logoData = logoGalleryData.find(logo => logo.id === logoId);
+  if (!logoData) return;
+  
+  if (!confirm(`Kas oled kindel, et soovid kustutada logo "${logoData.original_name}"?`)) {
+    return;
+  }
+  
+  // Add CSRF token
+  const formData = new FormData();
+  const csrfToken = document.querySelector('input[name="csrf_token"]');
+  if (csrfToken) {
+    formData.append('csrf_token', csrfToken.value);
+  }
+  
+  fetch(`/settings/logos/${logoId}`, {
+    method: 'DELETE',
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      BilliPocket.showMessage(`Logo "${logoData.original_name}" kustutatud`, 'success');
+      loadLogosFromServer(); // Refresh gallery
+    } else {
+      BilliPocket.showMessage(data.message || 'Viga logo kustutamisel', 'error');
+    }
+  })
+  .catch(error => {
+    console.error('Delete error:', error);
+    BilliPocket.showMessage('Viga logo kustutamisel', 'error');
+  });
+}
+
+function renameLogoPrompt(logoId, currentName) {
+  const newName = prompt(`Sisesta uus nimi logo jaoks:`, currentName);
+  if (!newName || newName === currentName) return;
+  
+  renameLogo(logoId, newName);
+}
+
+function renameLogo(logoId, newName) {
+  // Add CSRF token
+  const formData = new FormData();
+  formData.append('original_name', newName);
+  const csrfToken = document.querySelector('input[name="csrf_token"]');
+  if (csrfToken) {
+    formData.append('csrf_token', csrfToken.value);
+  }
+  
+  fetch(`/settings/logos/${logoId}/rename`, {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      BilliPocket.showMessage('Logo nimetatud ümber', 'success');
+      loadLogosFromServer(); // Refresh gallery
+    } else {
+      BilliPocket.showMessage(data.message || 'Viga logo ümbernimetamisel', 'error');
+    }
+  })
+  .catch(error => {
+    console.error('Rename error:', error);
+    BilliPocket.showMessage('Viga logo ümbernimetamisel', 'error');
+  });
+}
+
+// =============================================================================
+// LEGACY LOGO FUNCTIONS - Kept for backward compatibility
+// =============================================================================
+
+function removeLogo() {
+  // Clear selection in new system
+  document.querySelectorAll('.bp-logo-card').forEach(card => {
+    card.classList.remove('selected');
+  });
+  
+  document.getElementById('logoUrlField').value = '';
+  BilliPocket.showMessage('Logo valik tühistatud', 'success');
+}
+
+// Penalty Rates Management Functions
+function showManagePenaltyRatesModal() {
+  // Load penalty rates list
+  fetch('/settings/penalty-rates-list')
+  .then(response => response.json())
+  .then(data => {
+    const listContainer = document.getElementById('penaltyRatesManagementList');
+    
+    if (data.penalty_rates && data.penalty_rates.length > 0) {
+      let html = '';
+      data.penalty_rates.forEach(rate => {
+        html += `
+          <div class="bp-management-item d-flex align-items-center justify-content-between mb-1">
+            <div class="d-flex align-items-center gap-3">
+              <span class="badge bg-warning fs-6 px-3 py-2">${rate.name}</span>
+              ${!rate.is_active ? '<span class="badge bg-secondary">Mitteaktiivne</span>' : ''}
+            </div>
+            <button class="bp-management-remove-btn" onclick="deletePenaltyRate(${rate.id}, '${rate.name}')" title="Eemalda viivis"></button>
+          </div>
+        `;
+      });
+      listContainer.innerHTML = html;
+    } else {
+      listContainer.innerHTML = '<div class="text-center text-muted py-3">Viivised puuduvad</div>';
+    }
+    
+    // Clear the input field
+    document.getElementById('newPenaltyRateInput').value = '';
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('managePenaltyRatesModal'));
+    modal.show();
+  })
+  .catch(error => {
+    console.error('Error loading penalty rates:', error);
+    BilliPocket.showMessage('Viga viiviste laadimisel', 'error');
+  });
+}
+
+function addNewPenaltyRate() {
+  const rateInput = document.getElementById('newPenaltyRateInput');
+  const rate = parseFloat(rateInput.value);
+  
+  if (isNaN(rate) || rate < 0 || rate > 10) {
+    BilliPocket.showMessage('Sisesta korrektne viivise määr (0-10%)', 'error');
+    rateInput.focus();
+    return;
+  }
+  
+  fetch('/settings/penalty-rates', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value
+    },
+    body: JSON.stringify({
+      rate_per_day: rate,
+      is_default: false,
+      is_active: true
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      BilliPocket.showMessage('Viivis lisatud', 'success');
+      
+      // Add new option to main page dropdown
+      const dropdown = document.getElementById('penaltyRateDropdown');
+      if (dropdown) {
+        // Generate display name like on backend
+        let displayName;
+        if (rate === 0) {
+          displayName = "0% päevas";
+        } else if (rate === Math.floor(rate)) {
+          displayName = `${Math.floor(rate)}% päevas`;
+        } else {
+          displayName = `${rate.toFixed(1)}% päevas`.replace('.', ',');
+        }
+        
+        const newListItem = document.createElement('li');
+        newListItem.innerHTML = `<a class="dropdown-item penalty-rate-option" href="#" data-rate-id="${data.penalty_rate_id}" data-selected="false">${displayName}</a>`;
+        dropdown.appendChild(newListItem);
+        
+        // Add click event to new option
+        const newOption = newListItem.querySelector('.penalty-rate-option');
+        newOption.addEventListener('click', function(e) {
+          e.preventDefault();
+          const rateId = this.getAttribute('data-rate-id');
+          const label = this.textContent;
+          
+          document.getElementById('penaltyRateLabel').textContent = label;
+          document.getElementById('default_penalty_rate_id').value = rateId;
+          
+          document.querySelectorAll('.penalty-rate-option').forEach(opt => opt.classList.remove('active'));
+          this.classList.add('active');
+          
+          const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('penaltyRateSelector'));
+          if (dropdown) dropdown.hide();
+        });
+      }
+      
+      // Clear input and refresh modal list
+      rateInput.value = '';
+      
+      // Close current modal and reopen refreshed one
+      const currentModal = bootstrap.Modal.getInstance(document.getElementById('managePenaltyRatesModal'));
+      if (currentModal) {
+        currentModal.hide();
+      }
+      
+      // Small delay to ensure modal is fully closed before reopening
+      setTimeout(() => {
+        // Clean up any remaining backdrop
+        const backdrops = document.querySelectorAll('.modal-backdrop');
+        backdrops.forEach(backdrop => backdrop.remove());
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+        
+        showManagePenaltyRatesModal();
+      }, 300);
+    } else {
+      BilliPocket.showMessage(data.message || 'Viga viivise lisamisel', 'error');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    BilliPocket.showMessage('Viga viivise lisamisel', 'error');
+  });
+}
+
+// Penalty rate management functions - only add and delete needed
+
+function deletePenaltyRate(id, name) {
+  // Directly delete without confirmation dialog
+  
+  fetch(`/settings/penalty-rates/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      BilliPocket.showMessage('Viivis kustutatud', 'success');
+      // Refresh the management modal
+      showManagePenaltyRatesModal();
+      // Refresh the dropdown by reloading the page
+      setTimeout(() => location.reload(), 1000);
+    } else {
+      BilliPocket.showMessage(data.message || 'Viga viivise kustutamisel', 'error');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    BilliPocket.showMessage('Viga viivise kustutamisel', 'error');
+  });
+}
+
+// Note Labels Management Functions
+function showManageNoteLabelsModal() {
+  // Load note labels list
+  fetch('/settings/note-labels-list')
+  .then(response => response.json())
+  .then(data => {
+    const listContainer = document.getElementById('noteLabelsManagementList');
+    
+    if (data.note_labels && data.note_labels.length > 0) {
+      let html = '';
+      data.note_labels.forEach(label => {
+        html += `
+          <div class="bp-management-item d-flex align-items-center justify-content-between mb-1">
+            <div class="d-flex align-items-center gap-3">
+              <span class="badge bg-primary fs-6 px-3 py-2">${label.name}</span>
+              ${!label.is_active ? '<span class="badge bg-secondary">Mitteaktiivne</span>' : ''}
+            </div>
+            <button class="bp-management-remove-btn" onclick="deleteNoteLabel(${label.id}, '${label.name}')" title="Eemalda märkuse silt"></button>
+          </div>
+        `;
+      });
+      listContainer.innerHTML = html;
+    } else {
+      listContainer.innerHTML = '<div class="text-center text-muted py-3">Märkuste sildid puuduvad</div>';
+    }
+    
+    // Clear the input field
+    document.getElementById('newNoteLabelInput').value = '';
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('manageNoteLabelsModal'));
+    modal.show();
+  })
+  .catch(error => {
+    console.error('Error loading note labels:', error);
+    BilliPocket.showMessage('Viga märkuste siltide laadimisel', 'error');
+  });
+}
+
+function addNewNoteLabel() {
+  const labelInput = document.getElementById('newNoteLabelInput');
+  const labelName = labelInput.value.trim();
+  
+  if (!labelName) {
+    BilliPocket.showMessage('Sisesta märkuse sildi nimi', 'error');
+    labelInput.focus();
+    return;
+  }
+  
+  if (labelName.length > 50) {
+    BilliPocket.showMessage('Märkuse sildi nimi peab olema kuni 50 tähemärki', 'error');
+    labelInput.focus();
+    return;
+  }
+  
+  fetch('/settings/note-labels', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value
+    },
+    body: JSON.stringify({
+      name: labelName,
+      is_default: false  // Never set as default when adding
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      BilliPocket.showMessage('Märkuse silt lisatud', 'success');
+      // Clear input
+      labelInput.value = '';
+      // Refresh the management modal
+      setTimeout(() => {
+        showManageNoteLabelsModal();
+      }, 300);
+      // Refresh the dropdown by reloading the page
+      setTimeout(() => location.reload(), 1000);
+    } else {
+      BilliPocket.showMessage(data.message || 'Viga märkuse sildi lisamisel', 'error');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    BilliPocket.showMessage('Viga märkuse sildi lisamisel', 'error');
+  });
+}
+
+function deleteNoteLabel(id, name) {
+  // Directly delete without confirmation dialog
+  
+  fetch(`/settings/note-labels/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      BilliPocket.showMessage('Märkuse silt kustutatud', 'success');
+      // Refresh the management modal
+      showManageNoteLabelsModal();
+      // Refresh the dropdown by reloading the page
+      setTimeout(() => location.reload(), 1000);
+    } else {
+      BilliPocket.showMessage(data.message || 'Viga märkuse sildi kustutamisel', 'error');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    BilliPocket.showMessage('Viga märkuse sildi kustutamisel', 'error');
+  });
+}
+</script>
+{% endblock %}

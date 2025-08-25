@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Arve 2025-0004</title>
+    <style>
+        /* =================================================================
+           GOOGLE FONTS IMPORT
+           ================================================================= */
+        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&display=swap');
+        
+        /* =================================================================
+           CSS CUSTOM PROPERTIES (DESIGN TOKENS)
+           ================================================================= */
+        :root {
+            /* Colors */
+            --color-ink: #333333;
+            --
+            font-family: 'Open Sans', 'Arial', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.6;
+            color: #333333;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+            --font-size-sm: 11px;
+            --font-size-base: 12px;
+            --font-size-md: 14px;
+            --font-size-lg: 16px;
+            --font-size-xl: 18px;
+            --font-size-2xl: 20px;
+            --font-size-3xl: 24px;
+            --font-size-4xl:
+            max-width: 100%;
+            margin: 0 auto;
+            padding-left: 30px;
+            padding-right: 30px;
+            --font-weight-semibold: 600;
+            --font-weight-bold: 700;
+            
+            --lin
+            width: 100%;
+            margin-bottom: 60px;
+            --line-height-loose: 1.6;
+            
+            /* Spacing System */
+            --space-xs: 2px;
+            --space-sm: 4px;
+            --space-md: 6px;
+            --space-lg: 8px;
+            --space-xl: 12px;
+            --space-2xl: 15px;
+            --space-3xl: 16px;
+            --space-4xl: 20px;
+            --space-5xl: 24px;
+            --space-6xl: 30px;
+            --space-7xl: 40px;
+            --space-8xl: 60px;
+            --space-9xl: 80px;
+            
+            /* Layout */
+            --border-width-thin: 1px;
+            --border-width-thick: 2px;
+            --border-radius-sm: 2px;
+            
+            /* PDF specific */
+            --page-margin: 20mm;
+            --max-description-width: 320px;
+        }
+        
+        /* =================================================================
+           PDF PAGE SETUP
+           ================================================================= */
+        @page {
+            size: A4;
+            margin: var(--page-margin);
+        }
+        
+        /* =================================================================
+           GLOBAL RESET & BASE STYLES
+           ================================================================= */
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-family-primary);
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-normal);
+            line-height: var(--line-height-loose);
+            color: var(--color-ink);
+            background-color: var(--color-paper);
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* =================================================================
+           LAYOUT COMPONENTS
+           ================================================================= */
+        
+        /* Main Container */
+        .invoice-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding-left: var(--space-6xl);
+            padding-right: var(--space-6xl);
+        }
+        
+        /* Header Section */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-xl);
+        }
+        
+        /* =================================================================
+           COMPANY SECTION (Left Column)
+           ================================================================= */
+        .company-section {
+            display: flex;
+            flex-direction: column;
+            max-width: 60%;
+            padding-top: var(--space-4xl);
+        }
+        
+        .company-name {
+            font-size: 37px;
+            font-weight: var(--font-weight-bold);
+            color: var(--color-muted);
+            margin: 0 0 var(--space-lg) 0;
+            letter-spacing: -1.5px;
+            line-height: var(--line-height-tight);
+            transform: scaleX(0.9);
+            transform-origin: left;
+        }
+        
+        /* Company Details */
+        .company-details {
+            margin-bottom: var(--space-2xl);
+        }
+        
+        .company-detail {
+            color: var(--color-muted);
+            margin: var(--space-sm) 0;
+            font-size: var(--font-size-md);
+            line-height: var(--line-height-relaxed);
+        }
+        
+        .company-contact {
+            color: var(--color-muted);
+            margin: var(--space-xs) 0;
+            font-size: var(--font-size-md);
+        }
+        
+        .company-registry {
+            color: var(--color-muted);
+            margin: var(--space-lg) 0;
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-medium);
+        }
+        
+        /* Billed To Section */
+        .billed-to-wrapper {
+            margin-top: var(--space-4xl);
+        }
+        
+        .billed-to-label {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-ink);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0 0 var(--space-lg) 0;
+            border-bottom: var(--border-width-thin) solid var(--color-line);
+            padding-bottom: var(--space-lg);
+            margin-left: calc(-1 * var(--space-6xl));
+            margin-right: calc(-1 * var(--space-6xl));
+            padding-left: var(--space-6xl);
+        }
+        
+        .client-name {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-ink);
+            margin: var(--space-lg) 0;
+            line-height: var(--line-height-normal);
+        }
+        
+        .client-detail {
+            color: var(--color-muted);
+            margin: var(--space-sm) 0;
+            font-size: var(--font-size-md);
+            line-height: var(--line-height-relaxed);
+        }
+        
+        .client-registry {
+            color: var(--color-muted);
+            margin: va
+            width: calc(100% + 80px);
+            border-collapse: collapse;
+            margin-left: -40px;
+            margin-right: -40px;
+        .client-contact {
+            color: var(--color-muted);
+            margin: var(--space-xs) 0;
+            font-size: var(--font-size-md);
+        }
+        
+        /* =================================================================
+           INVOICE META SECTION (Right Column)
+           ================================================================= */
+        .invoice-meta-section {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            padding-top: var(--space-8xl);
+        }
+        
+        .invoice-title-only {
+            font-size: var(--font-size-4xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-muted);
+            margin: 0;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        
+        .invoice-title {
+            font-size: var(--font-size-4xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-lighter);
+            margin: 0;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transform: scaleX(0.9);
+            transform-origin: right;
+        }
+        
+        .meta-list {
+            display: flex;
+            flex-direction: column;
+            margin: var(--space-4xl) 0;
+            align-items: flex-end;
+        }
+        
+        .meta-row {
+            display: flex;
+            /* gap: var(--space-4xl); */
+            align-items: center;
+        }
+        
+        .meta-label {
+            font-size: var(--font-size-2xl);
+            font-weight: var(--font-weight-medium);
+            color: var(--color-muted);
+            text-align: right;
+            min-width: 100px;
+        }
+        
+        .meta-value {
+            font-size: var(--font-size-lg);
+            color: var(--color-ink);
+            font-weight: var(--font-weight-semibold);
+            text-align: right;
+            min-width: 105px;
+        }
+        
+        /* =================================================================
+           ITEMS TABLE SECTION
+           ================================================================= */
+        .items-section {
+            margin-botto
+            /* margin-bottom: var(--space-7xl); */
+        
+        .items-table {
+            width: calc(100% + 2 * var(--space-6xl));
+            border-collapse: collapse;
+            margin-left: calc(-1 * var(--space-6xl));
+            margin-right: calc(-1 * var(--space-6xl));
+        }
+        
+        /* Table Header */
+        .items-table th {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-ink);
+            padding: var(--space-xl) 0;
+            text-align: left;
+            border-bottom: var(--border-width-thin) solid var(--color-line);
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            background: var(--color-paper);
+        }
+        
+        .items-table th:first-child {
+            padding-left: var(--space-6xl);
+        }
+        
+        .items-table th:last-child {
+            padding-right: var(--space-6xl);
+        }
+        
+        /* Table Column Widths */
+        .items-table th.description-col { width: 50%; }
+        .items-table th.unit-col { width: 15%; text-align: right; }
+        .items-table th.qty-col { width: 10%; text-align: right; }
+        .items-table th.total-col { width: 25%; text-align: right; }
+        
+        /* Table Body */
+        .items-table td {
+            padding: var(--space-3xl) 0;
+            border-bottom: var(--border-width-thin) solid var(--color-line);
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            color: var(--color-ink);
+            font-size: var(--font-size-lg);
+            vertical-align: top;
+            background: var(--color-paper);
+        }
+        
+        .items-table td:first-child {
+            padding-left: var(--space-6xl);
+        }
+        
+        .items-table td:last-child {
+            padding-ri
+            border-top: 2px dotted #777777;
+            margin-top: 10px;
+        .items-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* Description Column */
+        .description-col {
+            font-weight: var(--font-weight-normal);
+        }
+        
+        .description-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: var(--max-description-width);
+            font-weight: var(--font-weight-normal);
+        }
+        
+        /* Numeric Columns */
+        .unit-col,
+        .qty-col,
+        .total-col {
+            text-align: right;
+            font-weight: var(--font-weight-normal);
+        }
+        
+        /* =================================================================
+           TOTALS SECTION
+           ================================================================= */
+        .totals-section {
+            display: flex
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: var(--space-6xl);
+            page-break-inside: avoid;
+        
+        .totals-block {
+            min-width: 
+            min-width: 300px;
+            margin-right: calc(-1 * var(--space-6xl));
+            padding-right: var(--space-6xl);
+        
+        .totals-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .totals-table td {
+            padding: var(--space-xl) 0;
+            border: none;
+            font-size: var(--font-size-lg);
+        }
+        
+        .totals-label {
+            color: var(--color-ink);
+            text-align: left;
+            padding-right: var(--space-6xl);
+            font-weight: var(--font-weight-normal);
+        }
+        
+        .totals-amount {
+            text-align: right;
+            font-weight: var(--font-weight-normal);
+            color: var(--color-ink);
+        }
+        
+        /* Final Total Row */
+        .total-final {
+            border-top: var(--border-width-thin) solid var(--color-line);
+            margin-top: 10px;
+        }
+        
+        .total-final .totals-label {
+            font-weight: var(--font-weight-bold);
+            font-size: var(--font-size-2xl);
+            color: var(--color-ink);
+            padding-top: var(--space-2xl);
+        }
+        
+        .total-final .totals-amount {
+            font-weight: var(--font-weight-semibold);
+            font-size: var(--font-size-2xl);
+            color: var(--color-ink);
+            padding-top: var(--space-2xl);
+        }
+        
+        /* =================================================================
+           FOOTER SECTION
+           ================================================================= */
+        .footer {
+            margin-top: var(--space-9xl);
+            padding-top: var(--space-6xl);
+            border-top: var(--border-width-thin) solid var(--color-line);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            font-size: var(--font-size-base);
+            line-height: var(--line-height-loose);
+            position: relative;
+            margin-left: calc(-1 * var(--space-6xl));
+            margin-right: calc(-1 * var(--space-6xl));
+            padding-left: var(--space-6xl);
+            padding-right: var(--space-6xl);
+        }
+        
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 0;
+            width: 80px;
+            height: var(--border-width-thick);
+            background: var(--color-accent);
+        }
+        
+        .footer-left {
+            color: var(--color-ink);
+            font-weight: var(--font-weight-semibold);
+            font-size: var(--font-size-xl);
+        }
+        
+        .footer-right {
+            color: var(--color-ink);
+            text-align: right;
+            font-size: var(--font-size-base);
+        }
+        
+        .payment-info {
+            margin-bottom: var(--space-sm);
+        }
+        
+        .payment-terms {
+            color: var(--color-ink);
+            font-size: var(--font-size-sm);
+            margin-top: var(--space-md);
+        }
+        
+        /* =================================================================
+           OPTIONAL INFO SECTIONS
+           ================================================================= */
+        .info-paragraph {
+            margin: var(--space-5xl) 0;
+            padding: var(--space-4xl) 0;
+            color: var(--color-ink);
+            font-size: 10px;
+            line-height: var(--line-height-loose);
+            border-top: var(--border-width-thin) solid var(--color-line);
+            page-break-inside: avoid;
+            position: relative;
+            margin-left: calc(-1 * var(--space-6xl));
+            margin-right: calc(-1 * var(--space-6xl));
+            padding-left: var(--space-6xl);
+            padding-right: var(--space-6xl);
+        }
+        
+        .info-paragraph::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 0;
+            width: 40px;
+            height: var(--border-width-thin);
+            background: var(--color-accent);
+        }
+        
+        .info-title {
+            font-weight: var(--font-weight-bold);
+            color: var(--color-accent);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-size: var(--font-size-xs);
+            margin-bottom: var(--space-lg);
+        }
+        
+        /* =================================================================
+           UTILITY CLASSES
+           ================================================================= */
+        .font-primary {
+            font-family: var(--font-family-primary);
+        }
+        
+        .font-tabular {
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .smallcaps {
+            font-variant: small-caps;
+        }
+        
+        .truncate {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .num {
+            font-variant-numeric: tabular-nums;
+        }
+        
+        /* =================================================================
+           PRINT OPTIMIZATIONS
+           ================================================================= */
+        @media print {
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .header,
+            .items-section,
+            .totals-section,
+            .info-paragraph {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <!-- =============================================================
+             HEADER SECTION
+             ============================================================= -->
+        <div class="header">
+            <!-- Left Column: Company Information & Billed To -->
+            <div class="company-section">
+                <!-- Company Name -->
+                <div class="company-name">Maine Disain</div>
+                
+                <!-- Company Details -->
+                <div class="company-details">
+                    
+                    <div class="company-contact">info@mainedisain.ee</div>
+                    
+                </div>
+                
+                <!-- Billed To Section -->
+                <div class="billed-to-wrapper">
+                    <div class="billed-to-label">ARVE SAAJA:</div>
+                    <div class="client-name">HOKA Sports OÜ</div>
+                    
+                    <div class="client-detail">Spordi tänav 15<br>Tallinn</div>
+                    
+                </div>
+            </div>
+            
+            <!-- Right Column: Invoice Meta Information -->
+            <div class="invoice-meta-section">
+                <h1 class="invoice-title">ARVE</h1>
+                <div class="meta-list">
+                    <div class="meta-row">
+                        <div class="meta-label">Arve nr:</div>
+                        <div class="meta-value">2025-0004</div>
+                    </div>
+                    <div class="meta-row">
+                        <div class="meta-label">Kuupäev:</div>
+                        <div class="meta-value">15.08.2025</div>
+                    </div>
+                    <div class="meta-row">
+                        <div class="meta-label">Tähtaeg:</div>
+                        <div class="meta-value">25.08.2025</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =============================================================
+             ITEMS TABLE SECTION
+             ============================================================= -->
+        <div class="items-section">
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th class="description-col">Kirjeldus</th>
+                        <th class="unit-col">Ühiku hind</th>
+                        <th class="qty-col">Kogus</th>
+                        <th class="total-col">Kokku</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <td class="description-col">
+                            <div class="description-text truncate">Russell mens full zip fleece + tikand (Royal Blue)</div>
+                        </td>
+                        <td class="unit-col font-tabular">180.01 €</td>
+                        <td class="qty-col font-tabular">11.00</td>
+                        <td class="total-col font-tabular">1980.11 €</td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="description-col">
+                            <div class="description-text truncate">Tööriiete tootmine (detst24 - veebr25).</div>
+                        </td>
+                        <td class="unit-col font-tabular">120.00 €</td>
+                        <td class="qty-col font-tabular">3.00</td>
+                        <td class="total-col font-tabular">360.00 €</td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="description-col">
+                            <div class="description-text truncate">Hoka Clifton 9 või Asics Gel‑Kayano 32</div>
+                        </td>
+                        <td class="unit-col font-tabular">33.00 €</td>
+                        <td class="qty-col font-tabular">2.00</td>
+                        <td class="total-col font-tabular">66.00 €</td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="description-col">
+                            <div class="description-text truncate">sans-serif + punased totalid • kompaktne rstik</div>
+                        </td>
+                        <td class="unit-col font-tabular">33.00 €</td>
+                        <td class="qty-col font-tabular">4.00</td>
+                        <td class="total-col font-tabular">132.00 €</td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+
+        <!-- =============================================================
+             TOTALS SECTION
+             ============================================================= -->
+        <div class="totals-section">
+            <div class="totals-block">
+                <table class="totals-table">
+                    <tbody>
+                        <tr>
+                            <td class="totals-label">Vahesumma</td>
+                            <td class="totals-amount font-tabular">2538.11 €</td>
+                        </tr>
+                        <tr>
+                            <td class="totals-label">KÄIB (24.00%)</td>
+                            <td class="totals-amount font-tabular">609.15 €</td>
+                        </tr>
+                        <tr class="total-final">
+                            <td class="totals-label">KOKKU</td>
+                            <td class="totals-amount font-tabular">3147.26 €</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- =============================================================
+             OPTIONAL INFORMATION BLOCKS
+             ============================================================= -->
+        
+        <div class="info-paragraph">
+            <div class="info-title">Teadaanded</div>
+            Soovitus: alusta Hoka Clifton 9 või Asics Gel‑Kayano 32
+        </div>
+        
+
+        
+        <div class="info-paragraph">
+            <div class="info-title">Märkused</div>
+            Asics Gel‑Kayano 32 
+        </div>
+        
+
+        <!-- =============================================================
+             FOOTER SECTION
+             ============================================================= -->
+        <div class="footer">
+            <div class="footer-left">Täname teid!</div>
+            <div class="footer-right">
+                <div class="payment-info">
+                    
+                    SEB Pank · EE861010220244996229
+                    
+                </div>
+                
+                <div class="payment-terms">10 päeva</div>
+                
+                
+                <div class="payment-terms">
+                    0,5% päevas: 0.500% päevas
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</body>
+</html>

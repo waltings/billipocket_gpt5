@@ -1,0 +1,9 @@
+[2025-08-25 00:10:52,253] INFO in logging_config: BilliPocket application started - Debug: True
+Traceback (most recent call last):
+  File "/Users/keijovalting/Downloads/billipocket_gpt5/run.py", line 10, in <module>
+    app = create_app()
+  File "/Users/keijovalting/Downloads/billipocket_gpt5/app/__init__.py", line 111, in create_app
+    from app.routes.dashboard import dashboard_bp
+  File "/Users/keijovalting/Downloads/billipocket_gpt5/app/routes/dashboard.py", line 2, in <module>
+    from flask_wtf.csrf import exempt
+ImportError: cannot import name 'exempt' from 'flask_wtf.csrf' (/Users/keijovalting/Library/Python/3.9/lib/python/site-packages/flask_wtf/csrf.py)

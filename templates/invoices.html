@@ -1,0 +1,2355 @@
+{% extends 'layout.html' %}
+{% block title %}Arved – Billipocket{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<!-- Custom calendar - no external dependencies -->
+<style>
+/* Soft, gentle styling for invoices page */
+.clickable-status {
+  transition: all 0.2s ease;
+  border: none;
+  box-shadow: none;
+}
+.clickable-status:hover {
+  transform: scale(1.02);
+  background-color: rgba(255, 255, 255, 0.9) !important;
+}
+.clickable-status:active {
+  transform: scale(0.98);
+}
+
+/* Gentle card styling */
+.bp-card {
+  border: none;
+  background-color: #ffffff;
+  box-shadow: none;
+  border-radius: 8px;
+}
+
+/* Ensure all cards have consistent border-radius */
+.card, .bp-card {
+  border-radius: 8px !important;
+}
+.bp-card.search-section {
+  border-radius: 8px !important;
+}
+.bp-card-header {
+  background-color: #ffffff;
+  border-bottom: none;
+}
+.bp-card-body {
+  background-color: #ffffff;
+}
+
+/* Soft dropdown styling */
+.dropdown-toggle {
+  border: 1px solid #e2e8f0;
+  background-color: #fafbfc;
+  color: #475569;
+  transition: all 0.2s ease;
+  box-shadow: none;
+}
+.dropdown-toggle:hover {
+  border-color: #cbd5e1;
+  background-color: #f1f5f9;
+  color: #334155;
+  box-shadow: none;
+}
+.dropdown-toggle:focus {
+  border-color: #11d6de;
+  background-color: #ffffff;
+  color: #334155;
+  box-shadow: 0 0 0 0.2rem rgba(17, 214, 222, 0.15);
+}
+
+.dropdown-menu {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  font-size: 12px;
+}
+.dropdown-item {
+  color: #475569;
+  padding: 0.5rem 1rem;
+  transition: all 0.15s ease;
+  font-size: 12px;
+}
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background-color: #f1f5f9;
+  color: #334155;
+}
+
+.dropdown-item.active {
+  background-color: rgba(17, 214, 222, 0.1) !important;
+  color: #114f68 !important;
+  font-weight: 500;
+}
+
+.dropdown-item.active:hover {
+  background-color: rgba(17, 214, 222, 0.15) !important;
+  color: #114f68 !important;
+}
+
+/* Specific styling for search section dropdowns */
+.search-section .dropdown-menu {
+  font-size: 12px;
+}
+.search-section .dropdown-item {
+  font-size: 12px;
+  padding: 0.4rem 0.8rem;
+}
+
+/* Badge styling in dropdowns */
+.search-section .dropdown-item .badge {
+  font-size: 10px;
+}
+
+/* Gentle button styling with white backgrounds */
+.btn-outline-primary {
+  border-color: #11d6de;
+  color: #114f68;
+  background-color: #ffffff;
+  box-shadow: none;
+}
+.btn-outline-primary:hover {
+  background-color: #f0fdff;
+  border-color: #06b6d4;
+  color: #0e7490;
+  box-shadow: none;
+}
+
+.btn-outline-secondary {
+  border-color: #e2e8f0;
+  color: #64748b;
+  background-color: #ffffff;
+  box-shadow: none;
+}
+.btn-outline-secondary:hover {
+  background-color: #e2e8f0;
+  border-color: #114f68;
+  color: #475569;
+  box-shadow: none;
+}
+
+.btn-outline-success {
+  border-color: #86efac;
+  color: #059669;
+  background-color: #ffffff;
+  box-shadow: none;
+}
+.btn-outline-success:hover {
+  background-color: #dcfce7;
+  border-color: #4ade80;
+  color: #047857;
+  box-shadow: none;
+}
+
+.btn-outline-info {
+  border-color: #7dd3fc;
+  color: #0369a1;
+  background-color: #ffffff;
+  box-shadow: none;
+}
+.btn-outline-info:hover {
+  background-color: #e0f2fe;
+  border-color: #38bdf8;
+  color: #0284c7;
+  box-shadow: none;
+}
+
+.btn-outline-warning {
+  border-color: #fde047;
+  color: #ca8a04;
+  background-color: #ffffff;
+  box-shadow: none;
+}
+.btn-outline-warning:hover {
+  background-color: #fef3c7;
+  border-color: #facc15;
+  color: #a16207;
+  box-shadow: none;
+}
+
+.btn-outline-danger {
+  border-color: #fca5a5;
+  color: #dc2626;
+  background-color: #ffffff;
+  box-shadow: none;
+}
+.btn-outline-danger:hover {
+  background-color: #fee2e2;
+  border-color: #f87171;
+  color: #b91c1c;
+  box-shadow: none;
+}
+
+/* Gentle form controls */
+.form-control {
+  border: 1px solid #e2e8f0;
+  background-color: #fafbfc;
+  color: #475569;
+  transition: all 0.2s ease;
+  box-shadow: none;
+}
+.form-control:hover {
+  border-color: #cbd5e1;
+  background-color: #f1f5f9;
+}
+.form-control:focus {
+  border-color: #11d6de;
+  background-color: #ffffff;
+  color: #334155;
+  box-shadow: 0 0 0 0.2rem rgba(17, 214, 222, 0.15);
+}
+
+.form-select {
+  border: 1px solid #e2e8f0;
+  background-color: #fafbfc;
+  color: #475569;
+  transition: all 0.2s ease;
+  box-shadow: none;
+}
+.form-select:hover {
+  border-color: #cbd5e1;
+  background-color: #f1f5f9;
+}
+.form-select:focus {
+  border-color: #11d6de;
+  background-color: #ffffff;
+  color: #334155;
+  box-shadow: 0 0 0 0.2rem rgba(17, 214, 222, 0.15);
+}
+
+/* Gentle table styling */
+.table {
+  border: none;
+}
+.table th {
+  border: none;
+  background-color: #f8fafc;
+  color: #64748b;
+  font-weight: 600;
+  padding: 1rem;
+}
+.table td {
+  border: none;
+  border-bottom: 1px solid #f1f5f9;
+  padding: 1rem;
+  color: #475569;
+}
+.table tbody tr:hover {
+  background-color: #f8fafc;
+  transition: background-color 0.15s ease;
+}
+
+/* System colors for status badges - white background with colored text and border */
+.badge {
+  font-weight: 500;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  background-color: #ffffff !important;
+  border: 1px solid;
+}
+
+/* Filter badges - smaller size */
+.filter-badges .badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.4rem;
+}
+
+/* Status badges - white background with colored text and border */
+.badge.bg-success {
+  color: var(--bp-success) !important;
+  border-color: var(--bp-success) !important;
+}
+.badge.bg-warning {
+  color: #b45309 !important;
+  border-color: #fbbf24 !important;
+}
+.badge.bg-danger {
+  color: var(--bp-danger) !important;
+  border-color: var(--bp-danger) !important;
+}
+.badge.bg-primary {
+  color: var(--bp-primary-600) !important;
+  border-color: var(--bp-primary-600) !important;
+}
+
+/* Toast notification styling - override global text color */
+.toast.status-toast, 
+.toast.status-toast div, 
+.toast.status-toast .toast-body {
+  color: white !important;
+}
+
+/* Header styling improvements */
+.page-header {
+  background-color: #fafbfc;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 1.5rem 0;
+  margin-bottom: 1.5rem;
+}
+
+/* Compact search section */
+.search-section .bp-card-body {
+  padding: 0.75rem 1.25rem;
+}
+
+/* Search input with icon styling */
+.search-input-container {
+  position: relative;
+}
+.search-input-container .search-icon {
+  position: absolute;
+  left: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #114f68;
+  z-index: 10;
+  pointer-events: none;
+  font-size: 12px;
+}
+.search-input-container .form-control {
+  padding-left: 2rem;
+}
+
+/* Search filter dropdown styling */
+.search-section .form-select {
+  border: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  color: #475569;
+  transition: all 0.2s ease;
+  box-shadow: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23475569' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 6 7 7 7-7'/%3e%3c/svg%3e");
+  font-size: 12px;
+}
+.search-section .form-select:hover {
+  border-color: #cbd5e1;
+  background-color: #f8fafc;
+}
+.search-section .form-select:focus {
+  border-color: #11d6de;
+  background-color: #ffffff;
+  color: #334155;
+  box-shadow: 0 0 0 0.2rem rgba(17, 214, 222, 0.15);
+}
+
+/* Uniform styling for all search section controls */
+.search-section .btn,
+.search-section .form-control,
+.search-section .dropdown-toggle {
+  font-size: 12px !important;
+  color: #475569 !important;
+  border: 1px solid #e2e8f0 !important;
+  background-color: #fafbfc !important;
+  transition: all 0.2s ease;
+  box-shadow: none !important;
+}
+
+.search-section .btn:hover,
+.search-section .form-control:hover,
+.search-section .dropdown-toggle:hover {
+  border-color: #cbd5e1 !important;
+  background-color: #f1f5f9 !important;
+  color: #334155 !important;
+  box-shadow: none !important;
+}
+
+.search-section .btn:focus,
+.search-section .form-control:focus,
+.search-section .dropdown-toggle:focus {
+  border-color: #11d6de !important;
+  background-color: #ffffff !important;
+  color: #334155 !important;
+  box-shadow: 0 0 0 0.2rem rgba(17, 214, 222, 0.15) !important;
+}
+
+/* Compact table styling */
+.table td {
+  border: none;
+  border-bottom: 1px solid #f1f5f9;
+  padding: 0.5rem 1rem;
+  color: #475569;
+}
+.table th {
+  border: none;
+  background-color: #f8fafc;
+  color: #64748b;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+}
+
+/* Edit button styling to match pencil icon */
+.btn-outline-secondary:has(.bi-pencil) {
+  border-color: #64748b;
+  color: #64748b;
+}
+.btn-outline-secondary:has(.bi-pencil):hover {
+  border-color: #475569;
+  background-color: #f1f5f9;
+  color: #475569;
+}
+
+/* Status dropdown button styling based on selected status */
+.status-dropdown-success {
+  border-color: #86efac !important;
+  background-color: #f0fdf4 !important;
+  color: #059669 !important;
+}
+.status-dropdown-success:hover {
+  border-color: #4ade80 !important;
+  background-color: #dcfce7 !important;
+  color: #047857 !important;
+}
+
+.status-dropdown-warning {
+  border-color: #fde047 !important;
+  background-color: #fffbeb !important;
+  color: #ca8a04 !important;
+}
+.status-dropdown-warning:hover {
+  border-color: #facc15 !important;
+  background-color: #fef3c7 !important;
+  color: #a16207 !important;
+}
+
+.status-dropdown-danger {
+  border-color: #fca5a5 !important;
+  background-color: #fef2f2 !important;
+  color: #dc2626 !important;
+}
+.status-dropdown-danger:hover {
+  border-color: #f87171 !important;
+  background-color: #fee2e2 !important;
+  color: #b91c1c !important;
+}
+
+/* Date range picker input - cyan color system */
+.date-range-picker {
+  background-color: #ECFEFF !important; /* cyan-50 */
+  border-color: #CFFAFE !important; /* cyan-100 */
+  color: #155E75 !important; /* cyan-800 */
+  cursor: pointer;
+  min-width: 200px;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.date-range-picker:hover {
+  background-color: #CFFAFE !important; /* cyan-100 */
+  border-color: #114f68 !important; /* cyan-600 */
+  color: #155E75 !important; /* cyan-800 */
+}
+
+.date-range-picker:focus {
+  background-color: #ffffff !important;
+  border-color: #11D6DE !important; /* primary cyan */
+  color: #155E75 !important; /* cyan-800 */
+  box-shadow: 0 0 0 0.2rem rgba(17, 214, 222, 0.25) !important;
+}
+.date-range-container {
+  position: relative;
+}
+
+/* Custom Calendar - Perfect seamless range with system colors */
+.custom-calendar {
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(17, 214, 222, 0.15);
+  background: #ffffff;
+  border: 1px solid #ECFEFF;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  display: none;
+  min-width: 600px;
+  padding: 1rem;
+}
+
+.custom-calendar.show {
+  display: block;
+}
+
+.calendar-months {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.calendar-month {
+  width: 100%;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0 1rem 0;
+  color: #155E75;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.calendar-month-title {
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.calendar-month-title:hover {
+  background: #ECFEFF;
+  color: #114f68;
+}
+
+.calendar-nav {
+  background: none;
+  border: none;
+  color: #114f68;
+  font-size: 1.5rem;
+  font-weight: 900;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendar-nav:hover {
+  background: #ECFEFF;
+  color: #11D6DE;
+  transform: scale(1.1);
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0;
+  margin-bottom: 0.5rem;
+}
+
+.calendar-weekday {
+  text-align: center;
+  padding: 0.5rem 0;
+  font-weight: 600;
+  font-size: 0.75rem;
+  color: #114f68;
+  background: #ECFEFF;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.calendar-weekday:first-child {
+  border-radius: 6px 0 0 6px;
+}
+
+.calendar-weekday:last-child {
+  border-radius: 0 6px 6px 0;
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0; /* Zero gap for seamless range */
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #155E75 !important;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  background: #ffffff;
+  border: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+.calendar-day:hover {
+  background: #ECFEFF;
+  color: #114f68;
+}
+
+.calendar-day.other-month {
+  color: #cbd5e1 !important;
+  opacity: 0.5 !important;
+}
+
+.calendar-day.other-month:hover {
+  background: #ECFEFF !important;
+  color: #9ca3af !important;
+  opacity: 0.7 !important;
+}
+
+.calendar-day.today {
+  color: #11D6DE;
+  font-weight: 700;
+  border: 2px solid #11D6DE;
+  border-radius: 8px;
+}
+
+.calendar-day.selected {
+  background: #114f68;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* SEAMLESS RANGE - the perfect solution */
+.calendar-day.in-range {
+  background: #ECFEFF !important; /* cyan-50 */
+  color: #114f68 !important; /* cyan-600 */
+}
+
+.calendar-day.range-start {
+  background: #114f68 !important; /* cyan-600 */
+  color: #ffffff !important;
+  border-radius: 6px 0 0 6px;
+}
+
+.calendar-day.range-end {
+  background: #114f68 !important; /* cyan-600 */
+  color: #ffffff !important;
+  border-radius: 0 6px 6px 0;
+}
+
+.calendar-day.range-start.range-end {
+  border-radius: 6px;
+}
+
+.calendar-day.range-start:hover,
+.calendar-day.range-end:hover {
+  background: #155E75 !important; /* cyan-800 */
+}
+
+/* Calendar Action Buttons */
+.calendar-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid #ECFEFF;
+  margin-top: 1rem;
+  gap: 0.5rem;
+}
+
+.calendar-actions .btn {
+  font-weight: 500;
+  font-size: 0.75rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  min-width: auto;
+}
+
+.calendar-actions .btn-outline-secondary {
+  border-color: #114f68 !important;
+  color: #114f68 !important;
+  background: #ffffff !important;
+}
+
+.calendar-actions .btn-outline-secondary:hover:not(:disabled) {
+  background: #114f68 !important;
+  border-color: #114f68 !important;
+  color: #ffffff !important;
+}
+
+.calendar-actions .btn-outline-secondary:disabled {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #9ca3af !important;
+  cursor: not-allowed !important;
+}
+
+/* Statistics card hover effects - disabled to prevent unwanted movement */
+/* .bp-card:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease-in-out;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
+} */
+</style>
+{% endblock %}
+
+{% block content %}
+<section id="invoices" class="mb-4">
+  <!-- Page Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="fw-bold mb-1" style="font-size: 1.8rem;">Arved</h1>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{{ url_for('invoices.new_invoice') }}" class="btn btn-primary">
+        <i class="bi bi-plus-lg me-1"></i>Loo uus arve
+      </a>
+      <div class="dropdown">
+        <button class="btn btn-outline-secondary d-flex align-items-center justify-content-center" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 40px; height: 38px;">
+          <i class="bi bi-three-dots-vertical"></i>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li>
+            <a class="dropdown-item" href="#" onclick="window.print()">
+              <i class="bi bi-printer me-2"></i>Prindi arved
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="#" onclick="exportToCSV()">
+              <i class="bi bi-file-earmark-text me-2"></i>Ekspordi CSV
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Invoice Statistics Cards - Horizontal Layout -->
+  <div class="row g-3 mb-4">
+    
+    <!-- Total Invoices -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="d-flex align-items-center p-3" style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border-radius: 16px; border: 1px solid #e2e8f0;">
+        <div class="me-3">
+          <div class="d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background: #e0f2fe; border-radius: 12px;">
+            <i class="bi bi-file-earmark-text" style="color: #0369a1; font-size: 1.5rem;"></i>
+          </div>
+        </div>
+        <div class="flex-grow-1">
+          <div class="fw-bold" style="color: #0f172a; font-size: 1rem; margin-bottom: 2px;">Arved Kokku</div>
+          <div class="fw-bold" style="color: #0369a1; font-size: 1.1rem;" id="stats-total-amount">11 213 €</div>
+        </div>
+        <div class="ms-2">
+          <div class="d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; border: 2px solid #0369a1; border-radius: 8px; background: white;">
+            <span class="fw-bold" style="color: #0369a1; font-size: 0.9rem;" id="stats-total-count">{{ total_count if total_count is defined else invoices|length }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paid Invoices -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="d-flex align-items-center p-3" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: 16px; border: 1px solid #bbf7d0;">
+        <div class="me-3">
+          <div class="d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background: #d1fae5; border-radius: 12px;">
+            <i class="bi bi-check-circle-fill" style="color: #059669; font-size: 1.5rem;"></i>
+          </div>
+        </div>
+        <div class="flex-grow-1">
+          <div class="fw-bold" style="color: #0f172a; font-size: 1rem; margin-bottom: 2px;">Makstud</div>
+          <div class="fw-bold" style="color: #059669; font-size: 1.1rem;" id="stats-makstud-total">11 213 €</div>
+        </div>
+        <div class="ms-2">
+          <div class="d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; border: 2px solid #059669; border-radius: 8px; background: white;">
+            <span class="fw-bold" style="color: #059669; font-size: 0.9rem;" id="stats-makstud-count">{{ status_counts.makstud if status_counts.makstud is defined else 0 }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unpaid Invoices -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="d-flex align-items-center p-3" style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border-radius: 16px; border: 1px solid #fde68a;">
+        <div class="me-3">
+          <div class="d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background: #fef3c7; border-radius: 12px;">
+            <i class="bi bi-clock-fill" style="color: #d97706; font-size: 1.5rem;"></i>
+          </div>
+        </div>
+        <div class="flex-grow-1">
+          <div class="fw-bold" style="color: #0f172a; font-size: 1rem; margin-bottom: 2px;">Maksmata</div>
+          <div class="fw-bold" style="color: #d97706; font-size: 1.1rem;" id="stats-maksmata-total">4585.66€</div>
+        </div>
+        <div class="ms-2">
+          <div class="d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; border: 2px solid #d97706; border-radius: 8px; background: white;">
+            <span class="fw-bold" style="color: #d97706; font-size: 0.9rem;" id="stats-maksmata-count">{{ status_counts.maksmata if status_counts.maksmata is defined else 0 }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overdue Invoices -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="d-flex align-items-center p-3" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-radius: 16px; border: 1px solid #fca5a5;">
+        <div class="me-3">
+          <div class="d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background: #fee2e2; border-radius: 12px;">
+            <i class="bi bi-exclamation-triangle-fill" style="color: #dc2626; font-size: 1.5rem;"></i>
+          </div>
+        </div>
+        <div class="flex-grow-1">
+          <div class="fw-bold" style="color: #0f172a; font-size: 1rem; margin-bottom: 2px;">Tähtaeg ületatud</div>
+          <div class="fw-bold" style="color: #dc2626; font-size: 1.1rem;" id="stats-overdue-total">2045.03€</div>
+        </div>
+        <div class="ms-2">
+          <div class="d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; border: 2px solid #dc2626; border-radius: 8px; background: white;">
+            <span class="fw-bold" style="color: #dc2626; font-size: 0.9rem;" id="stats-overdue-count">{{ status_counts.overdue if status_counts.overdue is defined else 0 }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Search and Filter Section -->
+  <div class="bp-card mb-4 search-section">
+    <div class="bp-card-body">
+      <form method="GET">
+        {{ search_form.hidden_tag() }}
+        
+        <!-- Desktop Layout: üks rida -->
+        <div class="d-none d-lg-flex gap-3 align-items-end">
+          <div class="flex-fill">
+            <div class="search-input-container">
+              <i class="bi bi-search search-icon"></i>
+              {{ search_form.search(class_="form-control", placeholder="Otsi arvet või klienti...", value=current_search or '', id="realtime-search") }}
+            </div>
+          </div>
+          <div style="flex: 0 0 140px;">
+            <div class="date-range-container position-relative">
+              <i class="bi bi-calendar-range position-absolute" style="left: 0.6rem; top: 50%; transform: translateY(-50%); color: #114f68; z-index: 10; pointer-events: none; font-size: 12px;"></i>
+              <input type="text" id="dateRangePicker" class="form-control date-range-picker" placeholder="pp.kk.aaaa - pp.kk.aaaa" style="font-size: 12px; padding-left: 2rem; width: 100%; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">
+              <input type="hidden" name="date_from" id="date_from" value="{{ request.args.get('date_from', '') }}">
+              <input type="hidden" name="date_to" id="date_to" value="{{ request.args.get('date_to', '') }}">
+              
+              <!-- Custom Calendar Popup -->
+              <div id="customCalendar" class="custom-calendar">
+                <div class="calendar-months">
+                  <div class="calendar-month" id="leftMonth">
+                    <div class="calendar-header">
+                      <button type="button" class="calendar-nav" id="prevMonth">‹</button>
+                      <span id="leftMonthTitle" class="calendar-month-title"></span>
+                      <span></span>
+                    </div>
+                    <div class="calendar-weekdays">
+                      <div class="calendar-weekday">E</div>
+                      <div class="calendar-weekday">T</div>
+                      <div class="calendar-weekday">K</div>
+                      <div class="calendar-weekday">N</div>
+                      <div class="calendar-weekday">R</div>
+                      <div class="calendar-weekday">L</div>
+                      <div class="calendar-weekday">P</div>
+                    </div>
+                    <div class="calendar-days" id="leftMonthDays"></div>
+                  </div>
+                  
+                  <div class="calendar-month" id="rightMonth">
+                    <div class="calendar-header">
+                      <span></span>
+                      <span id="rightMonthTitle" class="calendar-month-title"></span>
+                      <button type="button" class="calendar-nav" id="nextMonth">›</button>
+                    </div>
+                    <div class="calendar-weekdays">
+                      <div class="calendar-weekday">E</div>
+                      <div class="calendar-weekday">T</div>
+                      <div class="calendar-weekday">K</div>
+                      <div class="calendar-weekday">N</div>
+                      <div class="calendar-weekday">R</div>
+                      <div class="calendar-weekday">L</div>
+                      <div class="calendar-weekday">P</div>
+                    </div>
+                    <div class="calendar-days" id="rightMonthDays"></div>
+                  </div>
+                </div>
+                
+                <!-- Calendar Action Buttons -->
+                <div class="calendar-actions">
+                  <button type="button" class="btn btn-outline-secondary" id="cancelCalendar">
+                    <i class="bi bi-x-lg me-1"></i>Tühista
+                  </button>
+                  <button type="button" class="btn btn-outline-secondary" id="confirmCalendar" disabled>
+                    <i class="bi bi-check-lg me-1"></i>Kinnita
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex-fill">
+            <div class="dropdown w-100">
+              <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start" type="button" id="clientFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 12px;">
+                <span id="clientFilterLabel">
+                  {% if current_client_id %}
+                    {% for client in clients %}
+                      {% if client.id|string == current_client_id %}{{ client.name[:6] }}...{% endif %}
+                    {% endfor %}
+                  {% else %}
+                    Kliendid
+                  {% endif %}
+                </span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="clientFilterDropdown" style="width: max-content; min-width: 100%;">
+                <li><a class="dropdown-item {% if not current_client_id %}active{% endif %}" href="{{ url_for('invoices.invoices', status=current_status, search=current_search, date_from=request.args.get('date_from', ''), date_to=request.args.get('date_to', '')) }}">Kõik kliendid</a></li>
+                {% for client in clients %}
+                <li><a class="dropdown-item {% if client.id|string == current_client_id %}active{% endif %}" href="{{ url_for('invoices.invoices', client_id=client.id, status=current_status, search=current_search, date_from=request.args.get('date_from', ''), date_to=request.args.get('date_to', '')) }}">{{ client.name }}</a></li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+          <div class="flex-fill">
+            <div class="dropdown w-100">
+              <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start{% if current_status == 'makstud' %} status-dropdown-success{% elif current_status == 'maksmata' %} status-dropdown-warning{% elif current_status == 'overdue' %} status-dropdown-danger{% endif %}" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 12px;">
+                {% if current_status == 'makstud' %}
+                  Makstud
+                {% elif current_status == 'maksmata' %}
+                  Maksmata
+                {% elif current_status == 'overdue' %}
+                  Tähtaeg üle
+                {% else %}
+                  Staatused
+                {% endif %}
+              </button>
+              <ul class="dropdown-menu" style="width: max-content; min-width: 200px;">
+                <li>
+                  <a class="dropdown-item {% if not current_status %}active{% endif %}" 
+                     href="{{ url_for('invoices.invoices', client_id=current_client_id, search=current_search, date_from=request.args.get('date_from', ''), date_to=request.args.get('date_to', '')) }}">
+                    <span class="badge bg-primary me-1">{{ status_counts.all }}</span> Kõik Staatused
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item {% if current_status == 'makstud' %}active{% endif %}" 
+                     href="{{ url_for('invoices.invoices', status='makstud', client_id=current_client_id, search=current_search, date_from=request.args.get('date_from', ''), date_to=request.args.get('date_to', '')) }}">
+                    <span class="badge bg-success me-1">{{ status_counts.makstud }}</span> Makstud
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item {% if current_status == 'maksmata' %}active{% endif %}" 
+                     href="{{ url_for('invoices.invoices', status='maksmata', client_id=current_client_id, search=current_search, date_from=request.args.get('date_from', ''), date_to=request.args.get('date_to', '')) }}">
+                    <span class="badge bg-warning me-1">{{ status_counts.maksmata }}</span> Maksmata
+                  </a>
+                </li>
+                {% if status_counts.overdue > 0 %}
+                <li>
+                  <a class="dropdown-item {% if current_status == 'overdue' %}active{% endif %}" 
+                     href="{{ url_for('invoices.invoices', status='overdue', client_id=current_client_id, search=current_search, date_from=request.args.get('date_from', ''), date_to=request.args.get('date_to', '')) }}">
+                    <span class="badge bg-danger me-1">{{ status_counts.overdue }}</span> Tähtaja ületanud
+                  </a>
+                </li>
+                {% endif %}
+              </ul>
+            </div>
+          </div>
+          <div style="flex: 0 0 40px;">
+            <button type="button" class="btn btn-outline-secondary d-flex align-items-center justify-content-center" onclick="clearDateRange()" style="width: 40px;">
+              <i class="bi bi-arrow-clockwise"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile/Tablet Layout: kaks rida -->
+        <div class="d-lg-none">
+          <!-- Esimene rida: filter elemendid -->
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <div class="search-input-container">
+                <i class="bi bi-search search-icon"></i>
+                {{ search_form.search(class_="form-control", placeholder="Otsi arvet või klienti...", value=current_search or '', id="realtime-search-mobile") }}
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="date-range-container position-relative">
+                <i class="bi bi-calendar-range position-absolute" style="left: 0.6rem; top: 50%; transform: translateY(-50%); color: #114f68; z-index: 10; pointer-events: none; font-size: 12px;"></i>
+                <input type="text" id="dateRangePickerMobile" class="form-control date-range-picker" placeholder="Kuupäev..." readonly style="font-size: 11px; padding-left: 2rem; width: 100%; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">
+              </div>
+            </div>
+          </div>
+          
+          <!-- Teine rida: kliendid, staatus, reset ja statistika -->
+          <div class="row g-2 align-items-end">
+            <div class="col-4">
+              <div class="dropdown w-100">
+                <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start" type="button" id="clientFilterDropdownMobile" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 12px;">
+                  <span>
+                    {% if current_client_id %}
+                      {% for client in clients %}
+                        {% if client.id|string == current_client_id %}{{ client.name[:8] }}...{% endif %}
+                      {% endfor %}
+                    {% else %}
+                      Kliendid
+                    {% endif %}
+                  </span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="clientFilterDropdownMobile" style="width: max-content; min-width: 100%;">
+                  <li><a class="dropdown-item {% if not current_client_id %}active{% endif %}" href="{{ url_for('invoices.invoices', status=current_status, search=current_search, date_from=request.args.get('date_from', ''), date_to=request.args.get('date_to', '')) }}">Kõik kliendid</a></li>
+                  {% for client in clients %}
+                  <li><a class="dropdown-item {% if client.id|string == current_client_id %}active{% endif %}" href="{{ url_for('invoices.invoices', client_id=client.id, status=current_status, search=current_search, date_from=request.args.get('date_from', ''), date_to=request.args.get('date_to', '')) }}">{{ client.name }}</a></li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="dropdown w-100">
+                <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start{% if current_status == 'makstud' %} status-dropdown-success{% elif current_status == 'maksmata' %} status-dropdown-warning{% elif current_status == 'overdue' %} status-dropdown-danger{% endif %}" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 11px;">
+                  {% if current_status == 'makstud' %}
+                    Makstud
+                  {% elif current_status == 'maksmata' %}
+                    Maksmata
+                  {% elif current_status == 'overdue' %}
+                    Tähtaeg üle
+                  {% else %}
+                    Staatused
+                  {% endif %}
+                </button>
+                <ul class="dropdown-menu" style="width: max-content; min-width: 200px;">
+                  <li>
+                    <a class="dropdown-item {% if not current_status %}active{% endif %}" 
+                       href="{{ url_for('invoices.invoices', client_id=current_client_id, search=current_search, date_from=request.args.get('date_from', ''), date_to=request.args.get('date_to', '')) }}">
+                      <span class="badge bg-primary me-1">{{ status_counts.all }}</span> Kõik Staatused
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item {% if current_status == 'makstud' %}active{% endif %}" 
+                       href="{{ url_for('invoices.invoices', status='makstud', client_id=current_client_id, search=current_search, date_from=request.args.get('date_from', ''), date_to=request.args.get('date_to', '')) }}">
+                      <span class="badge bg-success me-1">{{ status_counts.makstud }}</span> Makstud
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item {% if current_status == 'maksmata' %}active{% endif %}" 
+                       href="{{ url_for('invoices.invoices', status='maksmata', client_id=current_client_id, search=current_search, date_from=request.args.get('date_from', ''), date_to=request.args.get('date_to', '')) }}">
+                      <span class="badge bg-warning me-1">{{ status_counts.maksmata }}</span> Maksmata
+                    </a>
+                  </li>
+                  {% if status_counts.overdue > 0 %}
+                  <li>
+                    <a class="dropdown-item {% if current_status == 'overdue' %}active{% endif %}" 
+                       href="{{ url_for('invoices.invoices', status='overdue', client_id=current_client_id, search=current_search, date_from=request.args.get('date_from', ''), date_to=request.args.get('date_to', '')) }}">
+                      <span class="badge bg-danger me-1">{{ status_counts.overdue }}</span> Tähtaja ületanud
+                    </a>
+                  </li>
+                  {% endif %}
+                </ul>
+              </div>
+            </div>
+            <div class="col-1">
+              <button type="button" class="btn btn-outline-secondary d-flex align-items-center justify-content-center" onclick="clearDateRange()" style="width: 36px; height: 36px;">
+                <i class="bi bi-arrow-clockwise" style="font-size: 11px;"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Invoices Table -->
+  <div class="bp-card">
+    <div class="bp-card-body p-0">
+      {% if invoices %}
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th class="border-0">
+                <a href="{{ url_for('invoices.invoices', sort='number', dir='asc' if current_sort == 'number' and current_dir == 'desc' else 'desc', status=current_status, search=current_search) }}" 
+                   class="text-decoration-none text-dark">
+                  Arve number
+                  {% if current_sort == 'number' %}
+                    {% if current_dir == 'asc' %}
+                      <i class="bi bi-chevron-up"></i>
+                    {% else %}
+                      <i class="bi bi-chevron-down"></i>
+                    {% endif %}
+                  {% endif %}
+                </a>
+              </th>
+              <th class="border-0">
+                <a href="{{ url_for('invoices.invoices', sort='client', dir='asc' if current_sort == 'client' and current_dir == 'desc' else 'desc', status=current_status, search=current_search) }}" 
+                   class="text-decoration-none text-dark">
+                  Klient
+                  {% if current_sort == 'client' %}
+                    {% if current_dir == 'asc' %}
+                      <i class="bi bi-chevron-up"></i>
+                    {% else %}
+                      <i class="bi bi-chevron-down"></i>
+                    {% endif %}
+                  {% endif %}
+                </a>
+              </th>
+              <th class="border-0">
+                <a href="{{ url_for('invoices.invoices', sort='date', dir='asc' if current_sort == 'date' and current_dir == 'desc' else 'desc', status=current_status, search=current_search) }}" 
+                   class="text-decoration-none text-dark">
+                  Kuupäev
+                  {% if current_sort == 'date' %}
+                    {% if current_dir == 'asc' %}
+                      <i class="bi bi-chevron-up"></i>
+                    {% else %}
+                      <i class="bi bi-chevron-down"></i>
+                    {% endif %}
+                  {% endif %}
+                </a>
+              </th>
+              <th class="border-0">
+                <a href="{{ url_for('invoices.invoices', sort='due_date', dir='asc' if current_sort == 'due_date' and current_dir == 'desc' else 'desc', status=current_status, search=current_search) }}" 
+                   class="text-decoration-none text-dark">
+                  Tähtaeg
+                  {% if current_sort == 'due_date' %}
+                    {% if current_dir == 'asc' %}
+                      <i class="bi bi-chevron-up"></i>
+                    {% else %}
+                      <i class="bi bi-chevron-down"></i>
+                    {% endif %}
+                  {% endif %}
+                </a>
+              </th>
+              <th class="border-0 text-end">
+                <a href="{{ url_for('invoices.invoices', sort='total', dir='asc' if current_sort == 'total' and current_dir == 'desc' else 'desc', status=current_status, search=current_search) }}" 
+                   class="text-decoration-none text-dark">
+                  Summa
+                  {% if current_sort == 'total' %}
+                    {% if current_dir == 'asc' %}
+                      <i class="bi bi-chevron-up"></i>
+                    {% else %}
+                      <i class="bi bi-chevron-down"></i>
+                    {% endif %}
+                  {% endif %}
+                </a>
+              </th>
+              <th class="border-0">
+                <a href="{{ url_for('invoices.invoices', sort='status', dir='asc' if current_sort == 'status' and current_dir == 'desc' else 'desc', status=current_status, search=current_search) }}" 
+                   class="text-decoration-none text-dark">
+                  Staatus
+                  {% if current_sort == 'status' %}
+                    {% if current_dir == 'asc' %}
+                      <i class="bi bi-chevron-up"></i>
+                    {% else %}
+                      <i class="bi bi-chevron-down"></i>
+                    {% endif %}
+                  {% endif %}
+                </a>
+              </th>
+              <th class="border-0 text-end">Toimingud</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for invoice in invoices %}
+            <tr>
+              <td>
+                <div class="fw-medium">{{ invoice.no }}</div>
+              </td>
+              <td>
+                <div class="fw-medium">{{ invoice.client }}</div>
+              </td>
+              <td>
+                <small class="text-muted">{{ invoice.date }}</small>
+              </td>
+              <td>
+                <small class="{% if invoice.is_overdue %}text-danger{% else %}text-muted{% endif %}">
+                  {{ invoice.due_date }}
+                  {% if invoice.is_overdue %}
+                  <i class="bi bi-exclamation-triangle ms-1"></i>
+                  {% endif %}
+                </small>
+              </td>
+              <td class="text-end">
+                <span class="fw-medium">{{ invoice.total|currency }}€</span>
+              </td>
+              <td>
+                <span class="badge bg-{{ invoice.status_color }} clickable-status" data-invoice-id="{{ invoice.id }}" style="cursor: pointer;">{{ invoice.status_display }}</span>
+              </td>
+              <td class="text-end">
+                <div class="d-flex justify-content-end">
+                  <!-- All actions in one compact btn-group -->
+                  <div class="btn-group btn-group-sm" role="group">
+                    <a href="{{ url_for('invoices.view_invoice', invoice_id=invoice.id) }}" 
+                       class="btn btn-outline-primary" 
+                       title="Vaata arvet">
+                      <i class="bi bi-eye"></i>
+                    </a>
+                    <a href="{{ url_for('invoices.edit_invoice', invoice_id=invoice.id) }}" 
+                       class="btn btn-outline-secondary" 
+                       title="Muuda arvet">
+                      <i class="bi bi-pencil"></i>
+                    </a>
+                    <a href="/invoice/{{ invoice.id }}/pdf/{{ default_pdf_template }}" 
+                       class="btn btn-outline-success" 
+                       target="_blank"
+                       title="Laadi alla PDF ({{ default_pdf_template }})">
+                      <i class="bi bi-download"></i>
+                    </a>
+                    <button type="button" 
+                            class="btn btn-outline-info" 
+                            onclick="emailInvoice({{ invoice.id }}, '{{ invoice.no }}', '{{ invoice.client }}')"
+                            title="Saada e-mailiga">
+                      <i class="bi bi-envelope"></i>
+                    </button>
+                    <button type="button" 
+                            class="btn btn-outline-warning" 
+                            onclick="duplicateInvoice({{ invoice.id }}, '{{ invoice.no }}')"
+                            title="Dubleeri arve">
+                      <i class="bi bi-copy"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-danger" 
+                            onclick="deleteInvoice({{ invoice.id }}, '{{ invoice.no }}')" 
+                            title="Kustuta arve">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="text-center py-5">
+        <div class="mb-3">
+          <i class="bi bi-file-earmark-text display-1 text-muted"></i>
+        </div>
+        <h5 class="text-muted mb-2">Arveid ei leitud</h5>
+        <p class="text-muted mb-3">Lisa esimene arve, et alustada arveldamist.</p>
+        <a href="{{ url_for('invoices.new_invoice') }}" class="btn btn-primary">
+          <i class="bi bi-plus-lg me-1"></i>Loo esimene arve
+        </a>
+      </div>
+      {% endif %}
+    </div>
+    
+    <!-- Pagination Controls -->
+    <div class="bp-card-footer d-flex justify-content-between align-items-center py-3 px-3">
+      <!-- Rows per page -->
+      <div class="d-flex align-items-center gap-2">
+        <span class="text-muted small fw-medium">Ridu lehel:</span>
+        <div class="dropdown">
+          <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 12px; min-width: 60px;">
+            {{ request.args.get('per_page', '10') }}
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item {% if request.args.get('per_page', '10') == '10' %}active{% endif %}" href="javascript:void(0)" onclick="changeRowsPerPage('10')">10</a></li>
+            <li><a class="dropdown-item {% if request.args.get('per_page', '10') == '25' %}active{% endif %}" href="javascript:void(0)" onclick="changeRowsPerPage('25')">25</a></li>
+            <li><a class="dropdown-item {% if request.args.get('per_page', '10') == '50' %}active{% endif %}" href="javascript:void(0)" onclick="changeRowsPerPage('50')">50</a></li>
+            <li><a class="dropdown-item {% if request.args.get('per_page', '10') == '100' %}active{% endif %}" href="javascript:void(0)" onclick="changeRowsPerPage('100')">100</a></li>
+          </ul>
+        </div>
+        <span class="text-muted small">kirjet</span>
+      </div>
+      
+      <!-- Page info and navigation -->
+      <div class="d-flex align-items-center gap-3">
+        <span class="text-muted small">
+          {% if total_count > 0 %}
+            Kuvatakse {{ start_item }}-{{ end_item }} / {{ total_count }} arvet
+          {% else %}
+            Arveid ei leitud
+          {% endif %}
+        </span>
+        
+        {% if total_pages > 1 %}
+        <!-- Pagination buttons -->
+        <div class="d-flex align-items-center gap-1">
+          <!-- Previous page -->
+          {% if current_page > 1 %}
+          <a href="{{ url_for('invoices.invoices', page=current_page-1, per_page=per_page, status=current_status, client_id=current_client_id, search=current_search, date_from=request.args.get('date_from', ''), date_to=request.args.get('date_to', ''), sort=current_sort, dir=current_dir) }}" 
+             class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-chevron-left"></i>
+          </a>
+          {% else %}
+          <button class="btn btn-outline-secondary btn-sm" disabled>
+            <i class="bi bi-chevron-left"></i>
+          </button>
+          {% endif %}
+          
+          <!-- Page numbers -->
+          {% set start_page = [1, current_page - 2]|max %}
+          {% set end_page = [total_pages, current_page + 2]|min %}
+          
+          {% if start_page > 1 %}
+            <a href="{{ url_for('invoices.invoices', page=1, per_page=per_page, status=current_status, client_id=current_client_id, search=current_search, date_from=request.args.get('date_from', ''), date_to=request.args.get('date_to', ''), sort=current_sort, dir=current_dir) }}" 
+               class="btn btn-outline-secondary btn-sm">1</a>
+            {% if start_page > 2 %}
+              <span class="text-muted small">...</span>
+            {% endif %}
+          {% endif %}
+          
+          {% for page_num in range(start_page, end_page + 1) %}
+            {% if page_num == current_page %}
+              <button class="btn btn-primary btn-sm">{{ page_num }}</button>
+            {% else %}
+              <a href="{{ url_for('invoices.invoices', page=page_num, per_page=per_page, status=current_status, client_id=current_client_id, search=current_search, date_from=request.args.get('date_from', ''), date_to=request.args.get('date_to', ''), sort=current_sort, dir=current_dir) }}" 
+                 class="btn btn-outline-secondary btn-sm">{{ page_num }}</a>
+            {% endif %}
+          {% endfor %}
+          
+          {% if end_page < total_pages %}
+            {% if end_page < total_pages - 1 %}
+              <span class="text-muted small">...</span>
+            {% endif %}
+            <a href="{{ url_for('invoices.invoices', page=total_pages, per_page=per_page, status=current_status, client_id=current_client_id, search=current_search, date_from=request.args.get('date_from', ''), date_to=request.args.get('date_to', ''), sort=current_sort, dir=current_dir) }}" 
+               class="btn btn-outline-secondary btn-sm">{{ total_pages }}</a>
+          {% endif %}
+          
+          <!-- Next page -->
+          {% if current_page < total_pages %}
+          <a href="{{ url_for('invoices.invoices', page=current_page+1, per_page=per_page, status=current_status, client_id=current_client_id, search=current_search, date_from=request.args.get('date_from', ''), date_to=request.args.get('date_to', ''), sort=current_sort, dir=current_dir) }}" 
+             class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-chevron-right"></i>
+          </a>
+          {% else %}
+          <button class="btn btn-outline-secondary btn-sm" disabled>
+            <i class="bi bi-chevron-right"></i>
+          </button>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Status Change Confirmation Modal -->
+<div class="modal fade" id="statusModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="statusModalTitle">Muuda staatust</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="statusModalBody">
+        <!-- Dynamic content -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tühista</button>
+        <button type="button" class="btn btn-primary" id="statusConfirmButton">Kinnita</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Email Confirmation Modal -->
+<div class="modal fade" id="emailModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Saada arve e-mailiga</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="emailModalBody">
+        <!-- Dynamic content -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tühista</button>
+        <button type="button" class="btn btn-primary" id="emailConfirmButton">Saada arve</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Duplicate Confirmation Modal -->
+<div class="modal fade" id="duplicateModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Dubleeri arve</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="duplicateModalBody">
+        <!-- Dynamic content -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tühista</button>
+        <button type="button" class="btn btn-warning" id="duplicateConfirmButton">Dubleeri arve</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Kustuta arve</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="deleteModalBody">
+        <!-- Dynamic content -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tühista</button>
+        <button type="button" class="btn btn-danger" id="deleteConfirmButton">Kustuta arve</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Custom calendar - no external dependencies -->
+<script>
+// Real-time search functionality
+let searchTimeout;
+const searchInput = document.getElementById('realtime-search');
+
+function performRealtimeSearch() {
+  const searchTerm = searchInput.value.toLowerCase().trim();
+  const tableRows = document.querySelectorAll('.table tbody tr');
+  
+  tableRows.forEach(row => {
+    const invoiceNumber = row.querySelector('td:first-child .fw-medium')?.textContent.toLowerCase() || '';
+    const clientName = row.querySelector('td:nth-child(2) .fw-medium')?.textContent.toLowerCase() || '';
+    
+    if (searchTerm === '' || invoiceNumber.includes(searchTerm) || clientName.includes(searchTerm)) {
+      row.style.display = '';
+    } else {
+      row.style.display = 'none';
+    }
+  });
+  
+  // Update statistics in the info bar  
+  const visibleRows = document.querySelectorAll('.table tbody tr:not([style*="display: none"])');
+  const leitudCount = document.querySelector('.badge.bg-primary');
+  if (leitudCount) {
+    leitudCount.textContent = visibleRows.length;
+  }
+  
+  // Calculate total for visible rows  
+  let visibleTotal = 0;
+  let makstudCount = 0;
+  let maksmataCount = 0;
+  let overdueCount = 0;
+  let makstudTotalAmount = 0;
+  let maksmataeTotalAmount = 0;
+  let overdueTotalAmount = 0;
+  
+  visibleRows.forEach(row => {
+    const totalCell = row.querySelector('td:nth-child(5) .fw-medium');
+    const statusBadge = row.querySelector('td:nth-child(6) .badge');
+    const dueDateCell = row.querySelector('td:nth-child(4) small');
+    
+    if (totalCell) {
+      const totalText = totalCell.textContent.replace('€', '').replace(/\s/g, '').replace(',', '.').trim();
+      const total = parseFloat(totalText) || 0;
+      visibleTotal += total;
+      
+      // Count status-based statistics
+      if (statusBadge) {
+        const statusText = statusBadge.textContent.trim();
+        const hasOverdueIcon = dueDateCell && dueDateCell.querySelector('.bi-exclamation-triangle');
+        
+        if (statusText === 'Makstud') {
+          makstudCount++;
+          makstudTotalAmount += total;
+        } else if (statusText === 'Maksmata') {
+          maksmataCount++;
+          maksmataeTotalAmount += total;
+        } else if (statusText === 'Tähtaeg ületatud' || hasOverdueIcon) {
+          overdueCount++;
+          overdueTotalAmount += total;
+        }
+      }
+    }
+  });
+  
+  
+  // Update statistics card
+  const statsTotalCount = document.getElementById('stats-total-count');
+  const statsTotalAmount = document.getElementById('stats-total-amount');
+  const statsMakstudCount = document.getElementById('stats-makstud-count');
+  const statsMakstudTotal = document.getElementById('stats-makstud-total');
+  const statsMaksmataCount = document.getElementById('stats-maksmata-count');
+  const statsMaksmataTotal = document.getElementById('stats-maksmata-total');
+  const statsOverdueCount = document.getElementById('stats-overdue-count');
+  const statsOverdueTotal = document.getElementById('stats-overdue-total');
+  
+  if (statsTotalCount) {
+    statsTotalCount.textContent = visibleRows.length;
+  }
+  if (statsTotalAmount) {
+    statsTotalAmount.textContent = visibleTotal.toFixed(2) + '€';
+  }
+  if (statsMakstudCount) {
+    statsMakstudCount.textContent = makstudCount;
+  }
+  if (statsMakstudTotal) {
+    statsMakstudTotal.textContent = makstudTotalAmount.toFixed(2) + '€';
+  }
+  if (statsMaksmataCount) {
+    statsMaksmataCount.textContent = maksmataCount;
+  }
+  if (statsMaksmataTotal) {
+    statsMaksmataTotal.textContent = maksmataeTotalAmount.toFixed(2) + '€';
+  }
+  if (statsOverdueCount) {
+    statsOverdueCount.textContent = overdueCount;
+  }
+  if (statsOverdueTotal) {
+    statsOverdueTotal.textContent = overdueTotalAmount.toFixed(2) + '€';
+  }
+}
+
+if (searchInput) {
+  searchInput.addEventListener('input', function() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(performRealtimeSearch, 150); // Debounce for better performance
+  });
+  
+  // Initialize statistics on page load (always call to set initial values)
+  performRealtimeSearch();
+}
+
+// Initialize auto-submit filters on page load
+
+// Change status function
+function changeStatus(invoiceId, newStatus) {
+  const statusLabels = {
+    'maksmata': 'maksmata',
+    'makstud': 'makstud'
+  };
+  
+  const statusDescriptions = {
+    'maksmata': 'Märkida arve maksmata?',
+    'makstud': 'Märkida arve makstud?'
+  };
+  
+  document.getElementById('statusModalTitle').textContent = `Märgi arve ${statusLabels[newStatus]}`;
+  document.getElementById('statusModalBody').innerHTML = `<p class="mb-0">${statusDescriptions[newStatus]}</p>`;
+  
+  document.getElementById('statusConfirmButton').onclick = function() {
+    // Create form and submit status change request
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = `/invoices/${invoiceId}/status/${newStatus}`;
+    
+    const csrfToken = document.querySelector('meta[name=csrf-token]');
+    if (csrfToken) {
+      const csrfInput = document.createElement('input');
+      csrfInput.type = 'hidden';
+      csrfInput.name = 'csrf_token';
+      csrfInput.value = csrfToken.getAttribute('content');
+      form.appendChild(csrfInput);
+    }
+    
+    document.body.appendChild(form);
+    form.submit();
+  };
+  
+  new bootstrap.Modal(document.getElementById('statusModal')).show();
+}
+
+// Email invoice function
+function emailInvoice(invoiceId, invoiceNumber, clientName) {
+  document.getElementById('emailModalBody').innerHTML = `
+    <p class="mb-2">Kas soovid saata arvet "<strong>${invoiceNumber}</strong>" kliendile <strong>${clientName}</strong>?</p>
+    <small class="text-muted">Arve saadetakse kliendi e-maili aadressile PDF-failina.</small>
+  `;
+  
+  document.getElementById('emailConfirmButton').onclick = function() {
+    // Create form and submit email request
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = `/invoices/${invoiceId}/email`;
+    
+    const csrfToken = document.querySelector('meta[name=csrf-token]');
+    if (csrfToken) {
+      const csrfInput = document.createElement('input');
+      csrfInput.type = 'hidden';
+      csrfInput.name = 'csrf_token';
+      csrfInput.value = csrfToken.getAttribute('content');
+      form.appendChild(csrfInput);
+    }
+    
+    document.body.appendChild(form);
+    form.submit();
+  };
+  
+  new bootstrap.Modal(document.getElementById('emailModal')).show();
+}
+
+// Duplicate invoice function
+function duplicateInvoice(invoiceId, invoiceNumber) {
+  document.getElementById('duplicateModalBody').innerHTML = `
+    <p class="mb-2">Kas soovid dubleerida arvet "<strong>${invoiceNumber}</strong>"?</p>
+    <small class="text-muted">Luuakse uus arve mustandina tänase kuupäevaga ja uue numbriga.</small>
+  `;
+  
+  document.getElementById('duplicateConfirmButton').onclick = function() {
+    // Create form and submit duplicate request
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = `/invoices/${invoiceId}/duplicate`;
+    
+    const csrfToken = document.querySelector('meta[name=csrf-token]');
+    if (csrfToken) {
+      const csrfInput = document.createElement('input');
+      csrfInput.type = 'hidden';
+      csrfInput.name = 'csrf_token';
+      csrfInput.value = csrfToken.getAttribute('content');
+      form.appendChild(csrfInput);
+    }
+    
+    document.body.appendChild(form);
+    form.submit();
+  };
+  
+  new bootstrap.Modal(document.getElementById('duplicateModal')).show();
+}
+
+// Delete invoice function
+function deleteInvoice(invoiceId, invoiceNumber) {
+  document.getElementById('deleteModalBody').innerHTML = `
+    <p class="mb-2">Kas oled kindel, et soovid kustutada arve "<strong>${invoiceNumber}</strong>"?</p>
+    <small class="text-muted">Seda toimingut ei saa tagasi võtta.</small>
+  `;
+  
+  document.getElementById('deleteConfirmButton').onclick = function() {
+    // Create form and submit delete request
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = `/invoices/${invoiceId}/delete`;
+    
+    const csrfToken = document.querySelector('meta[name=csrf-token]');
+    if (csrfToken) {
+      const csrfInput = document.createElement('input');
+      csrfInput.type = 'hidden';
+      csrfInput.name = 'csrf_token';
+      csrfInput.value = csrfToken.getAttribute('content');
+      form.appendChild(csrfInput);
+    }
+    
+    document.body.appendChild(form);
+    form.submit();
+  };
+  
+  new bootstrap.Modal(document.getElementById('deleteModal')).show();
+}
+
+// Export to CSV function
+function exportToCSV() {
+  const table = document.querySelector('.table');
+  const rows = Array.from(table.querySelectorAll('tr'));
+  
+  const csvContent = rows.map(row => {
+    const cells = Array.from(row.querySelectorAll('th, td'));
+    return cells.map(cell => {
+      // Remove action buttons and get clean text
+      const clone = cell.cloneNode(true);
+      const buttons = clone.querySelectorAll('button, .btn-group, .dropdown');
+      buttons.forEach(btn => btn.remove());
+      return '"' + clone.textContent.trim().replace(/"/g, '""') + '"';
+    }).join(',');
+  }).join('\n');
+  
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  link.setAttribute('href', url);
+  link.setAttribute('download', 'arved.csv');
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+// Handle clickable status badges
+function handleStatusClick(event) {
+  const badge = event.target;
+  const invoiceId = badge.getAttribute('data-invoice-id');
+  const currentStatus = badge.textContent.trim();
+  
+  // Determine the new status (toggle between Maksmata/Makstud)
+  let newStatus;
+  if (currentStatus === 'Maksmata' || currentStatus === 'Tähtaeg ületatud') {
+    newStatus = 'makstud';
+  } else if (currentStatus === 'Makstud') {
+    newStatus = 'maksmata';
+  } else {
+    console.error('Unknown status:', currentStatus);
+    return;
+  }
+  
+  // Show loading state
+  const originalContent = badge.innerHTML;
+  badge.innerHTML = '<i class="spinner-border spinner-border-sm" role="status"></i>';
+  badge.style.pointerEvents = 'none';
+  
+  // Get CSRF token
+  const csrfToken = document.querySelector('meta[name=csrf-token]');
+  if (!csrfToken) {
+    console.error('CSRF token not found');
+    badge.innerHTML = originalContent;
+    badge.style.pointerEvents = 'auto';
+    return;
+  }
+  
+  // Make AJAX request
+  fetch(`/invoices/${invoiceId}/status/${newStatus}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRFToken': csrfToken.getAttribute('content')
+    },
+    body: `csrf_token=${encodeURIComponent(csrfToken.getAttribute('content'))}`
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      // Update the badge with new status
+      badge.className = `badge bg-${data.status_color} clickable-status`;
+      badge.innerHTML = data.status_display;
+      
+      // Show success message
+      showToast(data.message, 'success');
+    } else {
+      // Restore original content and show error
+      badge.innerHTML = originalContent;
+      showToast(data.message, 'error');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    badge.innerHTML = originalContent;
+    showToast('Staatuse muutmisel tekkis viga. Palun proovi uuesti.', 'error');
+  })
+  .finally(() => {
+    badge.style.pointerEvents = 'auto';
+  });
+}
+
+// Show toast notification
+function showToast(message, type) {
+  // Create toast element
+  const toastId = 'statusToast' + Date.now();
+  const bgColor = type === 'success' ? '#198754' : '#dc3545'; // Use system success/danger colors
+  const textColor = '#ffffff';
+  
+  const toastHtml = `
+    <div class="toast status-toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true" id="${toastId}" style="background-color: ${bgColor};">
+      <div class="d-flex">
+        <div class="toast-body">
+          ${message}
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  `;
+  
+  // Add to toast container (create if doesn't exist)
+  let toastContainer = document.getElementById('toastContainer');
+  if (!toastContainer) {
+    toastContainer = document.createElement('div');
+    toastContainer.id = 'toastContainer';
+    toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+    toastContainer.style.zIndex = '9999';
+    document.body.appendChild(toastContainer);
+  }
+  
+  toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+  
+  // Show toast
+  const toastElement = document.getElementById(toastId);
+  const toast = new bootstrap.Toast(toastElement);
+  toast.show();
+  
+  // Remove from DOM after hiding
+  toastElement.addEventListener('hidden.bs.toast', () => {
+    toastElement.remove();
+  });
+}
+
+// Custom Calendar - Perfect seamless date range picker
+class CustomCalendar {
+  constructor() {
+    this.currentDate = new Date();
+    this.selectedStartDate = null;
+    this.selectedEndDate = null;
+    this.isSelectingRange = false;
+    
+    this.monthNames = [
+      'Jaanuar', 'Veebruar', 'Märts', 'Aprill', 'Mai', 'Juuni',
+      'Juuli', 'August', 'September', 'Oktoober', 'November', 'Detsember'
+    ];
+    
+    this.init();
+  }
+  
+  init() {
+    // Initialize existing dates
+    this.loadExistingDates();
+    
+    // Setup event listeners
+    this.setupEventListeners();
+    
+    // Render initial calendar
+    this.render();
+  }
+  
+  loadExistingDates() {
+    const dateFromInput = document.getElementById('date_from');
+    const dateToInput = document.getElementById('date_to');
+    const dateRangeInput = document.getElementById('dateRangePicker');
+    
+    if (dateFromInput.value && dateToInput.value) {
+      this.selectedStartDate = this.parseDateFromBackend(dateFromInput.value);
+      this.selectedEndDate = this.parseDateFromBackend(dateToInput.value);
+      
+      if (this.selectedStartDate && this.selectedEndDate) {
+        dateRangeInput.value = this.formatDateForDisplay(this.selectedStartDate) + ' - ' + this.formatDateForDisplay(this.selectedEndDate);
+      }
+    }
+  }
+  
+  setupEventListeners() {
+    const dateRangeInput = document.getElementById('dateRangePicker');
+    const customCalendar = document.getElementById('customCalendar');
+    const prevButton = document.getElementById('prevMonth');
+    const nextButton = document.getElementById('nextMonth');
+    const leftMonthTitle = document.getElementById('leftMonthTitle');
+    const rightMonthTitle = document.getElementById('rightMonthTitle');
+    const confirmButton = document.getElementById('confirmCalendar');
+    const cancelButton = document.getElementById('cancelCalendar');
+    
+    // Show calendar on any input interaction
+    dateRangeInput.addEventListener('focus', () => {
+      customCalendar.classList.add('show');
+    });
+    
+    dateRangeInput.addEventListener('click', () => {
+      customCalendar.classList.add('show');
+    });
+    
+    // Hide when clicking outside (only if not interacting with calendar)
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.date-range-container') && 
+          !e.target.closest('.custom-calendar')) {
+        customCalendar.classList.remove('show');
+      }
+    });
+    
+    // Navigation - prevent event bubbling
+    prevButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.currentDate.setMonth(this.currentDate.getMonth() - 1);
+      this.render();
+    });
+    
+    nextButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.currentDate.setMonth(this.currentDate.getMonth() + 1);
+      this.render();
+    });
+    
+    // Year editing functionality - prevent event bubbling
+    leftMonthTitle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.editYear('left');
+    });
+    
+    rightMonthTitle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.editYear('right');
+    });
+    
+    // Handle manual input
+    dateRangeInput.addEventListener('input', () => {
+      this.handleManualInput();
+    });
+    
+    dateRangeInput.addEventListener('blur', () => {
+      this.validateAndApplyManualInput();
+    });
+    
+    dateRangeInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        this.validateManualInput();
+        dateRangeInput.blur();
+      }
+    });
+    
+    // Button event listeners - prevent event bubbling
+    confirmButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.confirmSelection();
+    });
+    
+    cancelButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.cancelSelection();
+    });
+  }
+  
+  render() {
+    this.renderMonth('left', this.currentDate);
+    
+    const nextMonth = new Date(this.currentDate);
+    nextMonth.setMonth(nextMonth.getMonth() + 1);
+    this.renderMonth('right', nextMonth);
+    
+    // Update confirm button state
+    this.updateConfirmButton();
+  }
+  
+  renderMonth(side, date) {
+    const monthTitle = document.getElementById(side + 'MonthTitle');
+    const monthDays = document.getElementById(side + 'MonthDays');
+    
+    monthTitle.textContent = this.monthNames[date.getMonth()] + ' ' + date.getFullYear();
+    
+    const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+    const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    const startDate = new Date(firstDay);
+    startDate.setDate(startDate.getDate() - firstDay.getDay() + 1); // Start from Monday
+    
+    monthDays.innerHTML = '';
+    
+    for (let i = 0; i < 42; i++) {
+      const currentDate = new Date(startDate);
+      currentDate.setDate(startDate.getDate() + i);
+      
+      const dayElement = document.createElement('div');
+      dayElement.className = 'calendar-day';
+      dayElement.textContent = currentDate.getDate();
+      
+      // Classes for styling
+      if (currentDate.getMonth() !== date.getMonth()) {
+        dayElement.classList.add('other-month');
+      }
+      
+      if (this.isToday(currentDate)) {
+        dayElement.classList.add('today');
+      }
+      
+      if (this.isSelected(currentDate)) {
+        if (this.isStartDate(currentDate)) {
+          dayElement.classList.add('range-start');
+        } else if (this.isEndDate(currentDate)) {
+          dayElement.classList.add('range-end');
+        } else {
+          dayElement.classList.add('selected');
+        }
+      }
+      
+      if (this.isInRange(currentDate)) {
+        dayElement.classList.add('in-range');
+      }
+      
+      // Click handler - prevent event bubbling
+      dayElement.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.selectDate(currentDate);
+      });
+      
+      monthDays.appendChild(dayElement);
+    }
+  }
+  
+  selectDate(date) {
+    if (!this.selectedStartDate || (this.selectedStartDate && this.selectedEndDate)) {
+      // Start new selection
+      this.selectedStartDate = new Date(date);
+      this.selectedEndDate = null;
+      this.isSelectingRange = true;
+    } else if (this.isSelectingRange) {
+      // Complete range selection
+      if (date < this.selectedStartDate) {
+        this.selectedEndDate = this.selectedStartDate;
+        this.selectedStartDate = new Date(date);
+      } else {
+        this.selectedEndDate = new Date(date);
+      }
+      this.isSelectingRange = false;
+      
+      // Enable confirm button
+      this.updateConfirmButton();
+    }
+    
+    this.render();
+  }
+  
+  updateInputs() {
+    const dateFromInput = document.getElementById('date_from');
+    const dateToInput = document.getElementById('date_to');
+    const dateRangeInput = document.getElementById('dateRangePicker');
+    
+    if (this.selectedStartDate && this.selectedEndDate) {
+      dateFromInput.value = this.formatDateForBackend(this.selectedStartDate);
+      dateToInput.value = this.formatDateForBackend(this.selectedEndDate);
+      dateRangeInput.value = this.formatDateForDisplay(this.selectedStartDate) + ' - ' + this.formatDateForDisplay(this.selectedEndDate);
+    } else {
+      dateFromInput.value = '';
+      dateToInput.value = '';
+      dateRangeInput.value = '';
+    }
+  }
+  
+  updateConfirmButton() {
+    const confirmButton = document.getElementById('confirmCalendar');
+    const hasSelection = this.selectedStartDate && this.selectedEndDate;
+    
+    confirmButton.disabled = !hasSelection;
+    
+    if (hasSelection) {
+      const days = Math.ceil((this.selectedEndDate - this.selectedStartDate) / (1000 * 60 * 60 * 24)) + 1;
+      confirmButton.innerHTML = `<i class="bi bi-check-lg me-1"></i>Kinnita (${days} päeva)`;
+    } else {
+      confirmButton.innerHTML = '<i class="bi bi-check-lg me-1"></i>Kinnita';
+    }
+  }
+  
+  confirmSelection() {
+    if (this.selectedStartDate && this.selectedEndDate) {
+      this.updateInputs();
+      
+      // Hide calendar first
+      document.getElementById('customCalendar').classList.remove('show');
+      
+      // Then submit form
+      this.autoSubmit();
+    }
+  }
+  
+  cancelSelection() {
+    // Clear current selection (don't restore, just clear)
+    this.selectedStartDate = null;
+    this.selectedEndDate = null;
+    this.isSelectingRange = false;
+    
+    // Clear input display
+    const dateRangeInput = document.getElementById('dateRangePicker');
+    dateRangeInput.value = '';
+    dateRangeInput.style.borderColor = '';
+    dateRangeInput.style.backgroundColor = '';
+    
+    // Update calendar and button
+    this.render();
+    this.updateConfirmButton();
+    
+    // Keep calendar open for new selection
+  }
+  
+  autoSubmit() {
+    const form = document.getElementById('dateRangePicker').closest('form');
+    if (form) {
+      setTimeout(() => {
+        form.submit();
+      }, 100);
+    }
+  }
+  
+  editYear(side) {
+    const titleElement = document.getElementById(side + 'MonthTitle');
+    const currentText = titleElement.textContent;
+    const parts = currentText.split(' ');
+    const monthName = parts[0];
+    const currentYear = parseInt(parts[1]);
+    
+    // Create input element
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.value = currentYear;
+    input.min = '1900';
+    input.max = '2100';
+    input.style.width = '80px';
+    input.style.textAlign = 'center';
+    input.style.border = '1px solid #114f68';
+    input.style.borderRadius = '4px';
+    input.style.background = '#ffffff';
+    input.style.color = '#155E75';
+    input.style.fontSize = '1.1rem';
+    input.style.fontWeight = '600';
+    
+    // Replace title with input
+    titleElement.innerHTML = monthName + ' ';
+    titleElement.appendChild(input);
+    input.focus();
+    input.select();
+    
+    // Handle year change
+    const finishEdit = () => {
+      const newYear = parseInt(input.value);
+      if (newYear >= 1900 && newYear <= 2100) {
+        if (side === 'left') {
+          this.currentDate.setFullYear(newYear);
+        } else {
+          // For right month, adjust currentDate accordingly
+          const rightDate = new Date(this.currentDate);
+          rightDate.setMonth(rightDate.getMonth() + 1);
+          rightDate.setFullYear(newYear);
+          this.currentDate.setFullYear(newYear);
+          this.currentDate.setMonth(rightDate.getMonth() - 1);
+        }
+        this.render();
+      } else {
+        this.render(); // Restore original if invalid
+      }
+    };
+    
+    input.addEventListener('blur', finishEdit);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        finishEdit();
+      } else if (e.key === 'Escape') {
+        this.render(); // Cancel edit
+      }
+    });
+  }
+  
+  handleManualInput() {
+    // Real-time validation feedback could be added here
+    const dateRangeInput = document.getElementById('dateRangePicker');
+    const value = dateRangeInput.value.trim();
+    
+    // Remove invalid styling if user is typing
+    dateRangeInput.style.borderColor = '';
+    dateRangeInput.style.backgroundColor = '';
+  }
+  
+  validateManualInput() {
+    const dateRangeInput = document.getElementById('dateRangePicker');
+    const value = dateRangeInput.value.trim();
+    
+    if (!value) {
+      // Clear selection
+      this.selectedStartDate = null;
+      this.selectedEndDate = null;
+      this.render();
+      this.updateConfirmButton();
+      return;
+    }
+    
+    // Parse the input
+    const dateRange = this.parseManualInput(value);
+    
+    if (dateRange && dateRange.start && dateRange.end) {
+      // Valid input - update selection
+      this.selectedStartDate = dateRange.start;
+      this.selectedEndDate = dateRange.end;
+      this.isSelectingRange = false;
+      
+      // Update calendar view to show the selected dates
+      this.currentDate = new Date(dateRange.start);
+      
+      // Update calendar and button
+      this.render();
+      this.updateConfirmButton();
+      
+      // Show success styling
+      dateRangeInput.style.borderColor = '#10b981';
+      dateRangeInput.style.backgroundColor = '#f0fdf4';
+      
+      // Show calendar for confirmation
+      document.getElementById('customCalendar').classList.add('show');
+      
+    } else {
+      // Invalid input - show error styling
+      dateRangeInput.style.borderColor = '#ef4444';
+      dateRangeInput.style.backgroundColor = '#fef2f2';
+      
+      // Restore previous valid value after a delay
+      setTimeout(() => {
+        if (this.selectedStartDate && this.selectedEndDate) {
+          dateRangeInput.value = this.formatDateForDisplay(this.selectedStartDate) + ' - ' + this.formatDateForDisplay(this.selectedEndDate);
+        } else {
+          dateRangeInput.value = '';
+        }
+        dateRangeInput.style.borderColor = '';
+        dateRangeInput.style.backgroundColor = '';
+      }, 2000);
+    }
+  }
+  
+  validateAndApplyManualInput() {
+    // For blur event - just validate without showing calendar
+    this.validateManualInput();
+  }
+  
+  parseManualInput(value) {
+    // Support multiple formats:
+    // "01.07.2025 - 26.07.2025"
+    // "1.7.2025 - 26.7.2025" 
+    // "01.07.25 - 26.07.25"
+    // "1.7 - 26.7" (current year)
+    // "1-26.7" or "1-26.07.2025"
+    
+    // First try standard range format with " - "
+    if (value.includes(' - ')) {
+      const parts = value.split(' - ');
+      if (parts.length === 2) {
+        const startDate = this.parseDate(parts[0].trim());
+        const endDate = this.parseDate(parts[1].trim());
+        
+        if (startDate && endDate && startDate <= endDate) {
+          return { start: startDate, end: endDate };
+        }
+      }
+    }
+    
+    // Try dash format "1-26.7.2025"
+    const dashMatch = value.match(/^(\d{1,2})-(\d{1,2})\.(\d{1,2})\.?(\d{2,4})?$/);
+    if (dashMatch) {
+      const startDay = parseInt(dashMatch[1]);
+      const endDay = parseInt(dashMatch[2]);
+      const month = parseInt(dashMatch[3]);
+      const year = dashMatch[4] ? this.normalizeYear(parseInt(dashMatch[4])) : new Date().getFullYear();
+      
+      const startDate = new Date(year, month - 1, startDay);
+      const endDate = new Date(year, month - 1, endDay);
+      
+      if (this.isValidDate(startDate) && this.isValidDate(endDate) && startDate <= endDate) {
+        return { start: startDate, end: endDate };
+      }
+    }
+    
+    return null;
+  }
+  
+  parseDate(dateStr) {
+    // Parse formats like:
+    // "01.07.2025", "1.7.2025", "01.07.25", "1.7"
+    
+    const parts = dateStr.split('.');
+    if (parts.length < 2 || parts.length > 3) return null;
+    
+    const day = parseInt(parts[0]);
+    const month = parseInt(parts[1]);
+    let year;
+    
+    if (parts.length === 3) {
+      year = this.normalizeYear(parseInt(parts[2]));
+    } else {
+      year = new Date().getFullYear();
+    }
+    
+    const date = new Date(year, month - 1, day);
+    return this.isValidDate(date) ? date : null;
+  }
+  
+  normalizeYear(year) {
+    // Convert 2-digit years to 4-digit
+    if (year < 100) {
+      const currentYear = new Date().getFullYear();
+      const currentCentury = Math.floor(currentYear / 100) * 100;
+      
+      // If year is more than 50 years in the future, assume previous century
+      if (year > (currentYear % 100) + 50) {
+        return currentCentury - 100 + year;
+      } else {
+        return currentCentury + year;
+      }
+    }
+    return year;
+  }
+  
+  isValidDate(date) {
+    return date instanceof Date && !isNaN(date) && 
+           date.getFullYear() >= 1900 && date.getFullYear() <= 2100;
+  }
+  
+  // Helper methods
+  isToday(date) {
+    const today = new Date();
+    return date.toDateString() === today.toDateString();
+  }
+  
+  isSelected(date) {
+    return (this.selectedStartDate && date.toDateString() === this.selectedStartDate.toDateString()) ||
+           (this.selectedEndDate && date.toDateString() === this.selectedEndDate.toDateString());
+  }
+  
+  isStartDate(date) {
+    return this.selectedStartDate && date.toDateString() === this.selectedStartDate.toDateString();
+  }
+  
+  isEndDate(date) {
+    return this.selectedEndDate && date.toDateString() === this.selectedEndDate.toDateString();
+  }
+  
+  isInRange(date) {
+    return this.selectedStartDate && this.selectedEndDate &&
+           date > this.selectedStartDate && date < this.selectedEndDate;
+  }
+  
+  formatDateForBackend(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+  
+  formatDateForDisplay(date) {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}.${month}.${year}`;
+  }
+  
+  parseDateFromBackend(dateStr) {
+    if (!dateStr) return null;
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+    }
+    return null;
+  }
+  
+  clear() {
+    this.selectedStartDate = null;
+    this.selectedEndDate = null;
+    this.isSelectingRange = false;
+    
+    document.getElementById('date_from').value = '';
+    document.getElementById('date_to').value = '';
+    document.getElementById('dateRangePicker').value = '';
+    
+    this.render();
+  }
+}
+
+// Initialize custom calendar
+let customCalendar;
+
+function initializeDateRangePicker() {
+  customCalendar = new CustomCalendar();
+}
+
+function clearDateRange() {
+  if (customCalendar) {
+    customCalendar.clear();
+  }
+  
+  // Redirect to clear all filters
+  window.location.href = "{{ url_for('invoices.invoices') }}";
+}
+
+// Pagination function
+function changeRowsPerPage(perPage) {
+  const currentUrl = new URL(window.location);
+  currentUrl.searchParams.set('per_page', perPage);
+  currentUrl.searchParams.set('page', '1'); // Reset to first page when changing page size
+  window.location.href = currentUrl.toString();
+}
+
+
+// Auto-submit filters on change
+document.addEventListener('DOMContentLoaded', function() {
+  const statusSelect = document.querySelector('select[name="status"]');
+  const clientSelect = document.querySelector('select[name="client_id"]');
+  
+  if (statusSelect) {
+    statusSelect.addEventListener('change', function() {
+      this.form.submit();
+    });
+  }
+  
+  if (clientSelect) {
+    clientSelect.addEventListener('change', function() {
+      this.form.submit();
+    });
+  }
+  
+  // Add click event listeners to all status badges
+  const statusBadges = document.querySelectorAll('.clickable-status');
+  statusBadges.forEach(badge => {
+    badge.addEventListener('click', handleStatusClick);
+  });
+  
+  // Initialize date range picker
+  initializeDateRangePicker();
+});
+</script>
+{% endblock %}

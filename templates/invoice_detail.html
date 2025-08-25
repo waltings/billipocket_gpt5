@@ -1,0 +1,492 @@
+{% extends 'layout.html' %}
+{% block title %}Arve {{ invoice.number }} – Billipocket{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+{% endblock %}
+
+{% block content %}
+<section id="invoice-detail" class="mb-4">
+  <!-- Page Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="h3 mb-1">Arve {{ invoice.number }}</h1>
+      <p class="text-muted mb-0">{{ invoice.client.name }} · {{ invoice.date.strftime('%d.%m.%Y') }}</p>
+    </div>
+    <div class="d-flex gap-2">
+      <!-- PDF Template Selector -->
+      <div class="dropdown">
+        <button class="btn btn-sm" type="button" id="templateSelector" data-bs-toggle="dropdown" aria-expanded="false" 
+                style="background: var(--bp-surface); border: 1px solid #cbd5e1; color: var(--bp-sidebar); font-size: 13px;">
+          <span id="templateLabel">PDF: {{ invoice.get_preferred_pdf_template()|title }}</span> <i class="bi bi-file-pdf ms-1"></i>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="templateSelector">
+          <li><a class="dropdown-item template-option{% if invoice.get_preferred_pdf_template() == 'standard' %} active{% endif %}" href="#" data-template="standard">Standard</a></li>
+          <li><a class="dropdown-item template-option{% if invoice.get_preferred_pdf_template() == 'modern' %} active{% endif %}" href="#" data-template="modern">Modern</a></li>
+          <li><a class="dropdown-item template-option{% if invoice.get_preferred_pdf_template() == 'elegant' %} active{% endif %}" href="#" data-template="elegant">Elegant</a></li>
+          <li><a class="dropdown-item template-option{% if invoice.get_preferred_pdf_template() == 'minimal' %} active{% endif %}" href="#" data-template="minimal">Minimal</a></li>
+          <li><a class="dropdown-item template-option{% if invoice.get_preferred_pdf_template() == 'classic' %} active{% endif %}" href="#" data-template="classic">Classic</a></li>
+        </ul>
+      </div>
+      
+      <!-- Preview Button -->
+      <button type="button" class="btn btn-sm" onclick="previewInvoice()" 
+              style="background: var(--bp-primary); border: 1px solid var(--bp-primary); color: white; font-size: 13px;">
+        <i class="bi bi-eye me-1"></i>Eelvaade
+      </button>
+      
+      <!-- PDF Download Button -->
+      <button type="button" class="btn btn-sm" onclick="downloadPDF()" 
+              style="background: var(--bp-success); border: 1px solid var(--bp-success); color: white; font-size: 13px;">
+        <i class="bi bi-download me-1"></i>Laadi alla
+      </button>
+      
+      <!-- Action Buttons -->
+      <a href="{{ url_for('invoices.edit_invoice', invoice_id=invoice.id) }}" class="btn btn-sm" 
+         style="background: var(--bp-surface); border: 1px solid #cbd5e1; color: var(--bp-sidebar); font-size: 13px; text-decoration: none;">
+        <i class="bi bi-pencil me-1"></i>Muuda
+      </a>
+      
+      <a href="{{ url_for('invoices.invoices') }}" class="btn btn-sm" 
+         style="background: var(--bp-surface); border: 1px solid #cbd5e1; color: var(--bp-sidebar); font-size: 13px; text-decoration: none;">
+        <i class="bi bi-arrow-left me-1"></i>Tagasi
+      </a>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Invoice Details -->
+    <div class="col-lg-8">
+      <!-- Invoice Header -->
+      <div class="bp-card mb-4">
+        <div class="bp-card-header">
+          <h2 class="h6 m-0">
+            <i class="bi bi-file-earmark-text me-2"></i>Arve andmed
+          </h2>
+        </div>
+        <div class="bp-card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <h6 class="mb-2">Klient</h6>
+              <div class="border-start border-primary border-2 ps-3">
+                <div>{{ invoice.client.name }}</div>
+                {% if invoice.client.registry_code %}
+                <div class="text-muted">Reg: {{ invoice.client.registry_code }}</div>
+                {% endif %}
+                {% if invoice.client.email %}
+                <div>
+                  <i class="bi bi-envelope me-1"></i>
+                  <a href="mailto:{{ invoice.client.email }}" class="text-decoration-none">{{ invoice.client.email }}</a>
+                </div>
+                {% endif %}
+                {% if invoice.client.phone %}
+                <div>
+                  <i class="bi bi-telephone me-1"></i>
+                  <a href="tel:{{ invoice.client.phone }}" class="text-decoration-none">{{ invoice.client.phone }}</a>
+                </div>
+                {% endif %}
+                {% if invoice.client.address %}
+                <div class="mt-2">{{ invoice.client.address | replace('\n', '<br>') | safe }}</div>
+                {% endif %}
+                {% if invoice.client_extra_info %}
+                <div class="mt-2">{{ invoice.client_extra_info }}</div>
+                {% endif %}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <h6 class="mb-2">Arve Detailid</h6>
+              <table class="table table-borderless mb-0">
+                <tbody>
+                  <tr>
+                    <td class="text-muted">Arve number:</td>
+                    <td>{{ invoice.number }}</td>
+                  </tr>
+                  <tr>
+                    <td class="text-muted">Kuupäev:</td>
+                    <td>{{ invoice.date.strftime('%d.%m.%Y') }}</td>
+                  </tr>
+                  <tr>
+                    <td class="text-muted">Maksetähtaeg:</td>
+                    <td class="{% if invoice.is_overdue %}text-danger fw-medium{% endif %}">
+                      {{ invoice.due_date.strftime('%d.%m.%Y') }}
+                    </td>
+                  </tr>
+                  {% if invoice.payment_terms %}
+                  <tr>
+                    <td class="text-muted">Makse tingimused:</td>
+                    <td>{{ invoice.payment_terms }}</td>
+                  </tr>
+                  {% endif %}
+                  {% if invoice.note %}
+                  <tr>
+                    <td class="text-muted">{{ note_label }}:</td>
+                    <td>{{ invoice.note }}</td>
+                  </tr>
+                  {% endif %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Invoice Lines -->
+      <div class="bp-card">
+        <div class="bp-card-header">
+          <h3 class="h6 m-0">
+            <i class="bi bi-list-ul me-2"></i>Arve read
+          </h3>
+        </div>
+        <div class="bp-card-body p-0">
+          {% if invoice.lines %}
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th class="border-0">Kirjeldus</th>
+                  <th class="border-0 text-center">Kogus</th>
+                  <th class="border-0 text-end">Ühiku hind</th>
+                  <th class="border-0 text-end">Kokku</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for line in invoice.lines %}
+                <tr>
+                  <td>{{ line.description }}</td>
+                  <td class="text-center">{{ line.qty|quantity }}</td>
+                  <td class="text-end">{{ line.unit_price|currency }}€</td>
+                  <td class="text-end fw-medium">{{ line.line_total|currency }}€</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="text-center py-4">
+            <i class="bi bi-exclamation-circle display-6 text-warning"></i>
+            <p class="text-muted mt-2 mb-0">Arvel pole ridu</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Announcements Card -->
+      {% if invoice.announcements %}
+      <div class="bp-card">
+        <div class="bp-card-header">
+          <h3 class="h6 m-0">
+            <i class="bi bi-megaphone me-2"></i>Teadaanded
+          </h3>
+        </div>
+        <div class="bp-card-body">
+          <p class="mb-0">{{ invoice.announcements }}</p>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+      <!-- Invoice Status -->
+      <div class="bp-card mb-4">
+        <div class="bp-card-header d-flex justify-content-between align-items-center">
+          <h3 class="h6 m-0">
+            <i class="bi bi-circle-fill me-2"></i>Staatus
+          </h3>
+          <span class="badge bg-{{ invoice.status_color }} text-white clickable-status fs-6" 
+                data-invoice-id="{{ invoice.id }}" 
+                style="cursor: pointer;" 
+                title="Kliki staatuse muutmiseks">
+            {{ invoice.status_display }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Invoice Totals -->
+      <div class="bp-card mb-4">
+        <div class="bp-card-header">
+          <h3 class="h6 m-0">
+            <i class="bi bi-calculator me-2"></i>Summad
+          </h3>
+        </div>
+        <div class="bp-card-body">
+          <table class="table table-borderless mb-0">
+            <tbody>
+              <tr>
+                <td class="text-muted">Vahesumma:</td>
+                <td class="text-end">{{ invoice.subtotal|currency }}€</td>
+              </tr>
+              <tr>
+                <td class="text-muted">KM ({{ invoice.vat_rate }}%):</td>
+                <td class="text-end">{{ invoice.vat_amount|currency }}€</td>
+              </tr>
+              <tr class="border-top">
+                <td class="fw-bold">Kokku:</td>
+                <td class="text-end fw-bold fs-5">{{ invoice.total|currency }}€</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="bp-card">
+        <div class="bp-card-header">
+          <h4 class="h6 m-0">
+            <i class="bi bi-lightning-charge me-2"></i>Kiirtoimingud
+          </h4>
+        </div>
+        <div class="bp-card-body">
+          <div class="d-grid gap-2">
+            <!-- Status Change Actions -->
+            {% if invoice.status == 'maksmata' %}
+            <form method="POST" action="{{ url_for('invoices.change_status', invoice_id=invoice.id, new_status='makstud') }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+              <button type="submit" class="btn btn-outline-success btn-sm w-100">
+                <i class="bi bi-check-circle me-1"></i>Märgi makstud
+              </button>
+            </form>
+            {% elif invoice.status == 'makstud' %}
+            <form method="POST" action="{{ url_for('invoices.change_status', invoice_id=invoice.id, new_status='maksmata') }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+              <button type="submit" class="btn btn-outline-warning btn-sm w-100">
+                <i class="bi bi-x-circle me-1"></i>Märgi maksmata
+              </button>
+            </form>
+            {% endif %}
+            
+            <!-- Other Actions -->
+            <a href="{{ url_for('invoices.new_invoice') }}?client_id={{ invoice.client_id }}" 
+               class="btn btn-outline-primary btn-sm">
+              <i class="bi bi-plus-lg me-1"></i>Uus arve samale kliendile
+            </a>
+            
+            <a href="{{ url_for('clients.view_client', client_id=invoice.client_id) }}" 
+               class="btn btn-outline-secondary btn-sm">
+              <i class="bi bi-person me-1"></i>Vaata klienti
+            </a>
+            
+            <hr class="my-2">
+            <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="confirmDelete()">
+              <i class="bi bi-trash me-1"></i>Kustuta arve
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Kustuta arve</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p class="mb-2">Kas oled kindel, et soovid kustutada arve "<strong>{{ invoice.number }}</strong>"?</p>
+        <small class="text-muted">Seda toimingut ei saa tagasi võtta.</small>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tühista</button>
+        <form method="POST" action="{{ url_for('invoices.delete_invoice', invoice_id=invoice.id) }}" style="display: inline;">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+          <button type="submit" class="btn btn-danger">
+            <i class="bi bi-trash me-1"></i>Kustuta arve
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let currentTemplate = '{{ invoice.get_preferred_pdf_template() }}';
+
+// Handle clickable status badges - same as in invoices.html
+function handleStatusClick(event) {
+  const badge = event.target;
+  const invoiceId = badge.getAttribute('data-invoice-id');
+  const currentStatus = badge.textContent.trim();
+  
+  // Determine the new status (toggle between Maksmata/Makstud)
+  let newStatus;
+  if (currentStatus === 'Maksmata' || currentStatus === 'Tähtaeg ületatud') {
+    newStatus = 'makstud';
+  } else if (currentStatus === 'Makstud') {
+    newStatus = 'maksmata';
+  } else {
+    console.error('Unknown status:', currentStatus);
+    return;
+  }
+  
+  // Show loading state
+  const originalContent = badge.innerHTML;
+  badge.innerHTML = '<i class="spinner-border spinner-border-sm" role="status"></i>';
+  badge.style.pointerEvents = 'none';
+  
+  // Get CSRF token
+  const csrfToken = document.querySelector('meta[name=csrf-token]');
+  if (!csrfToken) {
+    console.error('CSRF token not found');
+    badge.innerHTML = originalContent;
+    badge.style.pointerEvents = 'auto';
+    return;
+  }
+  
+  // Make AJAX request
+  fetch(`/invoices/${invoiceId}/status/${newStatus}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRFToken': csrfToken.getAttribute('content')
+    },
+    body: `csrf_token=${encodeURIComponent(csrfToken.getAttribute('content'))}`
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      // Update the badge with new status
+      badge.className = `badge bg-${data.status_color} text-white clickable-status fs-6`;
+      badge.innerHTML = data.status_display;
+      
+      // Show success message
+      showToast(data.message, 'success');
+      
+      // Reload page to update all status-dependent elements
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } else {
+      // Restore original content and show error
+      badge.innerHTML = originalContent;
+      showToast(data.message, 'error');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    badge.innerHTML = originalContent;
+    showToast('Staatuse muutmisel tekkis viga. Palun proovi uuesti.', 'error');
+  })
+  .finally(() => {
+    badge.style.pointerEvents = 'auto';
+  });
+}
+
+// Show toast notification
+function showToast(message, type) {
+  // Create toast element
+  const toastId = 'statusToast' + Date.now();
+  const toastHtml = `
+    <div class="toast align-items-center text-bg-${type === 'success' ? 'success' : 'danger'} border-0" role="alert" aria-live="assertive" aria-atomic="true" id="${toastId}">
+      <div class="d-flex">
+        <div class="toast-body">
+          ${message}
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  `;
+  
+  // Add to toast container (create if doesn't exist)
+  let toastContainer = document.getElementById('toastContainer');
+  if (!toastContainer) {
+    toastContainer = document.createElement('div');
+    toastContainer.id = 'toastContainer';
+    toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+    toastContainer.style.zIndex = '9999';
+    document.body.appendChild(toastContainer);
+  }
+  
+  toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+  
+  // Show toast
+  const toastElement = document.getElementById(toastId);
+  const toast = new bootstrap.Toast(toastElement);
+  toast.show();
+  
+  // Remove from DOM after hiding
+  toastElement.addEventListener('hidden.bs.toast', () => {
+    toastElement.remove();
+  });
+}
+
+// Preview invoice in new window
+function previewInvoice() {
+  const previewUrl = `/invoice/{{ invoice.id }}/preview/${currentTemplate}`;
+  
+  // Open in new window with specific size for A4 preview
+  const previewWindow = window.open(
+    previewUrl, 
+    'invoicePreview', 
+    'width=900,height=1200,scrollbars=yes,resizable=yes,menubar=no,toolbar=no,location=no,status=no'
+  );
+  
+  if (previewWindow) {
+    previewWindow.focus();
+  } else {
+    alert('Palun lubage hüpikakende avamist, et näha eelvaadet.');
+  }
+}
+
+// Download PDF with current template
+function downloadPDF() {
+  const url = `/invoice/{{ invoice.id }}/pdf/${currentTemplate}`;
+  window.open(url, '_blank');
+}
+
+// Delete confirmation
+function confirmDelete() {
+  new bootstrap.Modal(document.getElementById('deleteModal')).show();
+}
+
+// Auto-dismiss alerts and initialize
+document.addEventListener('DOMContentLoaded', function() {
+  // Auto-dismiss alerts
+  const alerts = document.querySelectorAll('.alert:not(.alert-permanent)');
+  alerts.forEach(alert => {
+    setTimeout(() => {
+      if (bootstrap && bootstrap.Alert) {
+        const bsAlert = new bootstrap.Alert(alert);
+        bsAlert.close();
+      }
+    }, 5000);
+  });
+  
+  // Template selector dropdown functionality
+  const templateOptions = document.querySelectorAll('.template-option');
+  const templateLabel = document.getElementById('templateLabel');
+  
+  templateOptions.forEach(option => {
+    option.addEventListener('click', function(e) {
+      e.preventDefault();
+      const template = this.getAttribute('data-template');
+      const templateText = this.textContent.trim();
+      
+      // Update current template
+      currentTemplate = template;
+      
+      // Update button text
+      if (templateLabel) {
+        templateLabel.textContent = `PDF: ${templateText}`;
+      }
+      
+      // Update active state
+      templateOptions.forEach(opt => opt.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+  
+  // Add click event listener to status badge
+  const statusBadge = document.querySelector('.clickable-status');
+  if (statusBadge) {
+    statusBadge.addEventListener('click', handleStatusClick);
+  }
+});
+</script>
+{% endblock %}

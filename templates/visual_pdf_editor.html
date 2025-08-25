@@ -1,0 +1,1138 @@
+{% extends 'layout.html' %}
+{% block title %}{{ template.name if template else 'PDF' }} - Visuaalne Redaktor – Billipocket{% endblock %}
+
+<!-- DEBUG: 
+template={{ template }}
+sample_client={{ sample_client }}
+sample_invoice={{ sample_invoice }}
+company={{ company }}
+-->
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.css">
+<style>
+/* Main Layout */
+.visual-editor-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.editor-toolbar {
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+}
+
+.editor-content {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+}
+
+/* Sidebar for variables and tools */
+.editor-sidebar {
+    width: 300px;
+    background: #fff;
+    border-right: 1px solid #dee2e6;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+.sidebar-section {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.sidebar-header {
+    padding: 1rem;
+    background: #f8f9fa;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+.sidebar-content {
+    padding: 1rem;
+}
+
+.sidebar-content.collapsed {
+    display: none;
+}
+
+/* Variable Items - Draggable */
+.variable-item {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    margin: 0.25rem 0;
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    cursor: grab;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.variable-item:hover {
+    background: #f8f9fa;
+    border-color: #0d6efd;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.variable-item:active {
+    cursor: grabbing;
+}
+
+.variable-item .variable-icon {
+    width: 20px;
+    height: 20px;
+    background: #0d6efd;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 10px;
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+}
+
+.variable-item .variable-info {
+    flex: 1;
+}
+
+.variable-name {
+    font-weight: 500;
+    font-size: 0.875rem;
+    color: #333;
+}
+
+.variable-description {
+    font-size: 0.75rem;
+    color: #666;
+    margin-top: 0.125rem;
+}
+
+/* Canvas - PDF Preview Area */
+.editor-canvas {
+    flex: 1;
+    background: #f5f5f5;
+    padding: 2rem;
+    overflow: auto;
+    position: relative;
+}
+
+.pdf-canvas {
+    max-width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    background: white;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    position: relative;
+    padding: 20mm;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: #333;
+}
+
+/* Drop Zone */
+.drop-zone {
+    min-height: 40px;
+    border: 2px dashed transparent;
+    border-radius: 6px;
+    padding: 0.5rem;
+    margin: 0.25rem 0;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.drop-zone.drag-over {
+    border-color: #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+
+.drop-zone:before {
+    content: 'Lohista siia muutujaid';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #999;
+    font-size: 0.875rem;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.drop-zone:empty:before {
+    opacity: 1;
+}
+
+/* Placed Elements */
+.placed-element {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    margin: 0.125rem;
+    background: #e3f2fd;
+    border: 1px solid #2196f3;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+}
+
+.placed-element:hover {
+    background: #bbdefb;
+    border-color: #1976d2;
+}
+
+.placed-element.selected {
+    background: #1976d2;
+    color: white;
+    box-shadow: 0 0 0 2px #42a5f5;
+}
+
+.placed-element .element-controls {
+    position: absolute;
+    top: -30px;
+    right: 0;
+    display: none;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0.25rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    z-index: 10;
+}
+
+.placed-element:hover .element-controls,
+.placed-element.selected .element-controls {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.element-control-btn {
+    padding: 0.125rem 0.25rem;
+    border: none;
+    background: #f8f9fa;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.75rem;
+}
+
+.element-control-btn:hover {
+    background: #e9ecef;
+}
+
+/* Properties Panel */
+.properties-panel {
+    width: 320px;
+    background: #fff;
+    border-left: 1px solid #dee2e6;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+.properties-section {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.property-group {
+    margin-bottom: 1rem;
+}
+
+.property-label {
+    display: block;
+    font-weight: 500;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.property-control {
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.875rem;
+}
+
+.property-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.color-picker-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.color-preview {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Font Controls */
+.font-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.font-size-control {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.size-btn {
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #ced4da;
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.75rem;
+}
+
+.size-btn:hover {
+    background: #f8f9fa;
+}
+
+/* Layout Sections */
+.layout-section {
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    margin: 1rem 0;
+    overflow: hidden;
+}
+
+.layout-header {
+    background: #f8f9fa;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #e9ecef;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.layout-content {
+    padding: 1rem;
+    min-height: 60px;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .editor-sidebar {
+        width: 250px;
+    }
+    .properties-panel {
+        width: 280px;
+    }
+}
+
+/* Drag Ghost */
+.sortable-ghost {
+    opacity: 0.5;
+}
+
+/* Template Sections */
+.template-section {
+    margin-bottom: 2rem;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.section-header {
+    background: #f8f9fa;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #e9ecef;
+    font-weight: 600;
+    color: #495057;
+}
+
+.section-content {
+    padding: 1rem;
+    min-height: 40px;
+}
+
+/* Animation */
+.element-highlight {
+    animation: highlight 0.5s ease;
+}
+
+@keyframes highlight {
+    0% { background: #fff3cd; }
+    100% { background: transparent; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="visual-editor-container">
+  <!-- Toolbar -->
+  <div class="editor-toolbar">
+    <div class="d-flex align-items-center gap-3">
+      <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-brush text-primary"></i>
+        <strong>{{ template.name }} - Visuaalne Redaktor</strong>
+      </div>
+      <div class="text-muted small">{{ template.description }}</div>
+    </div>
+    <div class="d-flex gap-2">
+      <button type="button" class="btn btn-outline-secondary btn-sm" onclick="previewPDF()">
+        <i class="bi bi-eye me-1"></i>Eelvaade
+      </button>
+      <button type="button" class="btn btn-success btn-sm" onclick="saveTemplate()" id="saveBtn">
+        <i class="bi bi-check-lg me-1"></i>Salvesta
+      </button>
+      <a href="{{ url_for('dashboard.pdf_templates') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>Tagasi
+      </a>
+    </div>
+  </div>
+
+  <!-- Main Editor Content -->
+  <div class="editor-content">
+    <!-- Left Sidebar - Variables & Elements -->
+    <div class="editor-sidebar">
+      <!-- Company Variables -->
+      <div class="sidebar-section">
+        <div class="sidebar-header" onclick="toggleSection('company-vars')">
+          <i class="bi bi-building"></i>
+          Ettevõtte andmed
+          <i class="bi bi-chevron-down ms-auto"></i>
+        </div>
+        <div class="sidebar-content" id="company-vars">
+          <div class="variable-item" draggable="true" data-variable="company.company_name">
+            <div class="variable-icon"><i class="bi bi-building"></i></div>
+            <div class="variable-info">
+              <div class="variable-name">Ettevõtte nimi</div>
+              <div class="variable-description">{{ company.company_name or 'Ettevõtte nimi' }}</div>
+            </div>
+          </div>
+          <div class="variable-item" draggable="true" data-variable="company.company_address">
+            <div class="variable-icon"><i class="bi bi-geo-alt"></i></div>
+            <div class="variable-info">
+              <div class="variable-name">Aadress</div>
+              <div class="variable-description">{{ company.company_address or 'Ettevõtte aadress' }}</div>
+            </div>
+          </div>
+          <div class="variable-item" draggable="true" data-variable="company.company_phone">
+            <div class="variable-icon"><i class="bi bi-telephone"></i></div>
+            <div class="variable-info">
+              <div class="variable-name">Telefon</div>
+              <div class="variable-description">{{ company.company_phone or '+372 123 4567' }}</div>
+            </div>
+          </div>
+          <div class="variable-item" draggable="true" data-variable="company.company_email">
+            <div class="variable-icon"><i class="bi bi-envelope"></i></div>
+            <div class="variable-info">
+              <div class="variable-name">E-post</div>
+              <div class="variable-description">{{ company.company_email or 'info@ettevotte.ee' }}</div>
+            </div>
+          </div>
+          <div class="variable-item" draggable="true" data-variable="company.company_bank_account">
+            <div class="variable-icon"><i class="bi bi-credit-card"></i></div>
+            <div class="variable-info">
+              <div class="variable-name">Pangakonto</div>
+              <div class="variable-description">{{ company.company_bank_account or 'EE123456789' }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Client Variables -->
+      <div class="sidebar-section">
+        <div class="sidebar-header" onclick="toggleSection('client-vars')">
+          <i class="bi bi-person"></i>
+          Kliendi andmed
+          <i class="bi bi-chevron-down ms-auto"></i>
+        </div>
+        <div class="sidebar-content" id="client-vars">
+          <div class="variable-item" draggable="true" data-variable="invoice.client.name">
+            <div class="variable-icon"><i class="bi bi-person"></i></div>
+            <div class="variable-info">
+              <div class="variable-name">Kliendi nimi</div>
+              <div class="variable-description">{{ sample_client.name if sample_client else 'Kliendi nimi' }}</div>
+            </div>
+          </div>
+          <div class="variable-item" draggable="true" data-variable="invoice.client.email">
+            <div class="variable-icon"><i class="bi bi-envelope"></i></div>
+            <div class="variable-info">
+              <div class="variable-name">E-post</div>
+              <div class="variable-description">{{ sample_client.email if sample_client and sample_client.email else 'E-posti aadress' }}</div>
+            </div>
+          </div>
+          <div class="variable-item" draggable="true" data-variable="invoice.client.address">
+            <div class="variable-icon"><i class="bi bi-geo-alt"></i></div>
+            <div class="variable-info">
+              <div class="variable-name">Aadress</div>
+              <div class="variable-description">{{ sample_client.address if sample_client and sample_client.address else 'Kliendi aadress' }}</div>
+            </div>
+          </div>
+          <div class="variable-item" draggable="true" data-variable="invoice.client.registry_code">
+            <div class="variable-icon"><i class="bi bi-card-text"></i></div>
+            <div class="variable-info">
+              <div class="variable-name">Registrikood</div>
+              <div class="variable-description">{{ sample_client.registry_code if sample_client and sample_client.registry_code else 'Registrikood' }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Invoice Variables -->
+      <div class="sidebar-section">
+        <div class="sidebar-header" onclick="toggleSection('invoice-vars')">
+          <i class="bi bi-file-earmark-text"></i>
+          Arve andmed
+          <i class="bi bi-chevron-down ms-auto"></i>
+        </div>
+        <div class="sidebar-content" id="invoice-vars">
+          <div class="variable-item" draggable="true" data-variable="invoice.number">
+            <div class="variable-icon"><i class="bi bi-hash"></i></div>
+            <div class="variable-info">
+              <div class="variable-name">Arve number</div>
+              <div class="variable-description">{{ sample_invoice.number if sample_invoice else 'INV-2025-001' }}</div>
+            </div>
+          </div>
+          <div class="variable-item" draggable="true" data-variable="invoice.date">
+            <div class="variable-icon"><i class="bi bi-calendar"></i></div>
+            <div class="variable-info">
+              <div class="variable-name">Kuupäev</div>
+              <div class="variable-description">{{ sample_invoice.date.strftime('%d.%m.%Y') if sample_invoice and sample_invoice.date else '13.08.2025' }}</div>
+            </div>
+          </div>
+          <div class="variable-item" draggable="true" data-variable="invoice.due_date">
+            <div class="variable-icon"><i class="bi bi-calendar-check"></i></div>
+            <div class="variable-info">
+              <div class="variable-name">Maksetähtaeg</div>
+              <div class="variable-description">{{ sample_invoice.due_date.strftime('%d.%m.%Y') if sample_invoice and sample_invoice.due_date else '27.08.2025' }}</div>
+            </div>
+          </div>
+          <div class="variable-item" draggable="true" data-variable="invoice.total">
+            <div class="variable-icon"><i class="bi bi-currency-euro"></i></div>
+            <div class="variable-info">
+              <div class="variable-name">Kogusumma</div>
+              <div class="variable-description">{{ "%.2f"|format(sample_invoice.total) if sample_invoice else '124.00' }}€</div>
+            </div>
+          </div>
+          <div class="variable-item" draggable="true" data-variable="invoice.subtotal">
+            <div class="variable-icon"><i class="bi bi-calculator"></i></div>
+            <div class="variable-info">
+              <div class="variable-name">Vahesumma</div>
+              <div class="variable-description">{{ "%.2f"|format(sample_invoice.subtotal) if sample_invoice else '100.00' }}€</div>
+            </div>
+          </div>
+          <div class="variable-item" draggable="true" data-variable="invoice.vat_amount">
+            <div class="variable-icon"><i class="bi bi-percent"></i></div>
+            <div class="variable-info">
+              <div class="variable-name">KM summa</div>
+              <div class="variable-description">{{ "%.2f"|format(sample_invoice.vat_amount) if sample_invoice else '24.00' }}€</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Layout Elements -->
+      <div class="sidebar-section">
+        <div class="sidebar-header" onclick="toggleSection('layout-elements')">
+          <i class="bi bi-grid-3x3"></i>
+          Paigutuse elemendid
+          <i class="bi bi-chevron-down ms-auto"></i>
+        </div>
+        <div class="sidebar-content" id="layout-elements">
+          <div class="variable-item" draggable="true" data-element="header">
+            <div class="variable-icon"><i class="bi bi-header"></i></div>
+            <div class="variable-info">
+              <div class="variable-name">Päis</div>
+              <div class="variable-description">Dokumendi ülaosa</div>
+            </div>
+          </div>
+          <div class="variable-item" draggable="true" data-element="table">
+            <div class="variable-icon"><i class="bi bi-table"></i></div>
+            <div class="variable-info">
+              <div class="variable-name">Tabel</div>
+              <div class="variable-description">Arvete ridade tabel</div>
+            </div>
+          </div>
+          <div class="variable-item" draggable="true" data-element="footer">
+            <div class="variable-icon"><i class="bi bi-footer"></i></div>
+            <div class="variable-info">
+              <div class="variable-name">Jalus</div>
+              <div class="variable-description">Dokumendi alaosa</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Canvas - PDF Preview -->
+    <div class="editor-canvas">
+      <div class="pdf-canvas" id="pdfCanvas">
+        <!-- Header Section -->
+        <div class="template-section" data-section="header">
+          <div class="section-header">
+            <i class="bi bi-grip-vertical me-2"></i>
+            Päis
+          </div>
+          <div class="section-content drop-zone" id="header-content">
+            <!-- Header elements will be added here -->
+          </div>
+        </div>
+
+        <!-- Invoice Details Section -->
+        <div class="template-section" data-section="details">
+          <div class="section-header">
+            <i class="bi bi-grip-vertical me-2"></i>
+            Arve andmed
+          </div>
+          <div class="section-content drop-zone" id="details-content">
+            <!-- Invoice details will be added here -->
+          </div>
+        </div>
+
+        <!-- Client Information Section -->
+        <div class="template-section" data-section="client">
+          <div class="section-header">
+            <i class="bi bi-grip-vertical me-2"></i>
+            Kliendi info
+          </div>
+          <div class="section-content drop-zone" id="client-content">
+            <!-- Client information will be added here -->
+          </div>
+        </div>
+
+        <!-- Items Table Section -->
+        <div class="template-section" data-section="items">
+          <div class="section-header">
+            <i class="bi bi-grip-vertical me-2"></i>
+            Arve read
+          </div>
+          <div class="section-content drop-zone" id="items-content">
+            <div class="text-muted text-center py-3">
+              <i class="bi bi-table"></i><br>
+              Arve read (automaatne tabel)
+            </div>
+          </div>
+        </div>
+
+        <!-- Totals Section -->
+        <div class="template-section" data-section="totals">
+          <div class="section-header">
+            <i class="bi bi-grip-vertical me-2"></i>
+            Summad
+          </div>
+          <div class="section-content drop-zone" id="totals-content">
+            <!-- Totals will be added here -->
+          </div>
+        </div>
+
+        <!-- Footer Section -->
+        <div class="template-section" data-section="footer">
+          <div class="section-header">
+            <i class="bi bi-grip-vertical me-2"></i>
+            Jalus
+          </div>
+          <div class="section-content drop-zone" id="footer-content">
+            <!-- Footer elements will be added here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Properties Panel -->
+    <div class="properties-panel">
+      <div class="sidebar-section">
+        <div class="sidebar-header">
+          <i class="bi bi-sliders"></i>
+          Omadused
+        </div>
+        <div class="sidebar-content" id="properties-content">
+          <div id="no-selection" class="text-muted text-center py-4">
+            <i class="bi bi-cursor display-4"></i>
+            <p class="mt-2">Vali element kohandamiseks</p>
+          </div>
+          <div id="element-properties" style="display: none;">
+            <!-- Element properties will be shown here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Design Controls -->
+      <div class="sidebar-section">
+        <div class="sidebar-header">
+          <i class="bi bi-palette"></i>
+          Disain
+        </div>
+        <div class="sidebar-content">
+          <!-- Font Settings -->
+          <div class="property-group">
+            <label class="property-label">Font</label>
+            <select class="property-control" id="fontFamily">
+              <option value="Arial, sans-serif">Arial</option>
+              <option value="Georgia, serif">Georgia</option>
+              <option value="'Times New Roman', serif">Times New Roman</option>
+              <option value="'Courier New', monospace">Courier New</option>
+              <option value="Helvetica, sans-serif">Helvetica</option>
+            </select>
+          </div>
+
+          <div class="font-controls">
+            <div class="property-group">
+              <label class="property-label">Suurus</label>
+              <div class="font-size-control">
+                <button class="size-btn" onclick="changeFontSize(-1)">-</button>
+                <input type="number" class="property-control" id="fontSize" value="12" min="6" max="72">
+                <button class="size-btn" onclick="changeFontSize(1)">+</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Color Settings -->
+          <div class="property-group">
+            <label class="property-label">Teksti värv</label>
+            <div class="color-picker-wrapper">
+              <div class="color-preview" id="textColorPreview" style="background-color: #333;"></div>
+              <input type="color" class="property-control" id="textColor" value="#333333">
+            </div>
+          </div>
+
+          <div class="property-group">
+            <label class="property-label">Tausta värv</label>
+            <div class="color-picker-wrapper">
+              <div class="color-preview" id="bgColorPreview" style="background-color: transparent;"></div>
+              <input type="color" class="property-control" id="bgColor" value="#ffffff">
+            </div>
+          </div>
+
+          <!-- Spacing -->
+          <div class="property-group">
+            <label class="property-label">Vahe (px)</label>
+            <input type="number" class="property-control" id="spacing" value="8" min="0" max="50">
+          </div>
+
+          <!-- Border -->
+          <div class="property-group">
+            <label class="property-label">Ääris</label>
+            <select class="property-control" id="borderStyle">
+              <option value="none">Ei ole</option>
+              <option value="1px solid #ddd">Õhuke</option>
+              <option value="2px solid #333">Keskmine</option>
+              <option value="3px solid #000">Jäme</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+<script>
+let selectedElement = null;
+let templateData = {
+  sections: {
+    header: [],
+    details: [],
+    client: [],
+    totals: [],
+    footer: []
+  }
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+  initializeDragAndDrop();
+  initializeDropZones();
+  initializeProperties();
+  loadSampleData();
+});
+
+function initializeDragAndDrop() {
+  // Make variable items draggable
+  const variableItems = document.querySelectorAll('.variable-item');
+  variableItems.forEach(item => {
+    item.addEventListener('dragstart', handleDragStart);
+    item.addEventListener('dragend', handleDragEnd);
+  });
+}
+
+function initializeDropZones() {
+  const dropZones = document.querySelectorAll('.drop-zone');
+  dropZones.forEach(zone => {
+    zone.addEventListener('dragover', handleDragOver);
+    zone.addEventListener('drop', handleDrop);
+    zone.addEventListener('dragleave', handleDragLeave);
+    
+    // Make sortable
+    new Sortable(zone, {
+      group: 'template-elements',
+      animation: 150,
+      ghostClass: 'sortable-ghost',
+      onEnd: function(evt) {
+        updateTemplateData();
+      }
+    });
+  });
+}
+
+function handleDragStart(e) {
+  e.dataTransfer.setData('text/plain', JSON.stringify({
+    variable: e.target.dataset.variable,
+    element: e.target.dataset.element,
+    name: e.target.querySelector('.variable-name').textContent,
+    description: e.target.querySelector('.variable-description').textContent
+  }));
+  e.target.style.opacity = '0.5';
+}
+
+function handleDragEnd(e) {
+  e.target.style.opacity = '1';
+}
+
+function handleDragOver(e) {
+  e.preventDefault();
+  e.currentTarget.classList.add('drag-over');
+}
+
+function handleDragLeave(e) {
+  e.currentTarget.classList.remove('drag-over');
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  
+  const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+  
+  if (data.variable) {
+    addVariableElement(e.currentTarget, data);
+  } else if (data.element) {
+    addLayoutElement(e.currentTarget, data);
+  }
+  
+  updateTemplateData();
+}
+
+function addVariableElement(container, data) {
+  const element = document.createElement('div');
+  element.className = 'placed-element';
+  element.dataset.variable = data.variable;
+  element.innerHTML = `
+    <span>${data.description}</span>
+    <div class="element-controls">
+      <button class="element-control-btn" onclick="selectElement(this.parentElement.parentElement)">
+        <i class="bi bi-gear"></i>
+      </button>
+      <button class="element-control-btn" onclick="removeElement(this.parentElement.parentElement)">
+        <i class="bi bi-x"></i>
+      </button>
+    </div>
+  `;
+  
+  element.addEventListener('click', function() {
+    selectElement(this);
+  });
+  
+  container.appendChild(element);
+  element.classList.add('element-highlight');
+}
+
+function addLayoutElement(container, data) {
+  // Handle special layout elements
+  if (data.element === 'table') {
+    const table = document.createElement('div');
+    table.className = 'placed-element table-element';
+    table.innerHTML = `
+      <div class="table-placeholder">
+        <i class="bi bi-table"></i>
+        Arve ridade tabel
+      </div>
+      <div class="element-controls">
+        <button class="element-control-btn" onclick="selectElement(this.parentElement.parentElement)">
+          <i class="bi bi-gear"></i>
+        </button>
+        <button class="element-control-btn" onclick="removeElement(this.parentElement.parentElement)">
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+    `;
+    container.appendChild(table);
+  }
+}
+
+function selectElement(element) {
+  // Remove previous selection
+  document.querySelectorAll('.placed-element').forEach(el => {
+    el.classList.remove('selected');
+  });
+  
+  // Select current element
+  element.classList.add('selected');
+  selectedElement = element;
+  
+  // Show properties
+  showElementProperties(element);
+}
+
+function removeElement(element) {
+  element.remove();
+  selectedElement = null;
+  hideElementProperties();
+  updateTemplateData();
+}
+
+function showElementProperties(element) {
+  document.getElementById('no-selection').style.display = 'none';
+  document.getElementById('element-properties').style.display = 'block';
+  
+  const variable = element.dataset.variable;
+  const propertiesHtml = `
+    <div class="property-group">
+      <label class="property-label">Muutuja</label>
+      <input type="text" class="property-control" value="${variable}" readonly>
+    </div>
+    <div class="property-group">
+      <label class="property-label">Tekst</label>
+      <input type="text" class="property-control" id="elementText" value="${element.textContent}">
+    </div>
+  `;
+  
+  document.getElementById('element-properties').innerHTML = propertiesHtml;
+}
+
+function hideElementProperties() {
+  document.getElementById('no-selection').style.display = 'block';
+  document.getElementById('element-properties').style.display = 'none';
+}
+
+function toggleSection(sectionId) {
+  const content = document.getElementById(sectionId);
+  const header = content.previousElementSibling;
+  const chevron = header.querySelector('.bi-chevron-down, .bi-chevron-right');
+  
+  content.classList.toggle('collapsed');
+  
+  if (content.classList.contains('collapsed')) {
+    chevron.className = 'bi bi-chevron-right ms-auto';
+  } else {
+    chevron.className = 'bi bi-chevron-down ms-auto';
+  }
+}
+
+function changeFontSize(delta) {
+  const input = document.getElementById('fontSize');
+  const current = parseInt(input.value);
+  const newValue = Math.max(6, Math.min(72, current + delta));
+  input.value = newValue;
+  
+  if (selectedElement) {
+    selectedElement.style.fontSize = newValue + 'px';
+  }
+}
+
+function initializeProperties() {
+  // Font family change
+  document.getElementById('fontFamily').addEventListener('change', function() {
+    if (selectedElement) {
+      selectedElement.style.fontFamily = this.value;
+    }
+  });
+  
+  // Font size change
+  document.getElementById('fontSize').addEventListener('input', function() {
+    if (selectedElement) {
+      selectedElement.style.fontSize = this.value + 'px';
+    }
+  });
+  
+  // Text color change
+  document.getElementById('textColor').addEventListener('change', function() {
+    document.getElementById('textColorPreview').style.backgroundColor = this.value;
+    if (selectedElement) {
+      selectedElement.style.color = this.value;
+    }
+  });
+  
+  // Background color change
+  document.getElementById('bgColor').addEventListener('change', function() {
+    document.getElementById('bgColorPreview').style.backgroundColor = this.value;
+    if (selectedElement) {
+      selectedElement.style.backgroundColor = this.value;
+    }
+  });
+  
+  // Spacing change
+  document.getElementById('spacing').addEventListener('input', function() {
+    if (selectedElement) {
+      selectedElement.style.margin = this.value + 'px';
+    }
+  });
+  
+  // Border style change
+  document.getElementById('borderStyle').addEventListener('change', function() {
+    if (selectedElement) {
+      selectedElement.style.border = this.value;
+    }
+  });
+}
+
+function loadSampleData() {
+  // Add some sample elements to demonstrate
+  setTimeout(() => {
+    // Add company name to header
+    const headerZone = document.getElementById('header-content');
+    addVariableElement(headerZone, {
+      variable: 'company.company_name',
+      name: 'Ettevõtte nimi',
+      description: '{{ company.company_name or "Ettevõtte nimi" }}'
+    });
+    
+    // Add invoice number to details
+    const detailsZone = document.getElementById('details-content');
+    addVariableElement(detailsZone, {
+      variable: 'invoice.number',
+      name: 'Arve number',
+      description: '{{ sample_invoice.number if sample_invoice else "INV-2025-001" }}'
+    });
+    
+    updateTemplateData();
+  }, 500);
+}
+
+function updateTemplateData() {
+  // Update internal template data structure
+  const sections = ['header', 'details', 'client', 'totals', 'footer'];
+  
+  sections.forEach(section => {
+    const zone = document.getElementById(section + '-content');
+    const elements = zone.querySelectorAll('.placed-element');
+    templateData.sections[section] = Array.from(elements).map(el => ({
+      variable: el.dataset.variable,
+      text: el.textContent,
+      styles: {
+        fontFamily: el.style.fontFamily || 'Arial, sans-serif',
+        fontSize: el.style.fontSize || '12px',
+        color: el.style.color || '#333',
+        backgroundColor: el.style.backgroundColor || 'transparent',
+        margin: el.style.margin || '8px',
+        border: el.style.border || 'none'
+      }
+    }));
+  });
+}
+
+function previewPDF() {
+  // Generate preview of the PDF
+  const previewWindow = window.open('', '_blank');
+  const htmlContent = generateHTMLFromTemplate();
+  
+  previewWindow.document.write(htmlContent);
+  previewWindow.document.close();
+}
+
+function generateHTMLFromTemplate() {
+  // Generate HTML based on current template configuration
+  let html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <title>PDF Eelvaade</title>
+      <style>
+        body { font-family: Arial, sans-serif; margin: 20mm; }
+        .section { margin-bottom: 20px; }
+        .placed-element { display: inline-block; margin: 4px; }
+      </style>
+    </head>
+    <body>
+  `;
+  
+  // Add sections
+  Object.keys(templateData.sections).forEach(sectionName => {
+    const elements = templateData.sections[sectionName];
+    if (elements.length > 0) {
+      html += `<div class="section section-${sectionName}">`;
+      elements.forEach(element => {
+        html += `<span class="placed-element" style="
+          font-family: ${element.styles.fontFamily};
+          font-size: ${element.styles.fontSize};
+          color: ${element.styles.color};
+          background-color: ${element.styles.backgroundColor};
+          margin: ${element.styles.margin};
+          border: ${element.styles.border};
+        ">${element.text}</span>`;
+      });
+      html += '</div>';
+    }
+  });
+  
+  html += '</body></html>';
+  return html;
+}
+
+function saveTemplate() {
+  const saveBtn = document.getElementById('saveBtn');
+  const originalText = saveBtn.innerHTML;
+  
+  saveBtn.innerHTML = '<i class="bi bi-spinner spin me-1"></i>Salvestamine...';
+  saveBtn.disabled = true;
+  
+  // Generate HTML template from current configuration
+  const htmlContent = generateHTMLFromTemplate();
+  
+  fetch(`/settings/pdf-templates/{{ template.id }}/save`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+    },
+    body: JSON.stringify({
+      content: htmlContent,
+      templateData: templateData
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      BilliPocket.showMessage('Mall edukalt salvestatud', 'success');
+    } else {
+      BilliPocket.showMessage(data.message || 'Salvestamise viga', 'error');
+    }
+  })
+  .catch(error => {
+    console.error('Save error:', error);
+    BilliPocket.showMessage('Salvestamise viga', 'error');
+  })
+  .finally(() => {
+    saveBtn.innerHTML = originalText;
+    saveBtn.disabled = false;
+  });
+}
+
+// Add spinner animation
+const style = document.createElement('style');
+style.textContent = `
+  .spin { animation: spin 1s linear infinite; }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %}

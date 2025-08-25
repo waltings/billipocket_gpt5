@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Arve {{ invoice.number }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 10mm;
+        }
+        
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.2;
+            color: #2c3e50;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+        }
+        
+        .header-section {
+            background: #fbfbfb;
+            color: #2c3e50;
+            border-radius: 12px;
+            padding: 10px 30px;
+            margin-bottom: 30px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 1.5px solid #18476b;
+        }
+        
+        .company-logo {
+            flex: 1;
+        }
+        
+        .company-logo img {
+            max-height: 72px;
+            max-width: 240px;
+        }
+        
+        .invoice-info {
+            flex: 1;
+            text-align: right;
+        }
+        
+        .invoice-title {
+            font-size: 42px;
+            font-weight: 300;
+            color: #18476b;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        .invoice-data-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
+            line-height: 1.4;
+        }
+        
+        .client-section {
+            flex: 1.8;
+        }
+        
+        .invoice-section {
+            flex: 1.2;
+        }
+        
+        .section-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 10px;
+            margin-left: 0;
+            color: #18476b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .client-details {
+            padding: 0;
+        }
+        
+        .client-name {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #18476b;
+            font-size: 15px;
+        }
+        
+        .client-info-item {
+            margin-bottom: 6px;
+            color: #5a6c7d;
+            font-size: 13px;
+        }
+        
+        .client-address {
+            margin-top: 10px;
+            line-height: 1.4;
+        }
+        
+        .invoice-details-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .invoice-details-table td {
+            padding: 2px 0;
+            border: none;
+        }
+        
+        .detail-label {
+            color: #5a6c7d;
+            font-weight: 500;
+            width: 110px;
+            font-size: 12px;
+        }
+        
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: transparent;
+            border-radius: 10px;
+            overflow: hidden;
+            line-height: 1.2;
+        }
+        
+        .items-table th {
+            background: #fbfbfb;
+            font-weight: 600;
+            padding: 10px;
+            border: none;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            text-align: left;
+            color: #18476b;
+        }
+        
+        .items-table td {
+            padding: 8px;
+            border: none;
+            border-bottom: 1px solid #f1f3f4;
+            font-size: 12px;
+        }
+        
+        .items-table th.description-col,
+        .items-table td.description-col {
+            padding-left: 30px;
+            padding-right: 15px;
+        }
+        
+        .items-table th.qty-col,
+        .items-table th.unit-col,
+        .items-table th.price-col,
+        .items-table td.qty-col,
+        .items-table td.unit-col,
+        .items-table td.price-col {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+        
+        .items-table th.total-col,
+        .items-table td.total-col {
+            padding-left: 30px;
+            padding-right: 30px;
+        }
+        
+        .items-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .items-table th.qty-col,
+        .items-table th.unit-col,
+        .items-table th.price-col,
+        .items-table th.total-col {
+            text-align: right;
+        }
+        
+        .items-table .qty-col,
+        .items-table .unit-col,
+        .items-table .total-col {
+            text-align: right;
+        }
+        
+        .items-table .qty-col,
+        .items-table .unit-col {
+            width: 50px;
+        }
+        
+        .items-table .total-col {
+            width: 80px;
+        }
+        
+        .items-table .price-col {
+            text-align: right;
+            width: 100px;
+        }
+        
+        .items-table .description-col {
+            width: auto;
+        }
+        
+        .items-table .total-col {
+            font-weight: bold;
+        }
+        
+        .items-table .unit-col {
+            text-align: center;
+        }
+        
+        .totals-section {
+            width: 100%;
+            margin-top: 10px;
+            display: flex;
+            justify-content: flex-end;
+            padding-right: 30px;
+        }
+        
+        .totals-content {
+            width: 230px;
+            background: #fbfbfb;
+            border-radius: 10px;
+            padding: 20px 30px 20px 20px;
+        }
+        
+        .bottom-section {
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
+            margin-top: 20px;
+            padding: 0 30px;
+        }
+        
+        .payment-info {
+            flex: 0.4;
+            background: #fbfbfb;
+            padding: 20px 30px 20px 20px;
+            border-radius: 10px;
+            line-height: 1.6;
+        }
+        
+        .totals-section-bottom {
+            width: 250px;
+        }
+        
+        .totals-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .totals-table td {
+            padding: 8px 0;
+            border: none;
+            font-size: 12px;
+        }
+        
+        .totals-table .label {
+            color: #18476b;
+            font-weight: normal;
+            text-align: left;
+        }
+        
+        .totals-table .amount {
+            text-align: right;
+        }
+        
+        .total-final {
+            border-top: 1.5px solid #18476b;
+        }
+        
+        .total-final .label {
+            font-weight: bold;
+            color: #18476b;
+            font-size: 16px;
+            padding-top: 12px;
+        }
+        
+        .total-final .amount {
+            font-weight: bold;
+            font-size: 16px;
+            color: #18476b;
+            padding-top: 12px;
+        }
+        
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 4px 2px;
+            border-top: 1.5px solid #5a6c7d;
+            font-size: 11px;
+            color: #5a6c7d;
+            background: white;
+        }
+        
+        .footer div[style*="font-weight: bold"] {
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .footer div:not([style*="font-weight: bold"]) {
+            color: #5a6c7d;
+        }
+        
+        .payment-info h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #18476b;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .payment-info p {
+            margin: 0px 0;
+            font-size: 13px;
+            color: #2c3e50;
+        }
+        
+        .payment-info strong {
+            color: #18476b;
+            font-weight: 600;
+        }
+        
+        .clearfix::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+        
+        .info-section {
+            position: fixed;
+            bottom: 80px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .info-content {
+            flex: 0.6;
+            padding: 20px 20px 20px 30px;
+        }
+        
+        .info-content h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #18476b;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .info-content div {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-section">
+        <div class="header">
+            <div class="company-logo">
+                {% set template_logo = company.get_logo_for_template_new('standard') %}
+                {% if company_logo_absolute %}
+                <img src="{{ company_logo_absolute }}" alt="{{ company.company_name or 'Logo' }}">
+                {% elif template_logo %}
+                <img src="{{ template_logo }}" alt="{{ company.company_name or 'Logo' }}">
+                {% else %}
+                <div style="font-size: 18px; font-weight: bold; color: #18476b;">{{ company.company_name or 'BilliPocket' }}</div>
+                {% endif %}
+            </div>
+            <div class="invoice-info">
+                <div style="font-size: 40px; font-weight: 600; font-stretch: condensed; color: #18476b;">ARVE</div>
+                <div style="font-size: 24px; font-weight: 600; font-stretch: condensed; color: #18476b;">{{ invoice.number }}</div>
+            </div>
+        </div>
+
+        <div class="invoice-data-row">
+            <div class="client-section">
+                <div class="section-title">Arve Saaja</div>
+                <div class="client-details">
+                    <div class="client-name">{{ invoice.client.name }}</div>
+                    {% if invoice.client.address %}
+                    <div class="client-address">{{ invoice.client.address | replace('\n', '<br>') | safe }}</div>
+                    {% endif %}
+                    {% if invoice.client_extra_info %}
+                    <div class="client-address">{{ invoice.client_extra_info | replace('\n', '<br>') | safe }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="invoice-section">
+                <div class="section-title">Arve Detailid</div>
+                <table class="invoice-details-table">
+                    <tbody>
+                        <tr>
+                            <td class="detail-label">Arve number:</td>
+                            <td>{{ invoice.number }}</td>
+                        </tr>
+                        <tr>
+                            <td class="detail-label">Kuupäev:</td>
+                            <td>{{ invoice.date.strftime('%d.%m.%Y') }}</td>
+                        </tr>
+                        <tr>
+                            <td class="detail-label">Maksetähtaeg:</td>
+                            <td>{{ invoice.due_date.strftime('%d.%m.%Y') }}</td>
+                        </tr>
+                        <tr>
+                            <td class="detail-label">Maksetingimus:</td>
+                            <td>{{ invoice.payment_terms or '-' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="detail-label">Viivis:</td>
+                            <td>
+                                {% if company.default_penalty_rate_obj %}
+                                    {{ "%.3f"|format(company.default_penalty_rate_obj.rate_per_day|float) }}% päevas
+                                {% else %}
+                                    0.05% päevas
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% if invoice.note and note_label %}
+                        <tr>
+                            <td class="detail-label">{{ note_label }}:</td>
+                            <td>{{ invoice.note }}</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th class="description-col">Kirjeldus</th>
+                <th class="qty-col">Kogus</th>
+                <th class="unit-col">Ühik</th>
+                <th class="price-col">Ühiku hind</th>
+                <th class="total-col">Kokku</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for line in invoice.lines %}
+            <tr>
+                <td class="description-col">{{ line.description }}</td>
+                <td class="qty-col">{{ line.qty|quantity }}</td>
+                <td class="unit-col">{{ line.unit or 'tk' }}</td>
+                <td class="price-col">{{ line.unit_price|currency }}€</td>
+                <td class="total-col">{{ line.line_total|currency }}€</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="totals-section">
+        <div class="totals-content">
+            <table class="totals-table">
+                <tbody>
+                    <tr>
+                        <td class="label">Vahesumma (ilma KM):</td>
+                        <td class="amount">{{ invoice.subtotal|currency }}€</td>
+                    </tr>
+                    <tr>
+                        <td class="label">KM ({{ "%.2f"|format(invoice.vat_rate|float) }}%):</td>
+                        <td class="amount">{{ invoice.vat_amount|currency }}€</td>
+                    </tr>
+                    <tr class="total-final">
+                        <td class="label">TASUDA KOKKU:</td>
+                        <td class="amount">{{ invoice.total|currency }}€</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% if invoice.announcements %}
+    <div class="info-section">
+        <div class="info-content">
+            <h4>Info ja Teadaanded</h4>
+            <div>{{ invoice.announcements | replace('\n', '<br>') | safe }}</div>
+        </div>
+        <div class="payment-info">
+            <h4>Makseandmed</h4>
+            <p><strong>Saaja:</strong> {{ company.company_name }}</p>
+            <p><strong>Pangakonto:</strong> {{ company.company_bank_account }}</p>
+            <p><strong>Pank:</strong> {{ company.company_bank }}</p>
+            <p><strong>Summa:</strong> {{ invoice.total|currency }}€</p>
+            <p><strong>Selgitus:</strong> ARVE {{ invoice.number }}</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="footer">
+        <div style="text-align: center;">
+            <div style="font-weight: bold; text-transform: uppercase; margin-bottom: 5px;">{{ company.company_name or 'BilliPocket' }}</div>
+            <div style="margin-bottom: 3px;">Aadress: {{ company.company_address or '' }}  |  Tel: {{ company.company_phone or '' }}  |  E-Mail: {{ company.company_email or '' }}</div>
+            <div style="margin-bottom: 8px;">Reg.kood: {{ company.company_registry_code or '' }}  |  KMKR: {{ company.company_vat_number or '' }}  |  Pangakonto: {{ company.company_bank_account or '' }}  |  Pank: {{ company.company_bank or '' }}</div>
+            {% if company.marketing_messages %}
+            <div>{{ company.marketing_messages }}</div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

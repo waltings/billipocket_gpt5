@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+{% block title %}PDF Redaktor Test – Billipocket{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1>PDF Redaktor Test</h1>
+  
+  <p>Template: {{ template.name if template else 'No template' }}</p>
+  <p>Company: {{ company.company_name if company else 'No company' }}</p>
+  <p>Sample Client: {{ sample_client.name if sample_client else 'No client' }}</p>
+  <p>Sample Invoice: {{ sample_invoice.number if sample_invoice else 'No invoice' }}</p>
+  
+  <a href="{{ url_for('dashboard.pdf_templates') }}">Tagasi</a>
+</div>
+{% endblock %}

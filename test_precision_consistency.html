@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Precision Test - Frontend vs Backend</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-case { margin: 10px 0; padding: 10px; border: 1px solid #ddd; }
+        .pass { background-color: #d4edda; }
+        .fail { background-color: #f8d7da; }
+    </style>
+</head>
+<body>
+    <h1>JavaScript Precision Test</h1>
+    <p>Testing if JavaScript calculations match Python Decimal precision</p>
+    
+    <div id="test-results"></div>
+
+    <script>
+        // Frontend precision calculation helpers (copied from invoice_form.html)
+        function preciseRound(value, decimals = 2) {
+            const factor = Math.pow(10, decimals);
+            return Math.round((value + Number.EPSILON) * factor) / factor;
+        }
+
+        function calculateLineTotal(qty, unitPrice) {
+            if (!qty || !unitPrice) return 0;
+            const lineTotal = qty * unitPrice;
+            return preciseRound(lineTotal, 2);
+        }
+
+        function calculateVatAmount(subtotal, vatRate) {
+            if (!subtotal || !vatRate) return 0;
+            const vatAmount = subtotal * (vatRate / 100);
+            return preciseRound(vatAmount, 2);
+        }
+
+        // Test cases that previously caused precision issues
+        const testCases = [
+            {
+                name: "Basic multiplication",
+                qty: 1, price: 10.50, vatRate: 24,
+                expectedLine: 10.50, expectedSubtotal: 10.50, expectedVat: 2.52, expectedTotal: 13.02
+            },
+            {
+                name: "Decimal precision issue",
+                qty: 0.1, price: 3.00, vatRate: 24,
+                expectedLine: 0.30, expectedSubtotal: 0.30, expectedVat: 0.07, expectedTotal: 0.37
+            },
+            {
+                name: "Floating point accumulation",
+                lines: [
+                    {qty: 1, price: 0.10},
+                    {qty: 1, price: 0.20}, 
+                    {qty: 1, price: 0.30}
+                ],
+                vatRate: 24,
+                expectedSubtotal: 0.60, expectedVat: 0.14, expectedTotal: 0.74
+            },
+            {
+                name: "Large numbers with decimals",
+                qty: 123.45, price: 67.89, vatRate: 24,
+                expectedLine: 8384.11, expectedSubtotal: 8384.11, expectedVat: 2012.19, expectedTotal: 10396.30
+            }
+        ];
+
+        function runTests() {
+            const resultsDiv = document.getElementById('test-results');
+            let allPassed = true;
+
+            testCases.forEach((testCase, index) => {
+                const div = document.createElement('div');
+                div.className = 'test-case';
+
+                let subtotal = 0;
+                let results = [];
+
+                if (testCase.lines) {
+                    // Multi-line test
+                    testCase.lines.forEach(line => {
+                        const lineTotal = calculateLineTotal(line.qty, line.price);
+                        subtotal = preciseRound(subtotal + lineTotal, 2);
+                    });
+                } else {
+                    // Single line test
+                    const lineTotal = calculateLineTotal(testCase.qty, testCase.price);
+                    subtotal = lineTotal;
+                    
+                    const linePassed = Math.abs(lineTotal - testCase.expectedLine) < 0.001;
+                    results.push(`Line total: ${lineTotal.toFixed(2)} (expected: ${testCase.expectedLine.toFixed(2)}) ${linePassed ? '✓' : '✗'}`);
+                    if (!linePassed) allPassed = false;
+                }
+
+                const vatAmount = calculateVatAmount(subtotal, testCase.vatRate);
+                const total = preciseRound(subtotal + vatAmount, 2);
+
+                const subtotalPassed = Math.abs(subtotal - testCase.expectedSubtotal) < 0.001;
+                const vatPassed = Math.abs(vatAmount - testCase.expectedVat) < 0.001;
+                const totalPassed = Math.abs(total - testCase.expectedTotal) < 0.001;
+
+                results.push(`Subtotal: ${subtotal.toFixed(2)} (expected: ${testCase.expectedSubtotal.toFixed(2)}) ${subtotalPassed ? '✓' : '✗'}`);
+                results.push(`VAT: ${vatAmount.toFixed(2)} (expected: ${testCase.expectedVat.toFixed(2)}) ${vatPassed ? '✓' : '✗'}`);
+                results.push(`Total: ${total.toFixed(2)} (expected: ${testCase.expectedTotal.toFixed(2)}) ${totalPassed ? '✓' : '✗'}`);
+
+                const testPassed = subtotalPassed && vatPassed && totalPassed;
+                if (!testPassed) allPassed = false;
+
+                div.className += testPassed ? ' pass' : ' fail';
+                div.innerHTML = `
+                    <h3>Test ${index + 1}: ${testCase.name}</h3>
+                    ${results.map(result => `<div>${result}</div>`).join('')}
+                `;
+
+                resultsDiv.appendChild(div);
+            });
+
+            const summaryDiv = document.createElement('div');
+            summaryDiv.className = `test-case ${allPassed ? 'pass' : 'fail'}`;
+            summaryDiv.innerHTML = `<h2>Overall Result: ${allPassed ? 'All tests PASSED ✓' : 'Some tests FAILED ✗'}</h2>`;
+            resultsDiv.appendChild(summaryDiv);
+        }
+
+        // Run tests when page loads
+        document.addEventListener('DOMContentLoaded', runTests);
+    </script>
+</body>
+</html>

@@ -20407,3 +20407,614 @@ selgitusse lisada arve number! JAAA A'
 [2025-08-25 12:35:16,741] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 2 data dict: {'id': '526', 'description': 'Hoka Clifton 9 või Asics Gel‑Kayano 32', 'qty': Decimal('2.00'), 'unit_price': Decimal('33.00'), 'line_total': Decimal('66.00'), 'csrf_token': None}
 [2025-08-25 12:35:16,742] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 3: ID=NO_DATA, desc='NO_DATA', qty=4.00, price=33.00
 [2025-08-25 12:35:16,742] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 3 data dict: {'id': '527', 'description': 'sans-serif + punased totalid • kompaktne rstik', 'qty': Decimal('4.00'), 'unit_price': Decimal('33.00'), 'line_total': Decimal('132.00'), 'csrf_token': None}
+[2025-08-25 15:08:41,423] INFO in billipocket.logging_config.setup_logging: BilliPocket application started - Debug: True
+[2025-08-25 15:08:43,042] INFO in billipocket.logging_config.setup_logging: BilliPocket application started - Debug: True
+[2025-08-25 15:08:50,846] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 4 note_label_id: 6
+[2025-08-25 15:08:50,851] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using invoice-specific note label: Info
+[2025-08-25 15:08:57,319] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 4 note_label_id: 6
+[2025-08-25 15:08:57,324] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using invoice-specific note label: Info
+[2025-08-25 15:09:02,333] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 4 note_label_id: 6
+[2025-08-25 15:09:02,335] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using invoice-specific note label: Info
+[2025-08-25 15:09:09,985] DEBUG in app.routes.pdf.pdf.invoice_preview: Preview route - Invoice 4 note_label_id: 6
+[2025-08-25 15:09:09,987] DEBUG in app.routes.pdf.pdf.invoice_preview: Preview route - Using invoice-specific note label: Info
+[2025-08-25 15:09:56,055] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 4 note_label_id: 6
+[2025-08-25 15:09:56,065] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using invoice-specific note label: Info
+[2025-08-25 15:10:26,279] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 4 note_label_id: 6
+[2025-08-25 15:10:26,281] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using invoice-specific note label: Info
+[2025-08-25 15:10:29,378] DEBUG in app.routes.invoices.invoices.edit_invoice: Expunged cached invoice 4 from session
+[2025-08-25 15:10:29,384] DEBUG in app.routes.invoices.invoices.edit_invoice: Refreshed invoice 4 and loaded 4 lines
+[2025-08-25 15:10:29,387] DEBUG in app.routes.invoices.invoices.edit_invoice: Payment terms choices: [('', 'Vali makse tingimus...'), ('0 päeva', '0 päeva'), ('7 päeva', '7 päeva'), ('10 päeva', '10 päeva'), ('14 päeva', '14 päeva'), ('21 päeva', '21 päeva'), ('30 päeva', '30 päeva')]
+[2025-08-25 15:10:29,390] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Invoice VAT rate: 24.00% (ID: 4)
+[2025-08-25 15:10:29,390] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Set form VAT rate ID to: 4
+[2025-08-25 15:10:29,391] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 524: Russell mens full zip fleece + tikand (Royal Blue)
+[2025-08-25 15:10:29,392] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 525: Tööriiete tootmine (detst24 - veebr25).
+[2025-08-25 15:10:29,393] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 526: Hoka Clifton 9 või Asics Gel‑Kayano 32
+[2025-08-25 15:10:29,394] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 527: sans-serif + punased totalid • kompaktne rstik
+[2025-08-25 15:10:29,394] DEBUG in app.routes.invoices.invoices.edit_invoice: Edit invoice 4 - Method: GET, Form lines: 4
+[2025-08-25 15:10:29,394] DEBUG in app.routes.invoices.invoices.edit_invoice: Database has 4 lines for invoice 4
+[2025-08-25 15:10:29,394] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 0: ID=524, desc='Russell mens full zip fleece +...', qty=11.00, price=280.01
+[2025-08-25 15:10:29,394] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 1: ID=525, desc='Tööriiete tootmine (detst24 - ...', qty=3.50, price=120.00
+[2025-08-25 15:10:29,394] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 2: ID=526, desc='Hoka Clifton 9 või Asics Gel‑K...', qty=2.00, price=33.00
+[2025-08-25 15:10:29,395] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 3: ID=527, desc='sans-serif + punased totalid •...', qty=4.00, price=33.00
+[2025-08-25 15:10:29,395] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0: ID=NO_DATA, desc='NO_DATA', qty=11.00, price=280.01
+[2025-08-25 15:10:29,395] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0 data dict: {'id': '524', 'description': 'Russell mens full zip fleece + tikand (Royal Blue)', 'qty': Decimal('11.00'), 'unit_price': Decimal('280.01'), 'line_total': Decimal('3080.11'), 'csrf_token': None}
+[2025-08-25 15:10:29,395] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 1: ID=NO_DATA, desc='NO_DATA', qty=3.50, price=120.00
+[2025-08-25 15:10:29,395] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 1 data dict: {'id': '525', 'description': 'Tööriiete tootmine (detst24 - veebr25).', 'qty': Decimal('3.50'), 'unit_price': Decimal('120.00'), 'line_total': Decimal('420.00'), 'csrf_token': None}
+[2025-08-25 15:10:29,395] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 2: ID=NO_DATA, desc='NO_DATA', qty=2.00, price=33.00
+[2025-08-25 15:10:29,395] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 2 data dict: {'id': '526', 'description': 'Hoka Clifton 9 või Asics Gel‑Kayano 32', 'qty': Decimal('2.00'), 'unit_price': Decimal('33.00'), 'line_total': Decimal('66.00'), 'csrf_token': None}
+[2025-08-25 15:10:29,396] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 3: ID=NO_DATA, desc='NO_DATA', qty=4.00, price=33.00
+[2025-08-25 15:10:29,396] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 3 data dict: {'id': '527', 'description': 'sans-serif + punased totalid • kompaktne rstik', 'qty': Decimal('4.00'), 'unit_price': Decimal('33.00'), 'line_total': Decimal('132.00'), 'csrf_token': None}
+[2025-08-25 15:10:39,903] DEBUG in app.routes.invoices.invoices.edit_invoice: Expunged cached invoice 4 from session
+[2025-08-25 15:10:39,907] DEBUG in app.routes.invoices.invoices.edit_invoice: Refreshed invoice 4 and loaded 4 lines
+[2025-08-25 15:10:39,910] DEBUG in app.routes.invoices.invoices.edit_invoice: Payment terms choices: [('', 'Vali makse tingimus...'), ('0 päeva', '0 päeva'), ('7 päeva', '7 päeva'), ('10 päeva', '10 päeva'), ('14 päeva', '14 päeva'), ('21 päeva', '21 päeva'), ('30 päeva', '30 päeva')]
+[2025-08-25 15:10:39,913] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Invoice VAT rate: 24.00% (ID: 4)
+[2025-08-25 15:10:39,913] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Set form VAT rate ID to: 4
+[2025-08-25 15:10:39,915] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 524: Russell mens full zip fleece + tikand (Royal Blue)
+[2025-08-25 15:10:39,915] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 525: Tööriiete tootmine (detst24 - veebr25).
+[2025-08-25 15:10:39,917] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 526: Hoka Clifton 9 või Asics Gel‑Kayano 32
+[2025-08-25 15:10:39,918] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 527: sans-serif + punased totalid • kompaktne rstik
+[2025-08-25 15:10:39,918] DEBUG in app.routes.invoices.invoices.edit_invoice: Edit invoice 4 - Method: GET, Form lines: 4
+[2025-08-25 15:10:39,918] DEBUG in app.routes.invoices.invoices.edit_invoice: Database has 4 lines for invoice 4
+[2025-08-25 15:10:39,918] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 0: ID=524, desc='Russell mens full zip fleece +...', qty=11.00, price=280.01
+[2025-08-25 15:10:39,919] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 1: ID=525, desc='Tööriiete tootmine (detst24 - ...', qty=3.50, price=120.00
+[2025-08-25 15:10:39,919] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 2: ID=526, desc='Hoka Clifton 9 või Asics Gel‑K...', qty=2.00, price=33.00
+[2025-08-25 15:10:39,920] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 3: ID=527, desc='sans-serif + punased totalid •...', qty=4.00, price=33.00
+[2025-08-25 15:10:39,920] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0: ID=NO_DATA, desc='NO_DATA', qty=11.00, price=280.01
+[2025-08-25 15:10:39,920] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0 data dict: {'id': '524', 'description': 'Russell mens full zip fleece + tikand (Royal Blue)', 'qty': Decimal('11.00'), 'unit_price': Decimal('280.01'), 'line_total': Decimal('3080.11'), 'csrf_token': None}
+[2025-08-25 15:10:39,921] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 1: ID=NO_DATA, desc='NO_DATA', qty=3.50, price=120.00
+[2025-08-25 15:10:39,921] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 1 data dict: {'id': '525', 'description': 'Tööriiete tootmine (detst24 - veebr25).', 'qty': Decimal('3.50'), 'unit_price': Decimal('120.00'), 'line_total': Decimal('420.00'), 'csrf_token': None}
+[2025-08-25 15:10:39,921] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 2: ID=NO_DATA, desc='NO_DATA', qty=2.00, price=33.00
+[2025-08-25 15:10:39,921] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 2 data dict: {'id': '526', 'description': 'Hoka Clifton 9 või Asics Gel‑Kayano 32', 'qty': Decimal('2.00'), 'unit_price': Decimal('33.00'), 'line_total': Decimal('66.00'), 'csrf_token': None}
+[2025-08-25 15:10:39,921] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 3: ID=NO_DATA, desc='NO_DATA', qty=4.00, price=33.00
+[2025-08-25 15:10:39,921] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 3 data dict: {'id': '527', 'description': 'sans-serif + punased totalid • kompaktne rstik', 'qty': Decimal('4.00'), 'unit_price': Decimal('33.00'), 'line_total': Decimal('132.00'), 'csrf_token': None}
+[2025-08-25 15:10:42,326] DEBUG in app.routes.invoices.invoices.edit_invoice: Payment terms choices: [('', 'Vali makse tingimus...'), ('0 päeva', '0 päeva'), ('7 päeva', '7 päeva'), ('10 päeva', '10 päeva'), ('14 päeva', '14 päeva'), ('21 päeva', '21 päeva'), ('30 päeva', '30 päeva')]
+[2025-08-25 15:10:42,378] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Invoice VAT rate: 24.00% (ID: 4)
+[2025-08-25 15:10:42,378] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Set form VAT rate ID to: 4
+[2025-08-25 15:10:42,378] DEBUG in app.routes.invoices.invoices.edit_invoice: Edit invoice 4 - Method: POST, Form lines: 4
+[2025-08-25 15:10:42,378] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0: ID=NO_DATA, desc='NO_DATA', qty=11.00, price=280.01
+[2025-08-25 15:10:42,379] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0 data dict: {'id': None, 'description': 'Russell mens full zip fleece + tikand (Royal Blue)', 'qty': Decimal('11.00'), 'unit_price': Decimal('280.01'), 'line_total': None, 'csrf_token': None}
+[2025-08-25 15:10:42,379] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 1: ID=NO_DATA, desc='NO_DATA', qty=3.50, price=120.00
+[2025-08-25 15:10:42,379] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 1 data dict: {'id': None, 'description': 'Tööriiete tootmine (detst24 - veebr25).', 'qty': Decimal('3.50'), 'unit_price': Decimal('120.00'), 'line_total': None, 'csrf_token': None}
+[2025-08-25 15:10:42,379] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 2: ID=NO_DATA, desc='NO_DATA', qty=2.00, price=33.00
+[2025-08-25 15:10:42,379] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 2 data dict: {'id': None, 'description': 'Hoka Clifton 9 või Asics Gel‑Kayano 32', 'qty': Decimal('2.00'), 'unit_price': Decimal('33.00'), 'line_total': None, 'csrf_token': None}
+[2025-08-25 15:10:42,379] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 3: ID=NO_DATA, desc='NO_DATA', qty=4.00, price=33.00
+[2025-08-25 15:10:42,379] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 3 data dict: {'id': None, 'description': 'sans-serif + punased totalid • kompaktne rstik', 'qty': Decimal('4.00'), 'unit_price': Decimal('33.00'), 'line_total': None, 'csrf_token': None}
+[2025-08-25 15:10:42,380] DEBUG in app.routes.invoices.invoices.edit_invoice: POST data received for payment_terms: '10 päeva'
+[2025-08-25 15:10:42,380] DEBUG in app.routes.invoices.invoices.edit_invoice: Form payment_terms choices: [('', 'Vali makse tingimus...'), ('0 päeva', '0 päeva'), ('7 päeva', '7 päeva'), ('10 päeva', '10 päeva'), ('14 päeva', '14 päeva'), ('21 päeva', '21 päeva'), ('30 päeva', '30 päeva')]
+[2025-08-25 15:10:42,380] DEBUG in app.routes.invoices.invoices.edit_invoice: Current form payment_terms data: '10 päeva'
+[2025-08-25 15:10:42,390] DEBUG in app.routes.invoices.invoices.edit_invoice: Form validation successful for invoice 4
+[2025-08-25 15:10:42,391] DEBUG in app.routes.invoices.invoices.edit_invoice: Form data received - due_date: 2025-08-25, client_extra_info: 'Kuukulg', note: 'PROJ-2024-001', announcements: 'Palume tasuda arvel viidatud kontole ning 
+selgitusse lisada arve number! JAAA A', payment_terms: '10 päeva'
+[2025-08-25 15:10:42,391] DEBUG in app.routes.invoices.invoices.edit_invoice: VAT rate form data: 4
+[2025-08-25 15:10:42,391] DEBUG in app.routes.invoices.invoices.edit_invoice: Raw form VAT rate: 4
+[2025-08-25 15:10:42,391] DEBUG in app.routes.invoices.invoices.edit_invoice: Current invoice VAT rate: 24.00% (ID: 4)
+[2025-08-25 15:10:42,391] DEBUG in app.routes.invoices.invoices.edit_invoice: Updating invoice 4 fields:
+[2025-08-25 15:10:42,391] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old due_date: 2025-08-25, New due_date: 2025-08-25
+[2025-08-25 15:10:42,391] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old client_extra_info: 'Kuukulg', New client_extra_info: 'Kuukulg'
+[2025-08-25 15:10:42,392] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old note: 'PROJ-2024-001', New note: 'PROJ-2024-001'
+[2025-08-25 15:10:42,392] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old announcements: 'Palume tasuda arvel viidatud kontole ning 
+selgitusse lisada arve number! JAAA A', New announcements: 'Palume tasuda arvel viidatud kontole ning 
+selgitusse lisada arve number! JAAA A'
+[2025-08-25 15:10:42,392] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old payment_terms: '10 päeva', New payment_terms: '10 päeva'
+[2025-08-25 15:10:42,392] DEBUG in app.routes.invoices.invoices.edit_invoice: VAT rate update - Current: 24.00% (ID: 4)
+[2025-08-25 15:10:42,392] DEBUG in app.routes.invoices.invoices.edit_invoice: VAT rate update - Form submitted: '4'
+[2025-08-25 15:10:42,392] INFO in app.routes.invoices.invoices.edit_invoice: VAT rate updated: 24.00% (ID: 4) -> 24.00% (ID: 4)
+[2025-08-25 15:10:42,392] DEBUG in app.routes.invoices.invoices.edit_invoice: Selected note label ID from form: 
+[2025-08-25 15:10:42,393] DEBUG in app.routes.invoices.invoices.edit_invoice: After update:
+[2025-08-25 15:10:42,393] DEBUG in app.routes.invoices.invoices.edit_invoice:   due_date: 2025-08-25
+[2025-08-25 15:10:42,393] DEBUG in app.routes.invoices.invoices.edit_invoice:   client_extra_info: 'Kuukulg'
+[2025-08-25 15:10:42,393] DEBUG in app.routes.invoices.invoices.edit_invoice:   note: 'PROJ-2024-001'
+[2025-08-25 15:10:42,393] DEBUG in app.routes.invoices.invoices.edit_invoice:   announcements: 'Palume tasuda arvel viidatud kontole ning 
+selgitusse lisada arve number! JAAA A'
+[2025-08-25 15:10:42,393] DEBUG in app.routes.invoices.invoices.edit_invoice:   payment_terms: '10 päeva'
+[2025-08-25 15:10:42,412] DEBUG in app.routes.invoices.invoices.edit_invoice: Deleted line 524
+[2025-08-25 15:10:42,413] DEBUG in app.routes.invoices.invoices.edit_invoice: Deleted line 525
+[2025-08-25 15:10:42,413] DEBUG in app.routes.invoices.invoices.edit_invoice: Deleted line 526
+[2025-08-25 15:10:42,413] DEBUG in app.routes.invoices.invoices.edit_invoice: Deleted line 527
+[2025-08-25 15:10:42,413] DEBUG in app.routes.invoices.invoices.edit_invoice: Calculated line total: 3080.11
+[2025-08-25 15:10:42,415] DEBUG in app.routes.invoices.invoices.edit_invoice: Created new line
+[2025-08-25 15:10:42,415] DEBUG in app.routes.invoices.invoices.edit_invoice: Calculated line total: 420.00
+[2025-08-25 15:10:42,415] DEBUG in app.routes.invoices.invoices.edit_invoice: Created new line
+[2025-08-25 15:10:42,415] DEBUG in app.routes.invoices.invoices.edit_invoice: Calculated line total: 66.00
+[2025-08-25 15:10:42,416] DEBUG in app.routes.invoices.invoices.edit_invoice: Created new line
+[2025-08-25 15:10:42,416] DEBUG in app.routes.invoices.invoices.edit_invoice: Calculated line total: 132.00
+[2025-08-25 15:10:42,416] DEBUG in app.routes.invoices.invoices.edit_invoice: Created new line
+[2025-08-25 15:10:42,434] INFO in app.routes.invoices.invoices.edit_invoice: Successfully updated invoice 4 with 4 lines
+[2025-08-25 15:10:42,453] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 4 note_label_id: None
+[2025-08-25 15:10:42,455] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using default note label: Märkus
+[2025-08-25 15:11:09,959] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 4 note_label_id: None
+[2025-08-25 15:11:09,960] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using default note label: Märkus
+[2025-08-25 15:13:46,915] INFO in billipocket.logging_config.setup_logging: BilliPocket application started - Debug: True
+[2025-08-25 15:13:48,205] INFO in billipocket.logging_config.setup_logging: BilliPocket application started - Debug: True
+[2025-08-25 15:15:41,207] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 4 note_label_id: None
+[2025-08-25 15:15:41,211] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using default note label: Märkus
+[2025-08-25 15:15:45,313] DEBUG in app.routes.invoices.invoices.edit_invoice: Expunged cached invoice 4 from session
+[2025-08-25 15:15:45,321] DEBUG in app.routes.invoices.invoices.edit_invoice: Refreshed invoice 4 and loaded 4 lines
+[2025-08-25 15:15:45,326] DEBUG in app.routes.invoices.invoices.edit_invoice: Payment terms choices: [('', 'Vali makse tingimus...'), ('0 päeva', '0 päeva'), ('7 päeva', '7 päeva'), ('10 päeva', '10 päeva'), ('14 päeva', '14 päeva'), ('21 päeva', '21 päeva'), ('30 päeva', '30 päeva')]
+[2025-08-25 15:15:45,331] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Invoice VAT rate: 24.00% (ID: 4)
+[2025-08-25 15:15:45,331] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Set form VAT rate ID to: 4
+[2025-08-25 15:15:45,333] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 528: Russell mens full zip fleece + tikand (Royal Blue)
+[2025-08-25 15:15:45,334] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 529: Tööriiete tootmine (detst24 - veebr25).
+[2025-08-25 15:15:45,335] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 530: Hoka Clifton 9 või Asics Gel‑Kayano 32
+[2025-08-25 15:15:45,337] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 531: sans-serif + punased totalid • kompaktne rstik
+[2025-08-25 15:15:45,337] DEBUG in app.routes.invoices.invoices.edit_invoice: Edit invoice 4 - Method: GET, Form lines: 4
+[2025-08-25 15:15:45,337] DEBUG in app.routes.invoices.invoices.edit_invoice: Database has 4 lines for invoice 4
+[2025-08-25 15:15:45,337] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 0: ID=528, desc='Russell mens full zip fleece +...', qty=11.00, price=280.01
+[2025-08-25 15:15:45,338] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 1: ID=529, desc='Tööriiete tootmine (detst24 - ...', qty=3.50, price=120.00
+[2025-08-25 15:15:45,338] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 2: ID=530, desc='Hoka Clifton 9 või Asics Gel‑K...', qty=2.00, price=33.00
+[2025-08-25 15:15:45,338] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 3: ID=531, desc='sans-serif + punased totalid •...', qty=4.00, price=33.00
+[2025-08-25 15:15:45,338] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0: ID=NO_DATA, desc='NO_DATA', qty=11.00, price=280.01
+[2025-08-25 15:15:45,338] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0 data dict: {'id': '528', 'description': 'Russell mens full zip fleece + tikand (Royal Blue)', 'qty': Decimal('11.00'), 'unit_price': Decimal('280.01'), 'line_total': Decimal('3080.11'), 'csrf_token': None}
+[2025-08-25 15:15:45,339] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 1: ID=NO_DATA, desc='NO_DATA', qty=3.50, price=120.00
+[2025-08-25 15:15:45,339] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 1 data dict: {'id': '529', 'description': 'Tööriiete tootmine (detst24 - veebr25).', 'qty': Decimal('3.50'), 'unit_price': Decimal('120.00'), 'line_total': Decimal('420.00'), 'csrf_token': None}
+[2025-08-25 15:15:45,339] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 2: ID=NO_DATA, desc='NO_DATA', qty=2.00, price=33.00
+[2025-08-25 15:15:45,339] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 2 data dict: {'id': '530', 'description': 'Hoka Clifton 9 või Asics Gel‑Kayano 32', 'qty': Decimal('2.00'), 'unit_price': Decimal('33.00'), 'line_total': Decimal('66.00'), 'csrf_token': None}
+[2025-08-25 15:15:45,339] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 3: ID=NO_DATA, desc='NO_DATA', qty=4.00, price=33.00
+[2025-08-25 15:15:45,340] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 3 data dict: {'id': '531', 'description': 'sans-serif + punased totalid • kompaktne rstik', 'qty': Decimal('4.00'), 'unit_price': Decimal('33.00'), 'line_total': Decimal('132.00'), 'csrf_token': None}
+[2025-08-25 15:15:55,459] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 4 note_label_id: None
+[2025-08-25 15:15:55,461] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using default note label: Märkus
+[2025-08-25 15:15:57,851] DEBUG in app.routes.invoices.invoices.edit_invoice: Expunged cached invoice 4 from session
+[2025-08-25 15:15:57,859] DEBUG in app.routes.invoices.invoices.edit_invoice: Refreshed invoice 4 and loaded 4 lines
+[2025-08-25 15:15:57,867] DEBUG in app.routes.invoices.invoices.edit_invoice: Payment terms choices: [('', 'Vali makse tingimus...'), ('0 päeva', '0 päeva'), ('7 päeva', '7 päeva'), ('10 päeva', '10 päeva'), ('14 päeva', '14 päeva'), ('21 päeva', '21 päeva'), ('30 päeva', '30 päeva')]
+[2025-08-25 15:15:57,876] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Invoice VAT rate: 24.00% (ID: 4)
+[2025-08-25 15:15:57,876] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Set form VAT rate ID to: 4
+[2025-08-25 15:15:57,878] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 528: Russell mens full zip fleece + tikand (Royal Blue)
+[2025-08-25 15:15:57,880] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 529: Tööriiete tootmine (detst24 - veebr25).
+[2025-08-25 15:15:57,881] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 530: Hoka Clifton 9 või Asics Gel‑Kayano 32
+[2025-08-25 15:15:57,881] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 531: sans-serif + punased totalid • kompaktne rstik
+[2025-08-25 15:15:57,882] DEBUG in app.routes.invoices.invoices.edit_invoice: Edit invoice 4 - Method: GET, Form lines: 4
+[2025-08-25 15:15:57,882] DEBUG in app.routes.invoices.invoices.edit_invoice: Database has 4 lines for invoice 4
+[2025-08-25 15:15:57,882] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 0: ID=528, desc='Russell mens full zip fleece +...', qty=11.00, price=280.01
+[2025-08-25 15:15:57,882] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 1: ID=529, desc='Tööriiete tootmine (detst24 - ...', qty=3.50, price=120.00
+[2025-08-25 15:15:57,883] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 2: ID=530, desc='Hoka Clifton 9 või Asics Gel‑K...', qty=2.00, price=33.00
+[2025-08-25 15:15:57,883] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 3: ID=531, desc='sans-serif + punased totalid •...', qty=4.00, price=33.00
+[2025-08-25 15:15:57,883] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0: ID=NO_DATA, desc='NO_DATA', qty=11.00, price=280.01
+[2025-08-25 15:15:57,883] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0 data dict: {'id': '528', 'description': 'Russell mens full zip fleece + tikand (Royal Blue)', 'qty': Decimal('11.00'), 'unit_price': Decimal('280.01'), 'line_total': Decimal('3080.11'), 'csrf_token': None}
+[2025-08-25 15:15:57,884] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 1: ID=NO_DATA, desc='NO_DATA', qty=3.50, price=120.00
+[2025-08-25 15:15:57,884] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 1 data dict: {'id': '529', 'description': 'Tööriiete tootmine (detst24 - veebr25).', 'qty': Decimal('3.50'), 'unit_price': Decimal('120.00'), 'line_total': Decimal('420.00'), 'csrf_token': None}
+[2025-08-25 15:15:57,884] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 2: ID=NO_DATA, desc='NO_DATA', qty=2.00, price=33.00
+[2025-08-25 15:15:57,884] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 2 data dict: {'id': '530', 'description': 'Hoka Clifton 9 või Asics Gel‑Kayano 32', 'qty': Decimal('2.00'), 'unit_price': Decimal('33.00'), 'line_total': Decimal('66.00'), 'csrf_token': None}
+[2025-08-25 15:15:57,884] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 3: ID=NO_DATA, desc='NO_DATA', qty=4.00, price=33.00
+[2025-08-25 15:15:57,885] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 3 data dict: {'id': '531', 'description': 'sans-serif + punased totalid • kompaktne rstik', 'qty': Decimal('4.00'), 'unit_price': Decimal('33.00'), 'line_total': Decimal('132.00'), 'csrf_token': None}
+[2025-08-25 15:16:39,203] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 4 note_label_id: None
+[2025-08-25 15:16:39,206] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using default note label: Märkus
+[2025-08-25 15:17:35,603] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 4 note_label_id: None
+[2025-08-25 15:17:35,605] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using default note label: Märkus
+[2025-08-25 15:20:48,936] INFO in billipocket.logging_config.setup_logging: BilliPocket application started - Debug: True
+[2025-08-25 15:20:50,457] INFO in billipocket.logging_config.setup_logging: BilliPocket application started - Debug: True
+[2025-08-25 15:20:59,968] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 4 note_label_id: None
+[2025-08-25 15:20:59,971] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using default note label: Märkus
+[2025-08-25 15:21:04,661] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 4 note_label_id: None
+[2025-08-25 15:21:04,663] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using default note label: Märkus
+[2025-08-25 15:23:00,524] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 4 note_label_id: None
+[2025-08-25 15:23:00,527] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using default note label: Märkus
+[2025-08-25 15:23:11,204] DEBUG in app.routes.invoices.invoices.edit_invoice: Expunged cached invoice 4 from session
+[2025-08-25 15:23:11,210] DEBUG in app.routes.invoices.invoices.edit_invoice: Refreshed invoice 4 and loaded 4 lines
+[2025-08-25 15:23:11,213] DEBUG in app.routes.invoices.invoices.edit_invoice: Payment terms choices: [('', 'Vali makse tingimus...'), ('0 päeva', '0 päeva'), ('7 päeva', '7 päeva'), ('10 päeva', '10 päeva'), ('14 päeva', '14 päeva'), ('21 päeva', '21 päeva'), ('30 päeva', '30 päeva')]
+[2025-08-25 15:23:11,217] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Invoice VAT rate: 24.00% (ID: 4)
+[2025-08-25 15:23:11,217] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Set form VAT rate ID to: 4
+[2025-08-25 15:23:11,218] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 528: Russell mens full zip fleece + tikand (Royal Blue)
+[2025-08-25 15:23:11,220] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 529: Tööriiete tootmine (detst24 - veebr25).
+[2025-08-25 15:23:11,221] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 530: Hoka Clifton 9 või Asics Gel‑Kayano 32
+[2025-08-25 15:23:11,223] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 531: sans-serif + punased totalid • kompaktne rstik
+[2025-08-25 15:23:11,223] DEBUG in app.routes.invoices.invoices.edit_invoice: Edit invoice 4 - Method: GET, Form lines: 4
+[2025-08-25 15:23:11,224] DEBUG in app.routes.invoices.invoices.edit_invoice: Database has 4 lines for invoice 4
+[2025-08-25 15:23:11,224] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 0: ID=528, desc='Russell mens full zip fleece +...', qty=11.00, price=280.01
+[2025-08-25 15:23:11,224] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 1: ID=529, desc='Tööriiete tootmine (detst24 - ...', qty=3.50, price=120.00
+[2025-08-25 15:23:11,225] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 2: ID=530, desc='Hoka Clifton 9 või Asics Gel‑K...', qty=2.00, price=33.00
+[2025-08-25 15:23:11,225] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 3: ID=531, desc='sans-serif + punased totalid •...', qty=4.00, price=33.00
+[2025-08-25 15:23:11,225] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0: ID=NO_DATA, desc='NO_DATA', qty=11.00, price=280.01
+[2025-08-25 15:23:11,225] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0 data dict: {'id': '528', 'description': 'Russell mens full zip fleece + tikand (Royal Blue)', 'qty': Decimal('11.00'), 'unit_price': Decimal('280.01'), 'line_total': Decimal('3080.11'), 'csrf_token': None}
+[2025-08-25 15:23:11,225] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 1: ID=NO_DATA, desc='NO_DATA', qty=3.50, price=120.00
+[2025-08-25 15:23:11,226] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 1 data dict: {'id': '529', 'description': 'Tööriiete tootmine (detst24 - veebr25).', 'qty': Decimal('3.50'), 'unit_price': Decimal('120.00'), 'line_total': Decimal('420.00'), 'csrf_token': None}
+[2025-08-25 15:23:11,226] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 2: ID=NO_DATA, desc='NO_DATA', qty=2.00, price=33.00
+[2025-08-25 15:23:11,226] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 2 data dict: {'id': '530', 'description': 'Hoka Clifton 9 või Asics Gel‑Kayano 32', 'qty': Decimal('2.00'), 'unit_price': Decimal('33.00'), 'line_total': Decimal('66.00'), 'csrf_token': None}
+[2025-08-25 15:23:11,226] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 3: ID=NO_DATA, desc='NO_DATA', qty=4.00, price=33.00
+[2025-08-25 15:23:11,226] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 3 data dict: {'id': '531', 'description': 'sans-serif + punased totalid • kompaktne rstik', 'qty': Decimal('4.00'), 'unit_price': Decimal('33.00'), 'line_total': Decimal('132.00'), 'csrf_token': None}
+[2025-08-25 15:24:26,936] INFO in billipocket.logging_config.setup_logging: BilliPocket application started - Debug: True
+[2025-08-25 15:24:28,640] INFO in billipocket.logging_config.setup_logging: BilliPocket application started - Debug: True
+[2025-08-25 15:25:21,963] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 4 note_label_id: None
+[2025-08-25 15:25:21,968] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using default note label: Märkus
+[2025-08-25 15:25:37,822] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 4 note_label_id: None
+[2025-08-25 15:25:37,823] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using default note label: Märkus
+[2025-08-25 15:29:18,709] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 4 note_label_id: None
+[2025-08-25 15:29:18,710] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using default note label: Märkus
+[2025-08-25 15:29:23,603] DEBUG in app.routes.invoices.invoices.edit_invoice: Expunged cached invoice 4 from session
+[2025-08-25 15:29:23,608] DEBUG in app.routes.invoices.invoices.edit_invoice: Refreshed invoice 4 and loaded 4 lines
+[2025-08-25 15:29:23,611] DEBUG in app.routes.invoices.invoices.edit_invoice: Payment terms choices: [('', 'Vali makse tingimus...'), ('0 päeva', '0 päeva'), ('7 päeva', '7 päeva'), ('10 päeva', '10 päeva'), ('14 päeva', '14 päeva'), ('21 päeva', '21 päeva'), ('30 päeva', '30 päeva')]
+[2025-08-25 15:29:23,616] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Invoice VAT rate: 24.00% (ID: 4)
+[2025-08-25 15:29:23,616] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Set form VAT rate ID to: 4
+[2025-08-25 15:29:23,617] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 528: Russell mens full zip fleece + tikand (Royal Blue)
+[2025-08-25 15:29:23,623] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 529: Tööriiete tootmine (detst24 - veebr25).
+[2025-08-25 15:29:23,626] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 530: Hoka Clifton 9 või Asics Gel‑Kayano 32
+[2025-08-25 15:29:23,627] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 531: sans-serif + punased totalid • kompaktne rstik
+[2025-08-25 15:29:23,627] DEBUG in app.routes.invoices.invoices.edit_invoice: Edit invoice 4 - Method: GET, Form lines: 4
+[2025-08-25 15:29:23,627] DEBUG in app.routes.invoices.invoices.edit_invoice: Database has 4 lines for invoice 4
+[2025-08-25 15:29:23,628] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 0: ID=528, desc='Russell mens full zip fleece +...', qty=11.00, price=280.01
+[2025-08-25 15:29:23,628] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 1: ID=529, desc='Tööriiete tootmine (detst24 - ...', qty=3.50, price=120.00
+[2025-08-25 15:29:23,628] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 2: ID=530, desc='Hoka Clifton 9 või Asics Gel‑K...', qty=2.00, price=33.00
+[2025-08-25 15:29:23,628] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 3: ID=531, desc='sans-serif + punased totalid •...', qty=4.00, price=33.00
+[2025-08-25 15:29:23,628] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0: ID=NO_DATA, desc='NO_DATA', qty=11.00, price=280.01
+[2025-08-25 15:29:23,628] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0 data dict: {'id': '528', 'description': 'Russell mens full zip fleece + tikand (Royal Blue)', 'qty': Decimal('11.00'), 'unit_price': Decimal('280.01'), 'line_total': Decimal('3080.11'), 'csrf_token': None}
+[2025-08-25 15:29:23,628] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 1: ID=NO_DATA, desc='NO_DATA', qty=3.50, price=120.00
+[2025-08-25 15:29:23,629] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 1 data dict: {'id': '529', 'description': 'Tööriiete tootmine (detst24 - veebr25).', 'qty': Decimal('3.50'), 'unit_price': Decimal('120.00'), 'line_total': Decimal('420.00'), 'csrf_token': None}
+[2025-08-25 15:29:23,629] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 2: ID=NO_DATA, desc='NO_DATA', qty=2.00, price=33.00
+[2025-08-25 15:29:23,629] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 2 data dict: {'id': '530', 'description': 'Hoka Clifton 9 või Asics Gel‑Kayano 32', 'qty': Decimal('2.00'), 'unit_price': Decimal('33.00'), 'line_total': Decimal('66.00'), 'csrf_token': None}
+[2025-08-25 15:29:23,629] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 3: ID=NO_DATA, desc='NO_DATA', qty=4.00, price=33.00
+[2025-08-25 15:29:23,629] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 3 data dict: {'id': '531', 'description': 'sans-serif + punased totalid • kompaktne rstik', 'qty': Decimal('4.00'), 'unit_price': Decimal('33.00'), 'line_total': Decimal('132.00'), 'csrf_token': None}
+[2025-08-25 15:29:38,737] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 4 note_label_id: None
+[2025-08-25 15:29:38,738] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using default note label: Märkus
+[2025-08-25 20:11:18,396] DEBUG in app.routes.invoices.invoices.new_invoice: Form validated - all form data: {'vat_rate_id': '4', 'csrf_token': 'IjJiNmEwNTc2ODE3OTMwYTI2MTRiNDU0NzA2ZTQ2MTI5YzhmZTNjNGIi.aKyZJQ.TYJciWExVOsP8pPvvAYYxAQpzjo', 'number': '2025-0627', 'date': '2025-08-25', 'due_date': '2025-09-08', 'client_id': '1', 'payment_terms': '14 päeva', 'client_extra_info': '', 'selected_note_label_id': '', 'note': '', 'pdf_template': 'standard', 'status': 'maksmata', 'lines-0-description': 'xasxasx', 'lines-0-qty': '2', 'lines-0-unit_price': '22', 'announcements': ''}
+[2025-08-25 20:11:18,398] DEBUG in app.routes.invoices.invoices.new_invoice: Form vat_rate_id.data: '4'
+[2025-08-25 20:11:18,398] DEBUG in app.routes.invoices.invoices.new_invoice: Form VAT rate ID data: '4' (type: <class 'str'>)
+[2025-08-25 20:11:18,399] DEBUG in app.routes.invoices.invoices.new_invoice: Raw form data vat_rate_id: '4'
+[2025-08-25 20:11:18,399] DEBUG in app.routes.invoices.invoices.new_invoice: Creating invoice with VAT rate ID: 4 -> 4
+[2025-08-25 20:11:18,416] DEBUG in app.routes.invoices.invoices.new_invoice: Calculated line total: 44.00
+[2025-08-25 20:11:18,433] INFO in app.routes.invoices.invoices.new_invoice: Invoice 2025-0627 created successfully with 1 lines
+[2025-08-25 20:11:18,443] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 13 note_label_id: None
+[2025-08-25 20:11:18,445] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using default note label: Märkus
+[2025-08-25 20:12:30,007] INFO in billipocket.logging_config.setup_logging: BilliPocket application started - Debug: True
+[2025-08-25 20:13:29,835] INFO in billipocket.logging_config.setup_logging: BilliPocket application started - Debug: True
+[2025-08-25 20:14:31,562] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 13 note_label_id: None
+[2025-08-25 20:14:31,569] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using default note label: Märkus
+[2025-08-25 20:14:33,856] DEBUG in app.routes.invoices.invoices.edit_invoice: Expunged cached invoice 13 from session
+[2025-08-25 20:14:33,863] DEBUG in app.routes.invoices.invoices.edit_invoice: Refreshed invoice 13 and loaded 1 lines
+[2025-08-25 20:14:33,869] DEBUG in app.routes.invoices.invoices.edit_invoice: Payment terms choices: [('', 'Vali makse tingimus...'), ('0 päeva', '0 päeva'), ('7 päeva', '7 päeva'), ('10 päeva', '10 päeva'), ('14 päeva', '14 päeva'), ('21 päeva', '21 päeva'), ('30 päeva', '30 päeva')]
+[2025-08-25 20:14:33,873] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Invoice VAT rate: 24.00% (ID: 4)
+[2025-08-25 20:14:33,873] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Set form VAT rate ID to: 4
+[2025-08-25 20:14:33,874] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 532: xasxasx
+[2025-08-25 20:14:33,874] DEBUG in app.routes.invoices.invoices.edit_invoice: Edit invoice 13 - Method: GET, Form lines: 1
+[2025-08-25 20:14:33,874] DEBUG in app.routes.invoices.invoices.edit_invoice: Database has 1 lines for invoice 13
+[2025-08-25 20:14:33,874] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 0: ID=532, desc='xasxasx...', qty=2.00, price=22.00
+[2025-08-25 20:14:33,875] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0: ID=NO_DATA, desc='NO_DATA', qty=2.00, price=22.00
+[2025-08-25 20:14:33,875] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0 data dict: {'id': '532', 'description': 'xasxasx', 'qty': Decimal('2.00'), 'unit_price': Decimal('22.00'), 'line_total': Decimal('44.00'), 'csrf_token': None}
+[2025-08-25 22:37:58,343] DEBUG in app.routes.invoices.invoices.edit_invoice: Expunged cached invoice 12 from session
+[2025-08-25 22:37:58,359] DEBUG in app.routes.invoices.invoices.edit_invoice: Refreshed invoice 12 and loaded 1 lines
+[2025-08-25 22:37:58,364] DEBUG in app.routes.invoices.invoices.edit_invoice: Payment terms choices: [('', 'Vali makse tingimus...'), ('0 päeva', '0 päeva'), ('7 päeva', '7 päeva'), ('10 päeva', '10 päeva'), ('14 päeva', '14 päeva'), ('21 päeva', '21 päeva'), ('30 päeva', '30 päeva')]
+[2025-08-25 22:37:58,367] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Invoice VAT rate: 0.00% (ID: 1)
+[2025-08-25 22:37:58,368] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Set form VAT rate ID to: 1
+[2025-08-25 22:37:58,370] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 483: Taital nokamütsid
+[2025-08-25 22:37:58,371] DEBUG in app.routes.invoices.invoices.edit_invoice: Edit invoice 12 - Method: GET, Form lines: 1
+[2025-08-25 22:37:58,371] DEBUG in app.routes.invoices.invoices.edit_invoice: Database has 1 lines for invoice 12
+[2025-08-25 22:37:58,371] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 0: ID=483, desc='Taital nokamütsid...', qty=25.00, price=19.60
+[2025-08-25 22:37:58,371] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0: ID=NO_DATA, desc='NO_DATA', qty=25.00, price=19.60
+[2025-08-25 22:37:58,371] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0 data dict: {'id': '483', 'description': 'Taital nokamütsid', 'qty': Decimal('25.00'), 'unit_price': Decimal('19.60'), 'line_total': Decimal('490.00'), 'csrf_token': None}
+[2025-08-25 22:38:06,551] DEBUG in app.routes.invoices.invoices.edit_invoice: Payment terms choices: [('', 'Vali makse tingimus...'), ('0 päeva', '0 päeva'), ('7 päeva', '7 päeva'), ('10 päeva', '10 päeva'), ('14 päeva', '14 päeva'), ('21 päeva', '21 päeva'), ('30 päeva', '30 päeva')]
+[2025-08-25 22:38:06,575] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Invoice VAT rate: 0.00% (ID: 1)
+[2025-08-25 22:38:06,575] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Set form VAT rate ID to: 1
+[2025-08-25 22:38:06,837] DEBUG in app.routes.invoices.invoices.edit_invoice: Edit invoice 12 - Method: POST, Form lines: 1
+[2025-08-25 22:38:06,966] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0: ID=NO_DATA, desc='NO_DATA', qty=25.00, price=19.60
+[2025-08-25 22:38:06,966] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0 data dict: {'id': None, 'description': 'Taital nokamütsid', 'qty': Decimal('25.00'), 'unit_price': Decimal('19.60'), 'line_total': None, 'csrf_token': None}
+[2025-08-25 22:38:06,966] DEBUG in app.routes.invoices.invoices.edit_invoice: POST data received for payment_terms: '7 päeva'
+[2025-08-25 22:38:06,967] DEBUG in app.routes.invoices.invoices.edit_invoice: Form payment_terms choices: [('', 'Vali makse tingimus...'), ('0 päeva', '0 päeva'), ('7 päeva', '7 päeva'), ('10 päeva', '10 päeva'), ('14 päeva', '14 päeva'), ('21 päeva', '21 päeva'), ('30 päeva', '30 päeva')]
+[2025-08-25 22:38:06,967] DEBUG in app.routes.invoices.invoices.edit_invoice: Current form payment_terms data: '7 päeva'
+[2025-08-25 22:38:07,001] DEBUG in app.routes.invoices.invoices.edit_invoice: Form validation successful for invoice 12
+[2025-08-25 22:38:07,001] DEBUG in app.routes.invoices.invoices.edit_invoice: Form data received - due_date: 2025-07-19, client_extra_info: '', note: '
+
+PROJ-2024-001', announcements: '
+
+Palume tasuda arvel viidatud kontole ning selgitusse lisada arve number!
+Täname õigeaegselt tasutud arve eest!', payment_terms: '7 päeva'
+[2025-08-25 22:38:07,004] DEBUG in app.routes.invoices.invoices.edit_invoice: VAT rate form data: 1
+[2025-08-25 22:38:07,004] DEBUG in app.routes.invoices.invoices.edit_invoice: Raw form VAT rate: 4
+[2025-08-25 22:38:07,004] DEBUG in app.routes.invoices.invoices.edit_invoice: Current invoice VAT rate: 0.00% (ID: 1)
+[2025-08-25 22:38:07,004] DEBUG in app.routes.invoices.invoices.edit_invoice: Updating invoice 12 fields:
+[2025-08-25 22:38:07,004] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old due_date: 2025-07-19, New due_date: 2025-07-19
+[2025-08-25 22:38:07,005] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old client_extra_info: 'None', New client_extra_info: ''
+[2025-08-25 22:38:07,005] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old note: '
+
+PROJ-2024-001', New note: '
+
+PROJ-2024-001'
+[2025-08-25 22:38:07,005] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old announcements: '
+
+Palume tasuda arvel viidatud kontole ning selgitusse lisada arve number!
+Täname õigeaegselt tasutud arve eest!', New announcements: '
+
+Palume tasuda arvel viidatud kontole ning selgitusse lisada arve number!
+Täname õigeaegselt tasutud arve eest!'
+[2025-08-25 22:38:07,005] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old payment_terms: '7 päeva', New payment_terms: '7 päeva'
+[2025-08-25 22:38:07,005] DEBUG in app.routes.invoices.invoices.edit_invoice: VAT rate update - Current: 0.00% (ID: 1)
+[2025-08-25 22:38:07,006] DEBUG in app.routes.invoices.invoices.edit_invoice: VAT rate update - Form submitted: '4'
+[2025-08-25 22:38:07,006] INFO in app.routes.invoices.invoices.edit_invoice: VAT rate updated: 0.00% (ID: 1) -> 24.00% (ID: 4)
+[2025-08-25 22:38:07,007] DEBUG in app.routes.invoices.invoices.edit_invoice: Selected note label ID from form: 
+[2025-08-25 22:38:07,007] DEBUG in app.routes.invoices.invoices.edit_invoice: After update:
+[2025-08-25 22:38:07,007] DEBUG in app.routes.invoices.invoices.edit_invoice:   due_date: 2025-07-19
+[2025-08-25 22:38:07,007] DEBUG in app.routes.invoices.invoices.edit_invoice:   client_extra_info: 'None'
+[2025-08-25 22:38:07,007] DEBUG in app.routes.invoices.invoices.edit_invoice:   note: '
+
+PROJ-2024-001'
+[2025-08-25 22:38:07,008] DEBUG in app.routes.invoices.invoices.edit_invoice:   announcements: '
+
+Palume tasuda arvel viidatud kontole ning selgitusse lisada arve number!
+Täname õigeaegselt tasutud arve eest!'
+[2025-08-25 22:38:07,008] DEBUG in app.routes.invoices.invoices.edit_invoice:   payment_terms: '7 päeva'
+[2025-08-25 22:38:07,018] DEBUG in app.routes.invoices.invoices.edit_invoice: Deleted line 483
+[2025-08-25 22:38:07,019] DEBUG in app.routes.invoices.invoices.edit_invoice: Calculated line total: 490.00
+[2025-08-25 22:38:07,020] DEBUG in app.routes.invoices.invoices.edit_invoice: Created new line
+[2025-08-25 22:38:07,046] INFO in app.routes.invoices.invoices.edit_invoice: Successfully updated invoice 12 with 1 lines
+[2025-08-25 22:38:07,056] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 12 note_label_id: None
+[2025-08-25 22:38:07,058] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using default note label: Märkus
+[2025-08-25 22:42:21,809] DEBUG in app.routes.invoices.invoices.new_invoice: Form validated - all form data: {'vat_rate_id': '4', 'csrf_token': 'IjJiNmEwNTc2ODE3OTMwYTI2MTRiNDU0NzA2ZTQ2MTI5YzhmZTNjNGIi.aKy8Kw.iyO1VskYHcbHzy5xJ5b9VmjP0Vc', 'number': '2025-0627', 'date': '2025-07-29', 'due_date': '2025-07-29', 'client_id': '11', 'payment_terms': '0 päeva', 'client_extra_info': '', 'selected_note_label_id': '', 'note': '', 'pdf_template': 'standard', 'status': 'maksmata', 'lines-0-description': 'Pusad JH001 mustad', 'lines-0-qty': '10', 'lines-0-unit_price': '17.95', 'lines-1-id': '', 'lines-1-line_total': '371.25', 'lines-1-description': 'Gildan valged ja mustad T-särgid', 'lines-1-qty': '75', 'lines-1-unit_price': '4.95', 'announcements': 'Palume tasuda arvel viidatud kontole ning selgitusse lisada arve number!\r\nTäname õigeaegselt tasutud arve eest!'}
+[2025-08-25 22:42:21,809] DEBUG in app.routes.invoices.invoices.new_invoice: Form vat_rate_id.data: '4'
+[2025-08-25 22:42:21,809] DEBUG in app.routes.invoices.invoices.new_invoice: Form VAT rate ID data: '4' (type: <class 'str'>)
+[2025-08-25 22:42:21,810] DEBUG in app.routes.invoices.invoices.new_invoice: Raw form data vat_rate_id: '4'
+[2025-08-25 22:42:21,810] DEBUG in app.routes.invoices.invoices.new_invoice: Creating invoice with VAT rate ID: 4 -> 4
+[2025-08-25 22:42:21,815] DEBUG in app.routes.invoices.invoices.new_invoice: Calculated line total: 179.50
+[2025-08-25 22:42:21,817] DEBUG in app.routes.invoices.invoices.new_invoice: Using user-provided line total: 371.25
+[2025-08-25 22:42:21,834] INFO in app.routes.invoices.invoices.new_invoice: Invoice 2025-0627 created successfully with 2 lines
+[2025-08-25 22:42:21,841] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 13 note_label_id: None
+[2025-08-25 22:42:21,842] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using default note label: Märkus
+[2025-08-25 22:42:38,828] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 14 note_label_id: 1
+[2025-08-25 22:42:38,832] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using invoice-specific note label: Märkus
+[2025-08-25 22:42:50,534] DEBUG in app.routes.invoices.invoices.edit_invoice: Expunged cached invoice 14 from session
+[2025-08-25 22:42:50,537] DEBUG in app.routes.invoices.invoices.edit_invoice: Refreshed invoice 14 and loaded 1 lines
+[2025-08-25 22:42:50,538] DEBUG in app.routes.invoices.invoices.edit_invoice: Payment terms choices: [('', 'Vali makse tingimus...'), ('0 päeva', '0 päeva'), ('7 päeva', '7 päeva'), ('10 päeva', '10 päeva'), ('14 päeva', '14 päeva'), ('21 päeva', '21 päeva'), ('30 päeva', '30 päeva')]
+[2025-08-25 22:42:50,540] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Invoice VAT rate: 24.00% (ID: 4)
+[2025-08-25 22:42:50,540] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Set form VAT rate ID to: 4
+[2025-08-25 22:42:50,541] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 535: Reklaamteenus (mai25)
+[2025-08-25 22:42:50,541] DEBUG in app.routes.invoices.invoices.edit_invoice: Edit invoice 14 - Method: GET, Form lines: 1
+[2025-08-25 22:42:50,541] DEBUG in app.routes.invoices.invoices.edit_invoice: Database has 1 lines for invoice 14
+[2025-08-25 22:42:50,541] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 0: ID=535, desc='Reklaamteenus (mai25)...', qty=1.00, price=1383.34
+[2025-08-25 22:42:50,541] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0: ID=NO_DATA, desc='NO_DATA', qty=1.00, price=1383.34
+[2025-08-25 22:42:50,541] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0 data dict: {'id': '535', 'description': 'Reklaamteenus (mai25)', 'qty': Decimal('1.00'), 'unit_price': Decimal('1383.34'), 'line_total': Decimal('1383.34'), 'csrf_token': None}
+[2025-08-25 22:43:33,575] DEBUG in app.routes.invoices.invoices.edit_invoice: Payment terms choices: [('', 'Vali makse tingimus...'), ('0 päeva', '0 päeva'), ('7 päeva', '7 päeva'), ('10 päeva', '10 päeva'), ('14 päeva', '14 päeva'), ('21 päeva', '21 päeva'), ('30 päeva', '30 päeva')]
+[2025-08-25 22:43:33,578] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Invoice VAT rate: 24.00% (ID: 4)
+[2025-08-25 22:43:33,578] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Set form VAT rate ID to: 4
+[2025-08-25 22:43:33,579] DEBUG in app.routes.invoices.invoices.edit_invoice: Edit invoice 14 - Method: POST, Form lines: 1
+[2025-08-25 22:43:33,579] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0: ID=NO_DATA, desc='NO_DATA', qty=1.00, price=553.09
+[2025-08-25 22:43:33,579] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0 data dict: {'id': None, 'description': 'Reklaamteenus (juuni25)', 'qty': Decimal('1.00'), 'unit_price': Decimal('553.09'), 'line_total': None, 'csrf_token': None}
+[2025-08-25 22:43:33,579] DEBUG in app.routes.invoices.invoices.edit_invoice: POST data received for payment_terms: '14 päeva'
+[2025-08-25 22:43:33,580] DEBUG in app.routes.invoices.invoices.edit_invoice: Form payment_terms choices: [('', 'Vali makse tingimus...'), ('0 päeva', '0 päeva'), ('7 päeva', '7 päeva'), ('10 päeva', '10 päeva'), ('14 päeva', '14 päeva'), ('21 päeva', '21 päeva'), ('30 päeva', '30 päeva')]
+[2025-08-25 22:43:33,580] DEBUG in app.routes.invoices.invoices.edit_invoice: Current form payment_terms data: '14 päeva'
+[2025-08-25 22:43:33,583] DEBUG in app.routes.invoices.invoices.edit_invoice: Form validation successful for invoice 14
+[2025-08-25 22:43:33,584] DEBUG in app.routes.invoices.invoices.edit_invoice: Form data received - due_date: 2025-08-15, client_extra_info: '', note: '', announcements: '', payment_terms: '14 päeva'
+[2025-08-25 22:43:33,584] DEBUG in app.routes.invoices.invoices.edit_invoice: VAT rate form data: 4
+[2025-08-25 22:43:33,584] DEBUG in app.routes.invoices.invoices.edit_invoice: Raw form VAT rate: 4
+[2025-08-25 22:43:33,584] DEBUG in app.routes.invoices.invoices.edit_invoice: Current invoice VAT rate: 24.00% (ID: 4)
+[2025-08-25 22:43:33,585] DEBUG in app.routes.invoices.invoices.edit_invoice: Updating invoice 14 fields:
+[2025-08-25 22:43:33,585] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old due_date: 2025-07-15, New due_date: 2025-08-15
+[2025-08-25 22:43:33,585] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old client_extra_info: '', New client_extra_info: ''
+[2025-08-25 22:43:33,585] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old note: '', New note: ''
+[2025-08-25 22:43:33,586] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old announcements: '', New announcements: ''
+[2025-08-25 22:43:33,586] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old payment_terms: '14 päeva', New payment_terms: '14 päeva'
+[2025-08-25 22:43:33,586] DEBUG in app.routes.invoices.invoices.edit_invoice: VAT rate update - Current: 24.00% (ID: 4)
+[2025-08-25 22:43:33,586] DEBUG in app.routes.invoices.invoices.edit_invoice: VAT rate update - Form submitted: '4'
+[2025-08-25 22:43:33,587] INFO in app.routes.invoices.invoices.edit_invoice: VAT rate updated: 24.00% (ID: 4) -> 24.00% (ID: 4)
+[2025-08-25 22:43:33,587] DEBUG in app.routes.invoices.invoices.edit_invoice: Selected note label ID from form: 
+[2025-08-25 22:43:33,587] DEBUG in app.routes.invoices.invoices.edit_invoice: After update:
+[2025-08-25 22:43:33,588] DEBUG in app.routes.invoices.invoices.edit_invoice:   due_date: 2025-08-15
+[2025-08-25 22:43:33,588] DEBUG in app.routes.invoices.invoices.edit_invoice:   client_extra_info: 'None'
+[2025-08-25 22:43:33,588] DEBUG in app.routes.invoices.invoices.edit_invoice:   note: 'None'
+[2025-08-25 22:43:33,589] DEBUG in app.routes.invoices.invoices.edit_invoice:   announcements: 'None'
+[2025-08-25 22:43:33,589] DEBUG in app.routes.invoices.invoices.edit_invoice:   payment_terms: '14 päeva'
+[2025-08-25 22:43:33,593] DEBUG in app.routes.invoices.invoices.edit_invoice: Deleted line 535
+[2025-08-25 22:43:33,593] DEBUG in app.routes.invoices.invoices.edit_invoice: Calculated line total: 553.09
+[2025-08-25 22:43:33,594] DEBUG in app.routes.invoices.invoices.edit_invoice: Created new line
+[2025-08-25 22:43:33,602] INFO in app.routes.invoices.invoices.edit_invoice: Successfully updated invoice 14 with 1 lines
+[2025-08-25 22:43:33,609] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 14 note_label_id: None
+[2025-08-25 22:43:33,610] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using default note label: Märkus
+[2025-08-25 22:45:19,010] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 14 note_label_id: None
+[2025-08-25 22:45:19,011] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using default note label: Märkus
+[2025-08-25 22:45:21,858] DEBUG in app.routes.pdf.pdf.invoice_preview: Preview route - Invoice 14 note_label_id: None
+[2025-08-25 22:45:21,859] DEBUG in app.routes.pdf.pdf.invoice_preview: Preview route - No note label assigned to invoice
+[2025-08-25 22:45:40,952] DEBUG in app.routes.pdf.pdf.invoice_preview: Preview route - Invoice 14 note_label_id: None
+[2025-08-25 22:45:40,953] DEBUG in app.routes.pdf.pdf.invoice_preview: Preview route - No note label assigned to invoice
+[2025-08-25 22:46:04,519] DEBUG in app.routes.pdf.pdf.invoice_preview: Preview route - Invoice 14 note_label_id: None
+[2025-08-25 22:46:04,521] DEBUG in app.routes.pdf.pdf.invoice_preview: Preview route - No note label assigned to invoice
+[2025-08-25 22:46:24,065] DEBUG in app.routes.invoices.invoices.edit_invoice: Expunged cached invoice 14 from session
+[2025-08-25 22:46:24,070] DEBUG in app.routes.invoices.invoices.edit_invoice: Refreshed invoice 14 and loaded 1 lines
+[2025-08-25 22:46:24,073] DEBUG in app.routes.invoices.invoices.edit_invoice: Payment terms choices: [('', 'Vali makse tingimus...'), ('0 päeva', '0 päeva'), ('7 päeva', '7 päeva'), ('10 päeva', '10 päeva'), ('14 päeva', '14 päeva'), ('21 päeva', '21 päeva'), ('30 päeva', '30 päeva')]
+[2025-08-25 22:46:24,075] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Invoice VAT rate: 24.00% (ID: 4)
+[2025-08-25 22:46:24,076] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Set form VAT rate ID to: 4
+[2025-08-25 22:46:24,077] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 536: Reklaamteenus (juuni25)
+[2025-08-25 22:46:24,078] DEBUG in app.routes.invoices.invoices.edit_invoice: Edit invoice 14 - Method: GET, Form lines: 1
+[2025-08-25 22:46:24,078] DEBUG in app.routes.invoices.invoices.edit_invoice: Database has 1 lines for invoice 14
+[2025-08-25 22:46:24,079] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 0: ID=536, desc='Reklaamteenus (juuni25)...', qty=1.00, price=553.09
+[2025-08-25 22:46:24,080] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0: ID=NO_DATA, desc='NO_DATA', qty=1.00, price=553.09
+[2025-08-25 22:46:24,080] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0 data dict: {'id': '536', 'description': 'Reklaamteenus (juuni25)', 'qty': Decimal('1.00'), 'unit_price': Decimal('553.09'), 'line_total': Decimal('553.09'), 'csrf_token': None}
+[2025-08-25 22:46:44,339] DEBUG in app.routes.invoices.invoices.edit_invoice: Payment terms choices: [('', 'Vali makse tingimus...'), ('0 päeva', '0 päeva'), ('7 päeva', '7 päeva'), ('10 päeva', '10 päeva'), ('14 päeva', '14 päeva'), ('21 päeva', '21 päeva'), ('30 päeva', '30 päeva')]
+[2025-08-25 22:46:44,343] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Invoice VAT rate: 24.00% (ID: 4)
+[2025-08-25 22:46:44,344] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Set form VAT rate ID to: 4
+[2025-08-25 22:46:44,344] DEBUG in app.routes.invoices.invoices.edit_invoice: Edit invoice 14 - Method: POST, Form lines: 1
+[2025-08-25 22:46:44,344] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0: ID=NO_DATA, desc='NO_DATA', qty=1.00, price=553.09
+[2025-08-25 22:46:44,344] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0 data dict: {'id': None, 'description': 'Reklaamteenus (juuni25)', 'qty': Decimal('1.00'), 'unit_price': Decimal('553.09'), 'line_total': None, 'csrf_token': None}
+[2025-08-25 22:46:44,345] DEBUG in app.routes.invoices.invoices.edit_invoice: POST data received for payment_terms: '14 päeva'
+[2025-08-25 22:46:44,345] DEBUG in app.routes.invoices.invoices.edit_invoice: Form payment_terms choices: [('', 'Vali makse tingimus...'), ('0 päeva', '0 päeva'), ('7 päeva', '7 päeva'), ('10 päeva', '10 päeva'), ('14 päeva', '14 päeva'), ('21 päeva', '21 päeva'), ('30 päeva', '30 päeva')]
+[2025-08-25 22:46:44,346] DEBUG in app.routes.invoices.invoices.edit_invoice: Current form payment_terms data: '14 päeva'
+[2025-08-25 22:46:44,349] DEBUG in app.routes.invoices.invoices.edit_invoice: Form validation successful for invoice 14
+[2025-08-25 22:46:44,349] DEBUG in app.routes.invoices.invoices.edit_invoice: Form data received - due_date: 2025-08-15, client_extra_info: '', note: '', announcements: 'Palume tasuda arvel viidatud kontole ning selgitusse lisada arve number!
+Täname õigeaegselt tasutud arve eest!', payment_terms: '14 päeva'
+[2025-08-25 22:46:44,349] DEBUG in app.routes.invoices.invoices.edit_invoice: VAT rate form data: 4
+[2025-08-25 22:46:44,350] DEBUG in app.routes.invoices.invoices.edit_invoice: Raw form VAT rate: 4
+[2025-08-25 22:46:44,350] DEBUG in app.routes.invoices.invoices.edit_invoice: Current invoice VAT rate: 24.00% (ID: 4)
+[2025-08-25 22:46:44,350] DEBUG in app.routes.invoices.invoices.edit_invoice: Updating invoice 14 fields:
+[2025-08-25 22:46:44,350] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old due_date: 2025-08-15, New due_date: 2025-08-15
+[2025-08-25 22:46:44,350] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old client_extra_info: 'None', New client_extra_info: ''
+[2025-08-25 22:46:44,350] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old note: 'None', New note: ''
+[2025-08-25 22:46:44,350] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old announcements: 'None', New announcements: 'Palume tasuda arvel viidatud kontole ning selgitusse lisada arve number!
+Täname õigeaegselt tasutud arve eest!'
+[2025-08-25 22:46:44,350] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old payment_terms: '14 päeva', New payment_terms: '14 päeva'
+[2025-08-25 22:46:44,351] DEBUG in app.routes.invoices.invoices.edit_invoice: VAT rate update - Current: 24.00% (ID: 4)
+[2025-08-25 22:46:44,351] DEBUG in app.routes.invoices.invoices.edit_invoice: VAT rate update - Form submitted: '4'
+[2025-08-25 22:46:44,351] INFO in app.routes.invoices.invoices.edit_invoice: VAT rate updated: 24.00% (ID: 4) -> 24.00% (ID: 4)
+[2025-08-25 22:46:44,352] DEBUG in app.routes.invoices.invoices.edit_invoice: Selected note label ID from form: 
+[2025-08-25 22:46:44,352] DEBUG in app.routes.invoices.invoices.edit_invoice: After update:
+[2025-08-25 22:46:44,353] DEBUG in app.routes.invoices.invoices.edit_invoice:   due_date: 2025-08-15
+[2025-08-25 22:46:44,353] DEBUG in app.routes.invoices.invoices.edit_invoice:   client_extra_info: 'None'
+[2025-08-25 22:46:44,353] DEBUG in app.routes.invoices.invoices.edit_invoice:   note: 'None'
+[2025-08-25 22:46:44,353] DEBUG in app.routes.invoices.invoices.edit_invoice:   announcements: 'Palume tasuda arvel viidatud kontole ning selgitusse lisada arve number!
+Täname õigeaegselt tasutud arve eest!'
+[2025-08-25 22:46:44,353] DEBUG in app.routes.invoices.invoices.edit_invoice:   payment_terms: '14 päeva'
+[2025-08-25 22:46:44,357] DEBUG in app.routes.invoices.invoices.edit_invoice: Deleted line 536
+[2025-08-25 22:46:44,357] DEBUG in app.routes.invoices.invoices.edit_invoice: Calculated line total: 553.09
+[2025-08-25 22:46:44,357] DEBUG in app.routes.invoices.invoices.edit_invoice: Created new line
+[2025-08-25 22:46:44,370] INFO in app.routes.invoices.invoices.edit_invoice: Successfully updated invoice 14 with 1 lines
+[2025-08-25 22:46:44,377] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 14 note_label_id: None
+[2025-08-25 22:46:44,380] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using default note label: Märkus
+[2025-08-25 22:46:46,337] DEBUG in app.routes.pdf.pdf.invoice_preview: Preview route - Invoice 14 note_label_id: None
+[2025-08-25 22:46:46,337] DEBUG in app.routes.pdf.pdf.invoice_preview: Preview route - No note label assigned to invoice
+[2025-08-25 22:47:12,489] DEBUG in app.routes.pdf.pdf.invoice_preview: Preview route - Invoice 14 note_label_id: None
+[2025-08-25 22:47:12,489] DEBUG in app.routes.pdf.pdf.invoice_preview: Preview route - No note label assigned to invoice
+[2025-08-25 22:47:27,870] DEBUG in app.routes.pdf.pdf.invoice_preview: Preview route - Invoice 14 note_label_id: None
+[2025-08-25 22:47:27,870] DEBUG in app.routes.pdf.pdf.invoice_preview: Preview route - No note label assigned to invoice
+[2025-08-25 22:47:45,726] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 7 note_label_id: 1
+[2025-08-25 22:47:45,729] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using invoice-specific note label: Märkus
+[2025-08-25 22:47:53,962] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 6 note_label_id: 1
+[2025-08-25 22:47:53,964] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using invoice-specific note label: Märkus
+[2025-08-25 22:48:01,526] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 8 note_label_id: 1
+[2025-08-25 22:48:01,528] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using invoice-specific note label: Märkus
+[2025-08-25 22:48:07,193] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 9 note_label_id: 1
+[2025-08-25 22:48:07,195] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using invoice-specific note label: Märkus
+[2025-08-25 22:48:12,640] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 10 note_label_id: 1
+[2025-08-25 22:48:12,641] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using invoice-specific note label: Märkus
+[2025-08-25 22:52:23,556] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 14 note_label_id: None
+[2025-08-25 22:52:23,563] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using default note label: Märkus
+[2025-08-25 22:52:26,130] DEBUG in app.routes.pdf.pdf.invoice_pdf: PDF route - Invoice 14 note_label_id: None
+[2025-08-25 22:52:26,130] DEBUG in app.routes.pdf.pdf.invoice_pdf: PDF route - No note label assigned to invoice
+[2025-08-25 22:53:21,339] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 14 note_label_id: None
+[2025-08-25 22:53:21,340] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using default note label: Märkus
+[2025-08-25 22:53:23,000] DEBUG in app.routes.pdf.pdf.invoice_preview: Preview route - Invoice 14 note_label_id: None
+[2025-08-25 22:53:23,001] DEBUG in app.routes.pdf.pdf.invoice_preview: Preview route - No note label assigned to invoice
+[2025-08-26 10:14:03,602] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 5 note_label_id: 1
+[2025-08-26 10:14:03,611] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using invoice-specific note label: Märkus
+[2025-08-26 10:14:29,496] DEBUG in app.routes.invoices.invoices.edit_invoice: Expunged cached invoice 5 from session
+[2025-08-26 10:14:29,503] DEBUG in app.routes.invoices.invoices.edit_invoice: Refreshed invoice 5 and loaded 1 lines
+[2025-08-26 10:14:29,511] DEBUG in app.routes.invoices.invoices.edit_invoice: Payment terms choices: [('', 'Vali makse tingimus...'), ('0 päeva', '0 päeva'), ('7 päeva', '7 päeva'), ('10 päeva', '10 päeva'), ('14 päeva', '14 päeva'), ('21 päeva', '21 päeva'), ('30 päeva', '30 päeva')]
+[2025-08-26 10:14:29,519] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Invoice VAT rate: 24.00% (ID: 4)
+[2025-08-26 10:14:29,519] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Set form VAT rate ID to: 4
+[2025-08-26 10:14:29,520] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 76: Reklaamteenus (aprill25)
+[2025-08-26 10:14:29,520] DEBUG in app.routes.invoices.invoices.edit_invoice: Edit invoice 5 - Method: GET, Form lines: 1
+[2025-08-26 10:14:29,520] DEBUG in app.routes.invoices.invoices.edit_invoice: Database has 1 lines for invoice 5
+[2025-08-26 10:14:29,521] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 0: ID=76, desc='Reklaamteenus (aprill25)...', qty=1.00, price=1495.84
+[2025-08-26 10:14:29,521] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0: ID=NO_DATA, desc='NO_DATA', qty=1.00, price=1495.84
+[2025-08-26 10:14:29,521] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0 data dict: {'id': '76', 'description': 'Reklaamteenus (aprill25)', 'qty': Decimal('1.00'), 'unit_price': Decimal('1495.84'), 'line_total': Decimal('1495.84'), 'csrf_token': None}
+[2025-08-26 10:15:03,946] DEBUG in app.routes.invoices.invoices.edit_invoice: Payment terms choices: [('', 'Vali makse tingimus...'), ('0 päeva', '0 päeva'), ('7 päeva', '7 päeva'), ('10 päeva', '10 päeva'), ('14 päeva', '14 päeva'), ('21 päeva', '21 päeva'), ('30 päeva', '30 päeva')]
+[2025-08-26 10:15:03,955] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Invoice VAT rate: 24.00% (ID: 4)
+[2025-08-26 10:15:03,955] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Set form VAT rate ID to: 4
+[2025-08-26 10:15:03,956] DEBUG in app.routes.invoices.invoices.edit_invoice: Edit invoice 5 - Method: POST, Form lines: 1
+[2025-08-26 10:15:03,957] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0: ID=NO_DATA, desc='NO_DATA', qty=1.00, price=1495.84
+[2025-08-26 10:15:03,957] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0 data dict: {'id': None, 'description': 'Reklaamteenus (aprill25)', 'qty': Decimal('1.00'), 'unit_price': Decimal('1495.84'), 'line_total': None, 'csrf_token': None}
+[2025-08-26 10:15:03,957] DEBUG in app.routes.invoices.invoices.edit_invoice: POST data received for payment_terms: '14 päeva'
+[2025-08-26 10:15:03,958] DEBUG in app.routes.invoices.invoices.edit_invoice: Form payment_terms choices: [('', 'Vali makse tingimus...'), ('0 päeva', '0 päeva'), ('7 päeva', '7 päeva'), ('10 päeva', '10 päeva'), ('14 päeva', '14 päeva'), ('21 päeva', '21 päeva'), ('30 päeva', '30 päeva')]
+[2025-08-26 10:15:03,958] DEBUG in app.routes.invoices.invoices.edit_invoice: Current form payment_terms data: '14 päeva'
+[2025-08-26 10:15:03,963] DEBUG in app.routes.invoices.invoices.edit_invoice: Form validation successful for invoice 5
+[2025-08-26 10:15:03,964] DEBUG in app.routes.invoices.invoices.edit_invoice: Form data received - due_date: 2025-06-15, client_extra_info: '', note: '', announcements: '', payment_terms: '14 päeva'
+[2025-08-26 10:15:03,965] DEBUG in app.routes.invoices.invoices.edit_invoice: VAT rate form data: 4
+[2025-08-26 10:15:03,965] DEBUG in app.routes.invoices.invoices.edit_invoice: Raw form VAT rate: 5
+[2025-08-26 10:15:03,965] DEBUG in app.routes.invoices.invoices.edit_invoice: Current invoice VAT rate: 24.00% (ID: 4)
+[2025-08-26 10:15:03,966] DEBUG in app.routes.invoices.invoices.edit_invoice: Updating invoice 5 fields:
+[2025-08-26 10:15:03,967] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old due_date: 2025-06-15, New due_date: 2025-06-15
+[2025-08-26 10:15:03,967] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old client_extra_info: 'None', New client_extra_info: ''
+[2025-08-26 10:15:03,967] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old note: 'None', New note: ''
+[2025-08-26 10:15:03,967] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old announcements: 'None', New announcements: ''
+[2025-08-26 10:15:03,968] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old payment_terms: '14 päeva', New payment_terms: '14 päeva'
+[2025-08-26 10:15:03,968] DEBUG in app.routes.invoices.invoices.edit_invoice: VAT rate update - Current: 24.00% (ID: 4)
+[2025-08-26 10:15:03,968] DEBUG in app.routes.invoices.invoices.edit_invoice: VAT rate update - Form submitted: '5'
+[2025-08-26 10:15:03,969] INFO in app.routes.invoices.invoices.edit_invoice: VAT rate updated: 24.00% (ID: 4) -> 22.00% (ID: 5)
+[2025-08-26 10:15:03,969] DEBUG in app.routes.invoices.invoices.edit_invoice: Selected note label ID from form: 1
+[2025-08-26 10:15:03,969] DEBUG in app.routes.invoices.invoices.edit_invoice: After update:
+[2025-08-26 10:15:03,970] DEBUG in app.routes.invoices.invoices.edit_invoice:   due_date: 2025-06-15
+[2025-08-26 10:15:03,971] DEBUG in app.routes.invoices.invoices.edit_invoice:   client_extra_info: 'None'
+[2025-08-26 10:15:03,971] DEBUG in app.routes.invoices.invoices.edit_invoice:   note: 'None'
+[2025-08-26 10:15:03,971] DEBUG in app.routes.invoices.invoices.edit_invoice:   announcements: 'None'
+[2025-08-26 10:15:03,971] DEBUG in app.routes.invoices.invoices.edit_invoice:   payment_terms: '14 päeva'
+[2025-08-26 10:15:03,981] DEBUG in app.routes.invoices.invoices.edit_invoice: Deleted line 76
+[2025-08-26 10:15:03,982] DEBUG in app.routes.invoices.invoices.edit_invoice: Calculated line total: 1495.84
+[2025-08-26 10:15:03,982] DEBUG in app.routes.invoices.invoices.edit_invoice: Created new line
+[2025-08-26 10:15:03,994] INFO in app.routes.invoices.invoices.edit_invoice: Successfully updated invoice 5 with 1 lines
+[2025-08-26 10:15:04,011] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 5 note_label_id: 1
+[2025-08-26 10:15:04,017] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using invoice-specific note label: Märkus
+[2025-08-26 10:15:19,348] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 7 note_label_id: 1
+[2025-08-26 10:15:19,351] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using invoice-specific note label: Märkus
+[2025-08-26 10:15:26,128] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 9 note_label_id: 1
+[2025-08-26 10:15:26,131] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using invoice-specific note label: Märkus
+[2025-08-26 10:15:30,778] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 10 note_label_id: 1
+[2025-08-26 10:15:30,781] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using invoice-specific note label: Märkus
+[2025-08-26 10:16:12,953] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 4 note_label_id: None
+[2025-08-26 10:16:12,955] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using default note label: Märkus
+[2025-08-26 10:40:16,844] INFO in billipocket.logging_config.setup_logging: BilliPocket application started - Debug: True
+[2025-08-26 10:40:37,403] INFO in billipocket.logging_config.setup_logging: BilliPocket application started - Debug: True
+[2025-08-26 10:40:42,918] INFO in billipocket.logging_config.setup_logging: BilliPocket application started - Debug: True
+[2025-08-26 11:31:48,579] DEBUG in app.routes.invoices.invoices.edit_invoice: Expunged cached invoice 4 from session
+[2025-08-26 11:31:48,602] DEBUG in app.routes.invoices.invoices.edit_invoice: Refreshed invoice 4 and loaded 4 lines
+[2025-08-26 11:31:48,606] DEBUG in app.routes.invoices.invoices.edit_invoice: Payment terms choices: [('', 'Vali makse tingimus...'), ('0 päeva', '0 päeva'), ('7 päeva', '7 päeva'), ('10 päeva', '10 päeva'), ('14 päeva', '14 päeva'), ('21 päeva', '21 päeva'), ('30 päeva', '30 päeva')]
+[2025-08-26 11:31:48,613] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Invoice VAT rate: 24.00% (ID: 4)
+[2025-08-26 11:31:48,614] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Set form VAT rate ID to: 4
+[2025-08-26 11:31:48,615] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 528: Russell mens full zip fleece + tikand (Royal Blue)
+[2025-08-26 11:31:48,616] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 529: Tööriiete tootmine (detst24 - veebr25).
+[2025-08-26 11:31:48,617] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 530: Hoka Clifton 9 või Asics Gel‑Kayano 32
+[2025-08-26 11:31:48,617] DEBUG in app.routes.invoices.invoices.edit_invoice: Successfully populated line 531: sans-serif + punased totalid • kompaktne rstik
+[2025-08-26 11:31:48,617] DEBUG in app.routes.invoices.invoices.edit_invoice: Edit invoice 4 - Method: GET, Form lines: 4
+[2025-08-26 11:31:48,618] DEBUG in app.routes.invoices.invoices.edit_invoice: Database has 4 lines for invoice 4
+[2025-08-26 11:31:48,618] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 0: ID=528, desc='Russell mens full zip fleece +...', qty=11.00, price=280.01
+[2025-08-26 11:31:48,618] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 1: ID=529, desc='Tööriiete tootmine (detst24 - ...', qty=3.50, price=120.00
+[2025-08-26 11:31:48,618] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 2: ID=530, desc='Hoka Clifton 9 või Asics Gel‑K...', qty=2.00, price=33.00
+[2025-08-26 11:31:48,618] DEBUG in app.routes.invoices.invoices.edit_invoice:   Line 3: ID=531, desc='sans-serif + punased totalid •...', qty=4.00, price=33.00
+[2025-08-26 11:31:48,618] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0: ID=NO_DATA, desc='NO_DATA', qty=11.00, price=280.01
+[2025-08-26 11:31:48,619] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0 data dict: {'id': '528', 'description': 'Russell mens full zip fleece + tikand (Royal Blue)', 'qty': Decimal('11.00'), 'unit_price': Decimal('280.01'), 'line_total': Decimal('3080.11'), 'csrf_token': None}
+[2025-08-26 11:31:48,619] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 1: ID=NO_DATA, desc='NO_DATA', qty=3.50, price=120.00
+[2025-08-26 11:31:48,619] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 1 data dict: {'id': '529', 'description': 'Tööriiete tootmine (detst24 - veebr25).', 'qty': Decimal('3.50'), 'unit_price': Decimal('120.00'), 'line_total': Decimal('420.00'), 'csrf_token': None}
+[2025-08-26 11:31:48,619] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 2: ID=NO_DATA, desc='NO_DATA', qty=2.00, price=33.00
+[2025-08-26 11:31:48,619] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 2 data dict: {'id': '530', 'description': 'Hoka Clifton 9 või Asics Gel‑Kayano 32', 'qty': Decimal('2.00'), 'unit_price': Decimal('33.00'), 'line_total': Decimal('66.00'), 'csrf_token': None}
+[2025-08-26 11:31:48,619] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 3: ID=NO_DATA, desc='NO_DATA', qty=4.00, price=33.00
+[2025-08-26 11:31:48,619] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 3 data dict: {'id': '531', 'description': 'sans-serif + punased totalid • kompaktne rstik', 'qty': Decimal('4.00'), 'unit_price': Decimal('33.00'), 'line_total': Decimal('132.00'), 'csrf_token': None}
+[2025-08-26 11:31:55,830] DEBUG in app.routes.invoices.invoices.edit_invoice: Payment terms choices: [('', 'Vali makse tingimus...'), ('0 päeva', '0 päeva'), ('7 päeva', '7 päeva'), ('10 päeva', '10 päeva'), ('14 päeva', '14 päeva'), ('21 päeva', '21 päeva'), ('30 päeva', '30 päeva')]
+[2025-08-26 11:31:55,840] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Invoice VAT rate: 24.00% (ID: 4)
+[2025-08-26 11:31:55,840] DEBUG in app.routes.invoices.invoices.edit_invoice: GET request - Set form VAT rate ID to: 4
+[2025-08-26 11:31:55,840] DEBUG in app.routes.invoices.invoices.edit_invoice: Edit invoice 4 - Method: POST, Form lines: 4
+[2025-08-26 11:31:55,841] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0: ID=NO_DATA, desc='NO_DATA', qty=11.00, price=280.01
+[2025-08-26 11:31:55,841] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 0 data dict: {'id': None, 'description': 'Russell mens full zip fleece + tikand (Royal Blue)', 'qty': Decimal('11.00'), 'unit_price': Decimal('280.01'), 'line_total': None, 'csrf_token': None}
+[2025-08-26 11:31:55,841] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 1: ID=NO_DATA, desc='NO_DATA', qty=3.50, price=120.00
+[2025-08-26 11:31:55,842] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 1 data dict: {'id': None, 'description': 'Tööriiete tootmine (detst24 - veebr25).', 'qty': Decimal('3.50'), 'unit_price': Decimal('120.00'), 'line_total': None, 'csrf_token': None}
+[2025-08-26 11:31:55,842] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 2: ID=NO_DATA, desc='NO_DATA', qty=2.00, price=33.00
+[2025-08-26 11:31:55,842] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 2 data dict: {'id': None, 'description': 'Hoka Clifton 9 või Asics Gel‑Kayano 32', 'qty': Decimal('2.00'), 'unit_price': Decimal('33.00'), 'line_total': None, 'csrf_token': None}
+[2025-08-26 11:31:55,842] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 3: ID=NO_DATA, desc='NO_DATA', qty=4.00, price=33.00
+[2025-08-26 11:31:55,843] DEBUG in app.routes.invoices.invoices.edit_invoice:   Form line 3 data dict: {'id': None, 'description': 'sans-serif + punased totalid • kompaktne rstik', 'qty': Decimal('4.00'), 'unit_price': Decimal('33.00'), 'line_total': None, 'csrf_token': None}
+[2025-08-26 11:31:55,844] DEBUG in app.routes.invoices.invoices.edit_invoice: POST data received for payment_terms: '10 päeva'
+[2025-08-26 11:31:55,844] DEBUG in app.routes.invoices.invoices.edit_invoice: Form payment_terms choices: [('', 'Vali makse tingimus...'), ('0 päeva', '0 päeva'), ('7 päeva', '7 päeva'), ('10 päeva', '10 päeva'), ('14 päeva', '14 päeva'), ('21 päeva', '21 päeva'), ('30 päeva', '30 päeva')]
+[2025-08-26 11:31:55,847] DEBUG in app.routes.invoices.invoices.edit_invoice: Current form payment_terms data: '10 päeva'
+[2025-08-26 11:31:55,854] DEBUG in app.routes.invoices.invoices.edit_invoice: Form validation successful for invoice 4
+[2025-08-26 11:31:55,854] DEBUG in app.routes.invoices.invoices.edit_invoice: Form data received - due_date: 2025-08-29, client_extra_info: 'Kuukulg', note: 'PROJ-2024-001', announcements: 'Palume tasuda arvel viidatud kontole ning 
+selgitusse lisada arve number! JAAA A', payment_terms: '10 päeva'
+[2025-08-26 11:31:55,854] DEBUG in app.routes.invoices.invoices.edit_invoice: VAT rate form data: 4
+[2025-08-26 11:31:55,855] DEBUG in app.routes.invoices.invoices.edit_invoice: Raw form VAT rate: 4
+[2025-08-26 11:31:55,855] DEBUG in app.routes.invoices.invoices.edit_invoice: Current invoice VAT rate: 24.00% (ID: 4)
+[2025-08-26 11:31:55,855] DEBUG in app.routes.invoices.invoices.edit_invoice: Updating invoice 4 fields:
+[2025-08-26 11:31:55,855] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old due_date: 2025-08-25, New due_date: 2025-08-29
+[2025-08-26 11:31:55,856] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old client_extra_info: 'Kuukulg', New client_extra_info: 'Kuukulg'
+[2025-08-26 11:31:55,856] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old note: 'PROJ-2024-001', New note: 'PROJ-2024-001'
+[2025-08-26 11:31:55,856] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old announcements: 'Palume tasuda arvel viidatud kontole ning 
+selgitusse lisada arve number! JAAA A', New announcements: 'Palume tasuda arvel viidatud kontole ning 
+selgitusse lisada arve number! JAAA A'
+[2025-08-26 11:31:55,856] DEBUG in app.routes.invoices.invoices.edit_invoice:   Old payment_terms: '10 päeva', New payment_terms: '10 päeva'
+[2025-08-26 11:31:55,856] DEBUG in app.routes.invoices.invoices.edit_invoice: VAT rate update - Current: 24.00% (ID: 4)
+[2025-08-26 11:31:55,856] DEBUG in app.routes.invoices.invoices.edit_invoice: VAT rate update - Form submitted: '4'
+[2025-08-26 11:31:55,857] INFO in app.routes.invoices.invoices.edit_invoice: VAT rate updated: 24.00% (ID: 4) -> 24.00% (ID: 4)
+[2025-08-26 11:31:55,857] DEBUG in app.routes.invoices.invoices.edit_invoice: Selected note label ID from form: 
+[2025-08-26 11:31:55,857] DEBUG in app.routes.invoices.invoices.edit_invoice: After update:
+[2025-08-26 11:31:55,857] DEBUG in app.routes.invoices.invoices.edit_invoice:   due_date: 2025-08-29
+[2025-08-26 11:31:55,857] DEBUG in app.routes.invoices.invoices.edit_invoice:   client_extra_info: 'Kuukulg'
+[2025-08-26 11:31:55,857] DEBUG in app.routes.invoices.invoices.edit_invoice:   note: 'PROJ-2024-001'
+[2025-08-26 11:31:55,858] DEBUG in app.routes.invoices.invoices.edit_invoice:   announcements: 'Palume tasuda arvel viidatud kontole ning 
+selgitusse lisada arve number! JAAA A'
+[2025-08-26 11:31:55,858] DEBUG in app.routes.invoices.invoices.edit_invoice:   payment_terms: '10 päeva'
+[2025-08-26 11:31:55,866] DEBUG in app.routes.invoices.invoices.edit_invoice: Deleted line 528
+[2025-08-26 11:31:55,866] DEBUG in app.routes.invoices.invoices.edit_invoice: Deleted line 529
+[2025-08-26 11:31:55,868] DEBUG in app.routes.invoices.invoices.edit_invoice: Deleted line 530
+[2025-08-26 11:31:55,868] DEBUG in app.routes.invoices.invoices.edit_invoice: Deleted line 531
+[2025-08-26 11:31:55,869] DEBUG in app.routes.invoices.invoices.edit_invoice: Calculated line total: 3080.11
+[2025-08-26 11:31:55,869] DEBUG in app.routes.invoices.invoices.edit_invoice: Created new line
+[2025-08-26 11:31:55,869] DEBUG in app.routes.invoices.invoices.edit_invoice: Calculated line total: 420.00
+[2025-08-26 11:31:55,870] DEBUG in app.routes.invoices.invoices.edit_invoice: Created new line
+[2025-08-26 11:31:55,870] DEBUG in app.routes.invoices.invoices.edit_invoice: Calculated line total: 66.00
+[2025-08-26 11:31:55,871] DEBUG in app.routes.invoices.invoices.edit_invoice: Created new line
+[2025-08-26 11:31:55,871] DEBUG in app.routes.invoices.invoices.edit_invoice: Calculated line total: 132.00
+[2025-08-26 11:31:55,871] DEBUG in app.routes.invoices.invoices.edit_invoice: Created new line
+[2025-08-26 11:31:55,900] INFO in app.routes.invoices.invoices.edit_invoice: Successfully updated invoice 4 with 4 lines
+[2025-08-26 11:31:55,921] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Invoice 4 note_label_id: None
+[2025-08-26 11:31:55,923] DEBUG in app.routes.invoices.invoices.view_invoice: HTML route - Using default note label: Märkus
+[2025-08-26 11:34:19,173] INFO in billipocket.logging_config.setup_logging: BilliPocket application started - Debug: True
+[2025-08-26 11:38:42,086] INFO in billipocket.logging_config.setup_logging: BilliPocket application started - Debug: True
+[2025-08-26 11:42:36,713] INFO in billipocket.logging_config.setup_logging: BilliPocket application started - Debug: True
+[2025-08-26 11:42:38,313] INFO in billipocket.logging_config.setup_logging: BilliPocket application started - Debug: True

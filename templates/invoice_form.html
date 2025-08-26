@@ -313,7 +313,7 @@
     <div class="d-flex gap-2 align-items-center">
       <!-- VAT Rate Selector Button -->
       <div class="dropdown">
-        <button class="btn btn-outline-primary" type="button" id="vatRateSelector" data-bs-toggle="dropdown" aria-expanded="false">
+        <button class="btn btn-sm bp-btn-cancel" type="button" id="vatRateSelector" data-bs-toggle="dropdown" aria-expanded="false">
           <span id="vatRateLabel">KM ({{ current_vat_rate.rate if current_vat_rate else 24 }}%)</span> <i class="bi bi-pencil-square ms-1"></i>
         </button>
         <ul class="dropdown-menu" aria-labelledby="vatRateSelector" id="vatRateDropdown">
@@ -325,7 +325,7 @@
       
       <!-- PDF Template Selector Button -->
       <div class="dropdown">
-        <button class="btn btn-outline-success" type="button" id="pdfTemplateSelector" data-bs-toggle="dropdown" aria-expanded="false">
+        <button class="btn btn-sm bp-btn-cancel" type="button" id="pdfTemplateSelector" data-bs-toggle="dropdown" aria-expanded="false">
           <span id="pdfTemplateLabel">PDF: Standard</span> <i class="bi bi-file-pdf ms-1"></i>
         </button>
         <ul class="dropdown-menu" aria-labelledby="pdfTemplateSelector" id="pdfTemplateDropdown">
@@ -337,7 +337,7 @@
         </ul>
       </div>
       
-      <a href="{{ url_for('invoices.invoices') }}" class="btn btn-outline-secondary">
+      <a href="{{ url_for('invoices.invoices') }}" class="btn btn-sm bp-btn-cancel" style="text-decoration: none;">
         <i class="bi bi-arrow-left me-1"></i>Tagasi arvetele
       </a>
     </div>
@@ -700,7 +700,7 @@
               </button>
               {% endif %}
               
-              <a href="{{ url_for('invoices.invoices') }}" class="btn btn-outline-secondary">
+              <a href="{{ url_for('invoices.invoices') }}" class="btn btn-sm bp-btn-cancel" style="text-decoration: none;">
                 <i class="bi bi-x-lg me-1"></i>Tühista
               </a>
             </div>

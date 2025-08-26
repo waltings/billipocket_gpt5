@@ -74,9 +74,18 @@ def overview():
     
     recent_invoices_data = []
     for invoice in recent_invoices:
+        # Calculate days to due date
+        days_to_due = None
+        due_date_str = None
+        if invoice.due_date:
+            days_to_due = (invoice.due_date - today).days
+            due_date_str = invoice.due_date.strftime('%Y-%m-%d')
+        
         recent_invoices_data.append({
             'no': invoice.number,
             'date': invoice.date.strftime('%Y-%m-%d'),
+            'due_date': due_date_str,
+            'days_to_due': days_to_due,
             'client': invoice.client.name,
             'total': float(invoice.total),
             'status': invoice.status,
@@ -124,11 +133,10 @@ def overview():
         else:
             next_month_start = date(month_year, month_num + 1, 1)
         
-        # Get revenue for this month
+        # Get revenue for this month (all invoices, not just paid)
         month_revenue = db.session.query(func.sum(Invoice.total)).filter(
             Invoice.date >= month_start,
-            Invoice.date < next_month_start,
-            Invoice.status == 'makstud'
+            Invoice.date < next_month_start
         ).scalar() or Decimal('0')
         
         monthly_revenue_data.append(float(month_revenue))
@@ -155,6 +163,20 @@ def overview():
     status_values = [paid_invoices_count, unpaid_not_overdue, overdue_count]
     status_colors = ['#28a745', '#ffc107', '#dc3545']  # green, yellow, red
     
+    # Top customers data (by total invoice amount)
+    top_customers_query = db.session.query(
+        Client.name,
+        func.sum(Invoice.total).label('total_amount')
+    ).join(Invoice).group_by(Client.id, Client.name).order_by(
+        func.sum(Invoice.total).desc()
+    ).limit(10).all()
+    
+    top_customers_labels = []
+    top_customers_data = []
+    for customer in top_customers_query:
+        top_customers_labels.append(customer.name)
+        top_customers_data.append(float(customer.total_amount))
+    
     metrics = {
         "revenue_month": float(revenue_month),
         "cash_in": float(cash_in),
@@ -169,7 +191,9 @@ def overview():
         "monthly_labels": monthly_labels,
         "status_labels": status_labels,
         "status_values": status_values,
-        "status_colors": status_colors
+        "status_colors": status_colors,
+        "top_customers_labels": top_customers_labels,
+        "top_customers_data": top_customers_data
     }
     
     return render_template('overview.html', 
@@ -538,10 +562,17 @@ def upload_logo_new():
         return jsonify({'success': False, 'message': 'Faili üleslaadimisel tekkis viga'}), 500
 
 
-@dashboard_bp.route('/settings/logos/<int:logo_id>', methods=['DELETE'])
+@dashboard_bp.route('/settings/logos/<int:logo_id>', methods=['DELETE', 'POST'])
 def delete_logo(logo_id):
     """Delete a logo."""
     try:
+        # Handle both DELETE and POST methods (POST for CSRF compatibility)
+        if request.method == 'POST':
+            # Check if it's a delete operation via hidden field or method override
+            method_override = request.form.get('_method') or request.headers.get('X-HTTP-Method-Override')
+            if method_override != 'DELETE':
+                return jsonify({'success': False, 'message': 'Vigane meetod'}), 405
+        
         logo = Logo.get_by_id(logo_id)
         if not logo:
             return jsonify({'success': False, 'message': 'Logo ei leitud'}), 404
@@ -623,6 +654,38 @@ def remove_template_logo_new(template):
     except Exception as e:
         logger.error(f"Error removing logo from template {template}: {str(e)}")
         return jsonify({'success': False, 'message': 'Logo eemaldamisel tekkis viga'}), 500
+
+
+@dashboard_bp.route('/settings/logos/<int:logo_id>/rename', methods=['PATCH'])
+def rename_logo(logo_id):
+    """Rename a logo."""
+    try:
+        logo = Logo.get_by_id(logo_id)
+        if not logo:
+            return jsonify({'success': False, 'message': 'Logo ei leitud'}), 404
+        
+        data = request.get_json()
+        new_name = data.get('name', '').strip() if data else ''
+        
+        if not new_name:
+            return jsonify({'success': False, 'message': 'Logo nimi on kohustuslik'}), 400
+        
+        if len(new_name) > 255:
+            return jsonify({'success': False, 'message': 'Logo nimi on liiga pikk (max 255 tähemärki)'}), 400
+        
+        # Update logo name
+        logo.original_name = new_name
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': f'Logo nimi muudetud: "{new_name}"'
+        })
+    
+    except Exception as e:
+        logger.error(f"Error renaming logo {logo_id}: {str(e)}")
+        db.session.rollback()
+        return jsonify({'success': False, 'message': 'Viga logo ümbernimetamisel'}), 500
 
 
 @dashboard_bp.route('/settings/logos/migrate', methods=['POST'])

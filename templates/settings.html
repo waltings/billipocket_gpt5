@@ -142,45 +142,27 @@
               <label class="form-label mb-0">
                 <i class="bi bi-images me-2"></i>Logo Galerii
               </label>
-              <button type="button" class="btn btn-outline-primary btn-sm" onclick="toggleLogoUpload()">
+              <button type="button" class="btn btn-primary btn-sm shadow-sm" onclick="toggleLogoUpload()" id="toggleLogoBtn">
                 <i class="bi bi-plus-lg me-1"></i>Lisa uus logo
               </button>
             </div>
             
-            <!-- Logo Upload Zone (Initially Hidden) -->
-            <div class="bp-logo-upload-section" id="logoUploadSection" style="display: none;">
-              <div class="bp-file-upload-container">
-                <h6 class="mb-3">Lisa logosid</h6>
-                
-                <!-- Drop Zone -->
-                <div class="bp-file-drop-zone" id="logoDropArea">
-                  <div class="bp-drop-zone-content">
-                    <i class="bi bi-cloud-upload-fill bp-drop-icon"></i>
-                    <p class="bp-drop-text mb-1">
-                      Lohista failid siia või <button type="button" class="btn-link p-0 bp-browse-link" onclick="triggerLogoFileInput()">vali failid</button>
-                    </p>
-                    <small class="bp-drop-hint">
-                      Kuni 2MB • Failinimed ilma erimärkideta
-                    </small>
-                  </div>
-                </div>
-                <input type="file" id="logoFileInput" accept="image/*" multiple style="display: none;" />
-                
-                <!-- File List Container -->
-                <div class="bp-file-list" id="logoFileList">
-                  <!-- Dynamic file items will be added here -->
-                </div>
-              </div>
+            <!-- Old inline upload section - now hidden since we use modal -->
+            <div class="bp-logo-upload-section" id="logoUploadSection" style="display: none !important;">
+              <!-- Hidden - using modal instead -->
             </div>
             
             <!-- Logo Gallery Grid -->
             <div class="bp-logo-gallery" id="logoGallery">
               <div class="bp-logo-gallery-loading" id="logoGalleryLoading">
-                <div class="text-center py-4">
-                  <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <div class="text-center py-5">
+                  <div class="spinner-border text-primary mb-3" role="status">
                     <span class="visually-hidden">Laadin...</span>
                   </div>
-                  <div class="mt-2 text-muted">Laadin logosid...</div>
+                  <div class="text-muted mb-3">Laadin logosid...</div>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" onclick="loadLogosFromServer()">
+                    <i class="bi bi-arrow-clockwise me-1"></i>Värska
+                  </button>
                 </div>
               </div>
               
@@ -191,11 +173,14 @@
               
               <!-- Empty state -->
               <div class="bp-logo-empty" id="logoEmpty" style="display: none;">
-                <div class="text-center py-4">
-                  <i class="bi bi-image text-muted" style="font-size: 2rem;"></i>
-                  <p class="text-muted mt-2">Logod puuduvad</p>
-                  <button type="button" class="btn btn-outline-primary btn-sm" onclick="toggleLogoUpload()">
-                    <i class="bi bi-plus-lg me-1"></i>Lisa esimene logo
+                <div class="text-center py-5">
+                  <div class="mb-3">
+                    <i class="bi bi-image" style="font-size: 3rem; color: var(--bp-primary); opacity: 0.6;"></i>
+                  </div>
+                  <h6 class="text-muted mb-2">Logod puuduvad</h6>
+                  <p class="text-muted small mb-3">Lae esimene logo üles, et alustada logode galeriid</p>
+                  <button type="button" class="btn btn-primary btn-sm" onclick="toggleLogoUpload()">
+                    <i class="bi bi-cloud-upload me-2"></i>Lisa esimene logo
                   </button>
                 </div>
               </div>
@@ -639,8 +624,11 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // Initialize new logo gallery system
-  initLogoGallery();
+  console.log('DOM loaded, initializing logo gallery...');
+  // Initialize new logo gallery system with small delay
+  setTimeout(() => {
+    initLogoGallery();
+  }, 100);
   
   // Load existing logo if URL is provided (backward compatibility)
   const existingLogoUrl = document.getElementById('logoUrlField').value;
@@ -1397,11 +1385,21 @@ let isUploadSectionVisible = false;
 function initLogoGallery() {
   console.log('Initializing logo gallery system...');
   
+  // Ensure DOM elements exist before initializing
+  const galleryElement = document.getElementById('logoGallery');
+  if (!galleryElement) {
+    console.warn('Logo gallery element not found, retrying in 100ms...');
+    setTimeout(initLogoGallery, 100);
+    return;
+  }
+  
   // Initialize drag & drop
   initLogoDragDrop();
   
-  // Load logos from server
-  loadLogosFromServer();
+  // Load logos from server with small delay to ensure DOM is ready
+  setTimeout(() => {
+    loadLogosFromServer();
+  }, 50);
   
   // Initialize file input handler
   const fileInput = document.getElementById('logoFileInput');
@@ -1411,34 +1409,320 @@ function initLogoGallery() {
 }
 
 function toggleLogoUpload() {
-  const uploadSection = document.getElementById('logoUploadSection');
-  const toggleBtn = uploadSection.previousElementSibling.querySelector('button');
-  
-  isUploadSectionVisible = !isUploadSectionVisible;
-  
-  if (isUploadSectionVisible) {
-    uploadSection.style.display = 'block';
-    uploadSection.classList.add('active');
-    toggleBtn.innerHTML = '<i class="bi bi-x-lg me-1"></i>Sulge';
-    toggleBtn.classList.remove('btn-outline-primary');
-    toggleBtn.classList.add('btn-outline-secondary');
-  } else {
-    uploadSection.style.display = 'none';
-    uploadSection.classList.remove('active');
-    toggleBtn.innerHTML = '<i class="bi bi-plus-lg me-1"></i>Lisa uus logo';
-    toggleBtn.classList.remove('btn-outline-secondary');
-    toggleBtn.classList.add('btn-outline-primary');
+  showLogoUploadModal();
+}
+
+function showLogoUploadModal() {
+  // Remove existing modal if any
+  const existingModal = document.getElementById('logoUploadModal');
+  if (existingModal) {
+    existingModal.remove();
   }
+  
+  // Create upload modal HTML
+  const modalHtml = `
+    <div class="modal fade" id="logoUploadModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content bp-modern-upload-modal">
+          <div class="modal-header border-0 pb-2">
+            <h5 class="modal-title d-flex align-items-center">
+              <i class="bi bi-cloud-upload text-primary me-2"></i>
+              Lisa uued logod
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body p-0">
+            <!-- Modern Drop Zone - Top Section -->
+            <div class="bp-modern-drop-zone" id="modalDropArea">
+              <div class="bp-modern-drop-content">
+                <div class="bp-drop-icon-container">
+                  <i class="bi bi-cloud-upload-fill bp-modern-drop-icon"></i>
+                </div>
+                <div class="bp-drop-text-container">
+                  <h6 class="bp-drop-title mb-1">Drop your files here or browse</h6>
+                  <p class="bp-drop-subtitle mb-0">Max file size up to 2 MB</p>
+                </div>
+                <button type="button" class="bp-browse-button" onclick="triggerModalFileInput()">
+                  <i class="bi bi-folder2-open me-2"></i>Vali failid
+                </button>
+              </div>
+            </div>
+            <input type="file" id="modalFileInput" accept="image/*" multiple style="display: none;" />
+            
+            <!-- File List - Bottom Section -->
+            <div class="bp-file-list-container" id="modalUploadList" style="display: none;">
+              <div class="bp-file-list-header">
+                <h6 class="mb-0">Failid</h6>
+              </div>
+              <div class="bp-file-list-items" id="modalFileItems">
+                <!-- Dynamic upload items -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Add modal to page
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+  
+  const modal = new bootstrap.Modal(document.getElementById('logoUploadModal'));
+  
+  // Initialize drag & drop for modal
+  initModalDragDrop();
+  
+  // Handle modal cleanup
+  document.getElementById('logoUploadModal').addEventListener('hidden.bs.modal', function() {
+    this.remove();
+  });
+  
+  modal.show();
 }
 
 function triggerLogoFileInput() {
   document.getElementById('logoFileInput').click();
 }
 
+function triggerModalFileInput() {
+  document.getElementById('modalFileInput').click();
+}
+
+// Modal drag & drop functionality
+function initModalDragDrop() {
+  const dropArea = document.getElementById('modalDropArea');
+  const fileInput = document.getElementById('modalFileInput');
+  
+  if (!dropArea || !fileInput) return;
+  
+  // Prevent default drag behaviors
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    dropArea.addEventListener(eventName, preventDefaults, false);
+  });
+  
+  // Highlight drop area when item is dragged over it
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropArea.addEventListener(eventName, () => dropArea.classList.add('dragover'), false);
+  });
+  
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropArea.addEventListener(eventName, () => dropArea.classList.remove('dragover'), false);
+  });
+  
+  // Handle dropped files
+  dropArea.addEventListener('drop', handleModalDrop, false);
+  
+  // Handle click to select files
+  dropArea.addEventListener('click', triggerModalFileInput);
+  
+  // Handle file input change
+  fileInput.addEventListener('change', function(e) {
+    handleModalFiles(e.target.files);
+  });
+}
+
+function handleModalDrop(e) {
+  const files = e.dataTransfer.files;
+  handleModalFiles(files);
+}
+
+function handleModalFiles(files) {
+  if (files.length === 0) return;
+  
+  const uploadList = document.getElementById('modalUploadList');
+  const fileItems = document.getElementById('modalFileItems');
+  
+  // Show upload list
+  uploadList.style.display = 'block';
+  
+  // Clear previous items
+  fileItems.innerHTML = '';
+  
+  const maxSize = 2 * 1024 * 1024; // 2MB
+  const allowedTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml', 'image/gif'];
+  
+  Array.from(files).forEach((file, index) => {
+    // Validate file
+    let isValid = true;
+    let errorMessage = '';
+    
+    if (!allowedTypes.includes(file.type)) {
+      isValid = false;
+      errorMessage = 'Lubatud ainult pildi failid (PNG, JPG, SVG, GIF)';
+    } else if (file.size > maxSize) {
+      isValid = false;
+      errorMessage = 'Faili suurus on liiga suur (max 2MB)';
+    }
+    
+    // Create file item
+    const fileItem = createModalFileItem(file, index);
+    fileItems.appendChild(fileItem);
+    
+    if (!isValid) {
+      updateModalFileItemStatus(fileItem, 'error', errorMessage);
+    } else {
+      // Start upload
+      uploadModalFile(file, fileItem);
+    }
+  });
+}
+
+function createModalFileItem(file, index) {
+  const fileItem = document.createElement('div');
+  fileItem.className = 'bp-modern-file-item uploading';
+  fileItem.setAttribute('data-file-index', index);
+  
+  const fileSizeFormatted = (file.size / 1024).toFixed(0) + ' KB';
+  
+  fileItem.innerHTML = `
+    <div class="bp-modern-file-icon">
+      <i class="bi bi-file-earmark-image text-muted"></i>
+      <div class="bp-modern-progress-overlay active">
+        <div class="bp-modern-progress-bar"></div>
+      </div>
+      <div class="bp-modern-progress-fill animate"></div>
+    </div>
+    <div class="bp-modern-file-info">
+      <div class="bp-modern-file-name">${file.name}</div>
+      <div class="bp-modern-file-size">${fileSizeFormatted}</div>
+    </div>
+    <div class="bp-modern-file-delete" onclick="removeModalFileItem(this)" title="Eemalda fail">
+      <i class="bi bi-trash"></i>
+    </div>
+  `;
+  
+  return fileItem;
+}
+
+function updateModalFileItemStatus(fileItem, status, message = '') {
+  // Remove old status classes
+  fileItem.classList.remove('uploading', 'error', 'success');
+  fileItem.classList.add(status);
+  
+  const icon = fileItem.querySelector('.bp-modern-file-icon');
+  const sizeElement = fileItem.querySelector('.bp-modern-file-size');
+  
+  // Update icon and progress based on status
+  if (status === 'uploading') {
+    icon.innerHTML = `
+      <i class="bi bi-file-earmark-image text-primary"></i>
+      <div class="bp-modern-progress-overlay active">
+        <div class="bp-modern-progress-bar"></div>
+      </div>
+      <div class="bp-modern-progress-fill animate"></div>
+    `;
+  } else if (status === 'error') {
+    icon.innerHTML = `
+      <i class="bi bi-file-earmark-image text-danger"></i>
+      <div class="bp-modern-error-indicator">
+        <i class="bi bi-exclamation-circle-fill"></i>
+      </div>
+    `;
+    if (message) {
+      sizeElement.innerHTML = `<span class="text-danger">${message}</span>`;
+    }
+  } else if (status === 'success') {
+    icon.innerHTML = `
+      <i class="bi bi-file-earmark-image text-success"></i>
+    `;
+    // Hide the progress overlay for success
+    const progressOverlay = icon.querySelector('.bp-modern-progress-overlay');
+    if (progressOverlay) {
+      progressOverlay.classList.remove('active');
+    }
+  }
+}
+
+function removeModalFileItem(button) {
+  const fileItem = button.closest('.bp-modern-file-item');
+  if (fileItem) {
+    fileItem.remove();
+    
+    // Check if file list is empty
+    const fileList = document.getElementById('modalFileItems');
+    if (fileList && fileList.children.length === 0) {
+      // Hide file list section if no files
+      const uploadList = document.getElementById('modalUploadList');
+      if (uploadList) {
+        uploadList.style.display = 'none';
+      }
+    }
+  }
+}
+
+function uploadModalFile(file, fileItem) {
+  const formData = new FormData();
+  formData.append('logo', file);
+  
+  // Add CSRF token
+  const csrfToken = document.querySelector('input[name="csrf_token"]');
+  if (csrfToken) {
+    formData.append('csrf_token', csrfToken.value);
+  }
+  
+  fetch('/settings/logos/upload', {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      updateModalFileItemStatus(fileItem, 'success');
+      
+      // Auto-remove successful items after 2 seconds
+      setTimeout(() => {
+        fileItem.style.opacity = '0';
+        setTimeout(() => fileItem.remove(), 300);
+        
+        // Refresh gallery
+        loadLogosFromServer();
+        
+        // Check if all items are done
+        checkModalUploadComplete();
+      }, 2000);
+    } else {
+      updateModalFileItemStatus(fileItem, 'error', data.message);
+    }
+  })
+  .catch(error => {
+    console.error('Error uploading file:', error);
+    updateModalFileItemStatus(fileItem, 'error', 'Üleslaadimine ebaõnnestus');
+  });
+}
+
+function checkModalUploadComplete() {
+  const fileItems = document.getElementById('modalFileItems');
+  if (fileItems && fileItems.children.length === 0) {
+    const uploadList = document.getElementById('modalUploadList');
+    if (uploadList) {
+      uploadList.innerHTML = `
+        <div class="text-center py-4">
+          <i class="bi bi-check-circle text-success" style="font-size: 2rem;"></i>
+          <h6 class="mt-2 text-success">Kõik logod on üles laaditud!</h6>
+          <p class="text-muted small">Modaal sulgub automaatselt 3 sekundi pärast</p>
+        </div>
+      `;
+      
+      // Auto-close modal after 3 seconds
+      setTimeout(() => {
+        const modal = bootstrap.Modal.getInstance(document.getElementById('logoUploadModal'));
+        if (modal) modal.hide();
+      }, 3000);
+    }
+  }
+}
+
 function loadLogosFromServer() {
+  console.log('Loading logos from server...');
   const loadingElement = document.getElementById('logoGalleryLoading');
   const cardsElement = document.getElementById('logoCards');
   const emptyElement = document.getElementById('logoEmpty');
+  
+  // Ensure all elements exist
+  if (!loadingElement || !cardsElement || !emptyElement) {
+    console.error('Logo gallery elements not found');
+    return;
+  }
   
   // Show loading state
   loadingElement.style.display = 'block';
@@ -1452,7 +1736,13 @@ function loadLogosFromServer() {
       'X-Requested-With': 'XMLHttpRequest'
     }
   })
-  .then(response => response.json())
+  .then(response => {
+    console.log('Logos API response status:', response.status);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    return response.json();
+  })
   .then(data => {
     console.log('Loaded logos:', data);
     logoGalleryData = data.logos || [];
@@ -1460,26 +1750,50 @@ function loadLogosFromServer() {
   })
   .catch(error => {
     console.error('Error loading logos:', error);
-    BilliPocket.showMessage('Viga logode laadimisel', 'error');
-    renderLogoGallery(); // Show empty state
+    
+    // Hide loading and show error state
+    loadingElement.style.display = 'none';
+    cardsElement.style.display = 'none';
+    emptyElement.innerHTML = `
+      <div class="text-center py-5">
+        <div class="mb-3">
+          <i class="bi bi-exclamation-triangle" style="font-size: 3rem; color: #dc3545; opacity: 0.6;"></i>
+        </div>
+        <h6 class="text-danger mb-2">Logode laadimine ebaõnnestus</h6>
+        <p class="text-muted small mb-3">Kontrolli internetiühendust ja proovi uuesti</p>
+        <button type="button" class="btn btn-outline-primary btn-sm" onclick="loadLogosFromServer()">
+          <i class="bi bi-arrow-clockwise me-2"></i>Proovi uuesti
+        </button>
+      </div>
+    `;
+    emptyElement.style.display = 'block';
   });
 }
 
 function renderLogoGallery() {
+  console.log('Rendering logo gallery, data length:', logoGalleryData.length);
   const loadingElement = document.getElementById('logoGalleryLoading');
   const cardsElement = document.getElementById('logoCards');
   const emptyElement = document.getElementById('logoEmpty');
+  
+  // Ensure all elements exist
+  if (!loadingElement || !cardsElement || !emptyElement) {
+    console.error('Logo gallery render elements not found');
+    return;
+  }
   
   // Hide loading
   loadingElement.style.display = 'none';
   
   if (logoGalleryData.length === 0) {
+    console.log('No logos, showing empty state');
     // Show empty state
     cardsElement.style.display = 'none';
     emptyElement.style.display = 'block';
     return;
   }
   
+  console.log('Showing logo cards');
   // Show logo cards
   cardsElement.style.display = 'grid';
   emptyElement.style.display = 'none';
@@ -1488,24 +1802,19 @@ function renderLogoGallery() {
   let html = '';
   logoGalleryData.forEach(logo => {
     const uploadDate = new Date(logo.upload_date).toLocaleDateString('et-EE');
-    const fileSize = (logo.file_size / 1024).toFixed(1) + ' KB';
+    const fileSize = logo.file_size_mb || ((logo.file_size / 1024).toFixed(1) + ' KB');
     
     html += `
       <div class="bp-logo-card" data-logo-id="${logo.id}" onclick="selectLogo(${logo.id})">
         <div class="bp-logo-card-actions">
-          <button type="button" class="btn btn-outline-secondary btn-sm bp-logo-card-action" 
-                  onclick="event.stopPropagation(); renameLogoPrompt(${logo.id}, '${logo.original_name}')" 
-                  title="Nimeta ümber">
-            <i class="bi bi-pencil"></i>
-          </button>
-          <button type="button" class="btn btn-outline-danger btn-sm bp-logo-card-action" 
+          <button type="button" class="bp-logo-card-action" 
                   onclick="event.stopPropagation(); deleteLogoFromGallery(${logo.id})" 
-                  title="Kustuta">
+                  title="Kustuta logo">
             <i class="bi bi-trash"></i>
           </button>
         </div>
         
-        <img src="${logo.file_path}" alt="${logo.original_name}" class="bp-logo-card-image" />
+        <img src="${logo.url}" alt="${logo.original_name}" class="bp-logo-card-image" />
         <div class="bp-logo-card-name">${logo.original_name}</div>
         <div class="bp-logo-card-meta">${uploadDate} • ${fileSize}</div>
       </div>
@@ -1526,23 +1835,288 @@ function renderLogoGallery() {
 }
 
 function selectLogo(logoId) {
+  const logoData = logoGalleryData.find(logo => logo.id === logoId);
+  if (!logoData) return;
+  
+  // Show preview modal
+  showLogoPreviewModal(logoData);
+}
+
+function showLogoPreviewModal(logoData) {
+  // Remove existing modal if any
+  const existingModal = document.getElementById('logoPreviewModal');
+  if (existingModal) {
+    existingModal.remove();
+  }
+  
+  // Create preview modal HTML
+  const modalHtml = `
+    <div class="modal fade" id="logoPreviewModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header border-0 pb-2">
+            <h5 class="modal-title d-flex align-items-center">
+              <i class="bi bi-image text-primary me-2"></i>
+              Logo eelvaade
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <!-- Logo Preview -->
+            <div class="bp-logo-preview-container mb-4">
+              <img src="${logoData.url}" alt="${logoData.original_name}" class="bp-logo-preview-image" />
+            </div>
+            
+            <!-- Logo Info -->
+            <div class="bp-logo-info">
+              <h6 class="mb-2">${logoData.original_name}</h6>
+              <div class="row text-muted small">
+                <div class="col-6">
+                  <i class="bi bi-calendar3 me-1"></i>
+                  Üles laaditud: ${logoData.upload_date}
+                </div>
+                <div class="col-6">
+                  <i class="bi bi-hdd me-1"></i>
+                  Suurus: ${logoData.file_size_mb || ((logoData.file_size / 1024).toFixed(1) + ' KB')}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer border-0 pt-2 d-flex justify-content-between">
+            <div>
+              <button type="button" class="btn btn-outline-secondary me-2" style="font-size: 14px; background-color: transparent !important; color: #114f68 !important; border: 1px solid #114f68 !important; border-radius: 8px !important; padding: 0.25rem 0.5rem;" onclick="showRenameInput(${logoData.id}, '${logoData.original_name}')">
+                <i class="bi bi-pencil me-1"></i>Nimeta ümber
+              </button>
+              <button type="button" class="btn btn-outline-secondary" style="font-size: 14px; background-color: transparent !important; color: #dc3545 !important; border: 1px solid #dc3545 !important; border-radius: 8px !important; padding: 0.25rem 0.5rem;" onclick="deleteLogoFromPreview(${logoData.id})">
+                <i class="bi bi-trash me-1"></i>Kustuta logo
+              </button>
+            </div>
+            <div>
+              <button type="button" class="btn btn-outline-secondary me-2" style="font-size: 14px; background-color: transparent !important; color: #6c757d !important; border: 1px solid #6c757d !important; border-radius: 8px !important; padding: 0.25rem 0.5rem;" data-bs-dismiss="modal">
+                <i class="bi bi-x-lg me-1"></i>Sulge
+              </button>
+              <button type="button" class="btn btn-outline-secondary" style="font-size: 14px; background-color: #114f68 !important; color: white !important; border: 1px solid #114f68 !important; border-radius: 8px !important; padding: 0.25rem 0.5rem;" onclick="confirmSelectLogo(${logoData.id})">
+                <i class="bi bi-check-lg me-1"></i>Vali see logo
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Add modal to page
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+  
+  const modal = new bootstrap.Modal(document.getElementById('logoPreviewModal'));
+  
+  // Handle modal cleanup
+  document.getElementById('logoPreviewModal').addEventListener('hidden.bs.modal', function() {
+    this.remove();
+  });
+  
+  modal.show();
+}
+
+function confirmSelectLogo(logoId) {
+  const logoData = logoGalleryData.find(logo => logo.id === logoId);
+  if (!logoData) return;
+  
   // Remove previous selections
   document.querySelectorAll('.bp-logo-card').forEach(card => {
     card.classList.remove('selected');
   });
   
-  // Select clicked logo
+  // Select logo in gallery
   const selectedCard = document.querySelector(`[data-logo-id="${logoId}"]`);
   if (selectedCard) {
     selectedCard.classList.add('selected');
-    
-    // Update hidden field for backward compatibility
-    const logoData = logoGalleryData.find(logo => logo.id === logoId);
-    if (logoData) {
-      document.getElementById('logoUrlField').value = logoData.file_path;
-      BilliPocket.showMessage(`Logo "${logoData.original_name}" valitud`, 'success');
-    }
   }
+  
+  // Update hidden field for backward compatibility
+  document.getElementById('logoUrlField').value = logoData.url;
+  
+  // Close preview modal
+  const modal = bootstrap.Modal.getInstance(document.getElementById('logoPreviewModal'));
+  if (modal) modal.hide();
+  
+  // Show success message
+  const message = `
+    <div class="d-flex align-items-center">
+      <img src="${logoData.url}" alt="${logoData.original_name}" 
+           style="width: 32px; height: 32px; object-fit: contain; margin-right: 0.5rem; border-radius: 4px; background: #f8f9fa;">
+      <span>Logo "${logoData.original_name}" valitud</span>
+    </div>
+  `;
+  BilliPocket.showMessage(message, 'success');
+  
+  // Auto-hide success message after 3 seconds
+  setTimeout(() => {
+    const alerts = document.querySelectorAll('.alert-success');
+    alerts.forEach(alert => {
+      if (alert.textContent.includes('valitud')) {
+        alert.style.opacity = '0';
+        setTimeout(() => alert.remove(), 300);
+      }
+    });
+  }, 3000);
+}
+
+function deleteLogoFromPreview(logoId) {
+  // Close preview modal first
+  const modal = bootstrap.Modal.getInstance(document.getElementById('logoPreviewModal'));
+  if (modal) modal.hide();
+  
+  // Use the existing delete function
+  deleteLogoFromGallery(logoId);
+}
+
+function showRenameInput(logoId, currentName) {
+  const logoInfo = document.querySelector('#logoPreviewModal .bp-logo-info');
+  const escapedName = currentName.replace(/'/g, '&apos;');
+  
+  logoInfo.innerHTML = `
+    <div class="bp-rename-section">
+      <label class="form-label mb-2">Logo nimi:</label>
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" id="renameInput" value="${escapedName}" maxlength="255">
+        <button class="btn btn-outline-secondary" style="font-size: 14px; background-color: #114f68 !important; color: white !important; border: 1px solid #114f68 !important; border-radius: 8px !important; padding: 0.25rem 0.5rem;" type="button" onclick="saveLogoRename(${logoId})">
+          <i class="bi bi-check-lg"></i>
+        </button>
+        <button class="btn btn-outline-secondary" style="font-size: 14px; background-color: transparent !important; color: #6c757d !important; border: 1px solid #6c757d !important; border-radius: 8px !important; padding: 0.25rem 0.5rem;" type="button" onclick="cancelRename(${logoId}, '${escapedName}')">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <small class="text-muted">
+        <i class="bi bi-info-circle me-1"></i>
+        Ainult faili nimi muutub, faili sisu ja URL jääb samaks
+      </small>
+    </div>
+  `;
+  
+  // Focus and select input
+  const input = document.getElementById('renameInput');
+  input.focus();
+  input.select();
+  
+  // Handle Enter key
+  input.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      saveLogoRename(logoId);
+    } else if (e.key === 'Escape') {
+      cancelRename(logoId, currentName);
+    }
+  });
+}
+
+function saveLogoRename(logoId) {
+  const newName = document.getElementById('renameInput').value.trim();
+  
+  if (!newName) {
+    BilliPocket.showMessage('Logo nimi ei saa olla tühi', 'error');
+    return;
+  }
+  
+  if (newName.length > 255) {
+    BilliPocket.showMessage('Logo nimi on liiga pikk (max 255 tähemärki)', 'error');
+    return;
+  }
+  
+  // Show loading
+  const logoInfo = document.querySelector('#logoPreviewModal .bp-logo-info');
+  logoInfo.innerHTML = `
+    <div class="text-center py-3">
+      <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
+        <span class="visually-hidden">Salvestamine...</span>
+      </div>
+      Salvestame uut nime...
+    </div>
+  `;
+  
+  // Make API call to rename logo
+  fetch(`/settings/logos/${logoId}/rename`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest'
+    },
+    body: JSON.stringify({
+      name: newName,
+      csrf_token: document.querySelector('input[name="csrf_token"]')?.value
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      // Update logo data in memory
+      const logoData = logoGalleryData.find(logo => logo.id === logoId);
+      if (logoData) {
+        logoData.original_name = newName;
+      }
+      
+      // Refresh gallery to show new name
+      loadLogosFromServer();
+      
+      // Update modal title
+      const modalTitle = document.querySelector('#logoPreviewModal .modal-title');
+      modalTitle.innerHTML = `
+        <i class="bi bi-image text-primary me-2"></i>
+        Logo eelvaade
+      `;
+      
+      // Restore info section
+      const uploadDate = logoData ? logoData.upload_date : '';
+      const fileSize = logoData ? (logoData.file_size_mb || ((logoData.file_size / 1024).toFixed(1) + ' KB')) : '';
+      
+      logoInfo.innerHTML = `
+        <h6 class="mb-2">${newName}</h6>
+        <div class="row text-muted small">
+          <div class="col-6">
+            <i class="bi bi-calendar3 me-1"></i>
+            Üles laaditud: ${uploadDate}
+          </div>
+          <div class="col-6">
+            <i class="bi bi-hdd me-1"></i>
+            Suurus: ${fileSize}
+          </div>
+        </div>
+      `;
+      
+      BilliPocket.showMessage(`Logo nimi muudetud: "${newName}"`, 'success');
+    } else {
+      BilliPocket.showMessage(data.message || 'Viga logo ümbernimetamisel', 'error');
+      // Restore original info on error
+      cancelRename(logoId, logoGalleryData.find(logo => logo.id === logoId)?.original_name || '');
+    }
+  })
+  .catch(error => {
+    console.error('Error renaming logo:', error);
+    BilliPocket.showMessage('Viga logo ümbernimetamisel', 'error');
+    // Restore original info on error
+    cancelRename(logoId, logoGalleryData.find(logo => logo.id === logoId)?.original_name || '');
+  });
+}
+
+function cancelRename(logoId, originalName) {
+  const logoData = logoGalleryData.find(logo => logo.id === logoId);
+  if (!logoData) return;
+  
+  // Restore original info display
+  const logoInfo = document.querySelector('#logoPreviewModal .bp-logo-info');
+  logoInfo.innerHTML = `
+    <h6 class="mb-2">${originalName}</h6>
+    <div class="row text-muted small">
+      <div class="col-6">
+        <i class="bi bi-calendar3 me-1"></i>
+        Üles laaditud: ${logoData.upload_date}
+      </div>
+      <div class="col-6">
+        <i class="bi bi-hdd me-1"></i>
+        Suurus: ${logoData.file_size_mb || ((logoData.file_size / 1024).toFixed(1) + ' KB')}
+      </div>
+    </div>
+  `;
 }
 
 function initLogoDragDrop() {
@@ -1632,22 +2206,27 @@ function handleLogoFiles(files) {
 
 function createFileItem(file, index) {
   const fileItem = document.createElement('div');
-  fileItem.className = 'bp-file-item uploading';
+  fileItem.className = 'bp-modern-file-item uploading';
   fileItem.setAttribute('data-file-index', index);
   
-  const fileSizeFormatted = (file.size / 1024 / 1024).toFixed(1) + ' MB';
+  const fileSizeFormatted = (file.size / 1024).toFixed(0) + ' KB';
   
   fileItem.innerHTML = `
-    <div class="bp-file-icon uploading">
-      <div class="bp-upload-progress"></div>
+    <div class="bp-modern-file-icon">
+      <i class="bi bi-file-earmark-image text-muted"></i>
+      <div class="bp-modern-progress-overlay">
+        <div class="bp-modern-progress-bar">
+          <div class="bp-modern-progress-fill"></div>
+        </div>
+      </div>
     </div>
-    <div class="bp-file-info">
-      <div class="bp-file-name">${file.name}</div>
-      <div class="bp-file-size">${fileSizeFormatted}</div>
+    <div class="bp-modern-file-info">
+      <div class="bp-modern-file-name">${file.name}</div>
+      <div class="bp-modern-file-size">${fileSizeFormatted}</div>
     </div>
-    <div class="bp-file-actions">
-      <button type="button" class="bp-file-remove" onclick="removeFileItem(this)" title="Eemalda">
-        <i class="bi bi-x-lg"></i>
+    <div class="bp-modern-file-actions">
+      <button type="button" class="bp-modern-file-remove" onclick="removeFileItem(this)" title="Remove">
+        <i class="bi bi-trash3"></i>
       </button>
     </div>
   `;
@@ -1660,31 +2239,42 @@ function updateFileItemStatus(fileItem, status, message = '') {
   fileItem.classList.remove('uploading', 'error', 'success');
   fileItem.classList.add(status);
   
-  const icon = fileItem.querySelector('.bp-file-icon');
-  icon.classList.remove('uploading', 'error', 'success');
-  icon.classList.add(status);
+  const icon = fileItem.querySelector('.bp-modern-file-icon');
+  const progressOverlay = fileItem.querySelector('.bp-modern-progress-overlay');
+  const sizeElement = fileItem.querySelector('.bp-modern-file-size');
   
-  // Update icon content
-  let iconContent = '';
+  // Update icon and progress based on status
   if (status === 'uploading') {
-    iconContent = '<div class="bp-upload-progress"></div>';
+    icon.innerHTML = `
+      <i class="bi bi-file-earmark-image text-primary"></i>
+      <div class="bp-modern-progress-overlay active">
+        <div class="bp-modern-progress-bar">
+          <div class="bp-modern-progress-fill animate"></div>
+        </div>
+      </div>
+    `;
   } else if (status === 'error') {
-    iconContent = '<i class="bi bi-exclamation-triangle-fill text-danger"></i>';
+    icon.innerHTML = `
+      <i class="bi bi-file-earmark-image text-danger"></i>
+      <div class="bp-modern-error-indicator">
+        <i class="bi bi-exclamation-circle-fill text-danger"></i>
+      </div>
+    `;
+    if (message) {
+      sizeElement.innerHTML = `<span class="text-danger">${message}</span>`;
+    }
   } else if (status === 'success') {
-    iconContent = '<i class="bi bi-check-circle-fill text-success"></i>';
-  }
-  
-  icon.innerHTML = iconContent;
-  
-  // Update message
-  const sizeElement = fileItem.querySelector('.bp-file-size');
-  if (status === 'error' && message) {
-    sizeElement.innerHTML = `<span class="bp-file-error">${message}</span>`;
+    icon.innerHTML = `
+      <i class="bi bi-file-earmark-image text-success"></i>
+      <div class="bp-modern-success-indicator">
+        <i class="bi bi-check-circle-fill text-success"></i>
+      </div>
+    `;
   }
 }
 
 function removeFileItem(button) {
-  const fileItem = button.closest('.bp-file-item');
+  const fileItem = button.closest('.bp-modern-file-item');
   if (fileItem) {
     fileItem.remove();
     
@@ -2115,5 +2705,532 @@ function deleteNoteLabel(id, name) {
     BilliPocket.showMessage('Viga märkuse sildi kustutamisel', 'error');
   });
 }
+
+// =============================================================================
+// CUSTOM CONFIRMATION MODAL
+// =============================================================================
+
+function showCustomConfirm(title, message, onConfirm, onCancel) {
+  // Remove existing modal if any
+  const existingModal = document.getElementById('customConfirmModal');
+  if (existingModal) {
+    existingModal.remove();
+  }
+  
+  // Create modal HTML
+  const modalHtml = `
+    <div class="modal fade" id="customConfirmModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header border-0 pb-2">
+            <h5 class="modal-title d-flex align-items-center">
+              <i class="bi bi-question-circle text-warning me-2"></i>
+              ${title}
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body pb-2">
+            <p class="mb-0">${message}</p>
+          </div>
+          <div class="modal-footer border-0 pt-2">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+              <i class="bi bi-x-lg me-1"></i>Tühista
+            </button>
+            <button type="button" class="btn btn-danger" id="confirmButton">
+              <i class="bi bi-check-lg me-1"></i>Kinnita
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Add modal to page
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+  
+  const modal = new bootstrap.Modal(document.getElementById('customConfirmModal'));
+  const confirmBtn = document.getElementById('confirmButton');
+  
+  // Handle confirm
+  confirmBtn.addEventListener('click', function() {
+    modal.hide();
+    if (onConfirm) onConfirm();
+  });
+  
+  // Handle cancel/close
+  document.getElementById('customConfirmModal').addEventListener('hidden.bs.modal', function() {
+    this.remove();
+    if (onCancel) onCancel();
+  });
+  
+  modal.show();
+}
+
+// Update delete function to use custom confirm
+function deleteLogoFromGallery(logoId) {
+  const logoData = logoGalleryData.find(logo => logo.id === logoId);
+  const logoName = logoData ? logoData.original_name : 'see logo';
+  
+  showCustomConfirm(
+    'Kustuta logo',
+    `Kas oled kindel, et soovid kustutada logo "${logoName}"?`,
+    function() {
+      // Confirmed - proceed with deletion
+      const csrfToken = document.querySelector('input[name="csrf_token"]');
+      
+      // Use POST with method override for CSRF compatibility
+      const formData = new FormData();
+      formData.append('_method', 'DELETE');
+      if (csrfToken) {
+        formData.append('csrf_token', csrfToken.value);
+      }
+      
+      fetch(`/settings/logos/${logoId}`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          BilliPocket.showMessage(data.message, 'success');
+          loadLogosFromServer(); // Refresh gallery
+        } else {
+          BilliPocket.showMessage(data.message || 'Viga logo kustutamisel', 'error');
+        }
+      })
+      .catch(error => {
+        console.error('Error deleting logo:', error);
+        BilliPocket.showMessage('Viga logo kustutamisel', 'error');
+      });
+    },
+    null // No action on cancel
+  );
+}
+
 </script>
+
+<style>
+/* =========================================================================== */
+/* MODERN UPLOAD MODAL STYLES */
+/* =========================================================================== */
+
+/* Modal styling */
+.bp-modern-upload-modal .modal-content {
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+}
+
+.bp-modern-upload-modal .modal-header {
+  padding: 1.5rem 1.5rem 0 1.5rem;
+}
+
+.bp-modern-upload-modal .modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+/* Drop Zone - Top Section */
+.bp-modern-drop-zone {
+  background: linear-gradient(135deg, #f8f9fb 0%, #e9ecef 100%);
+  border: 2px dashed #cbd5e0;
+  border-radius: 12px;
+  padding: 3rem 2rem;
+  margin: 1.5rem;
+  margin-bottom: 0;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.bp-modern-drop-zone:hover {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border-color: #2196f3;
+  transform: translateY(-2px);
+}
+
+.bp-modern-drop-zone.dragover {
+  background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+  border-color: #4caf50;
+  transform: scale(1.02);
+}
+
+/* Drop Zone Content */
+.bp-modern-drop-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.bp-drop-icon-container {
+  background: #ffffff;
+  border-radius: 50%;
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin-bottom: 0.5rem;
+}
+
+.bp-modern-drop-icon {
+  font-size: 2.5rem;
+  color: #6c757d;
+  transition: all 0.3s ease;
+}
+
+.bp-modern-drop-zone:hover .bp-modern-drop-icon {
+  color: #2196f3;
+  transform: scale(1.1);
+}
+
+.bp-drop-text-container {
+  text-align: center;
+}
+
+.bp-drop-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 0.25rem;
+}
+
+.bp-drop-subtitle {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+/* Browse Button */
+.bp-browse-button {
+  background: #114f68;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  margin-top: 0.5rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.bp-browse-button:hover {
+  background: #0d3a4d;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(17, 79, 104, 0.3);
+}
+
+/* File List Container - Bottom Section */
+.bp-file-list-container {
+  background: #ffffff;
+  border-top: 1px solid #e9ecef;
+  padding: 0;
+  margin: 0;
+}
+
+.bp-file-list-header {
+  padding: 1rem 1.5rem 0.5rem 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.bp-file-list-header h6 {
+  color: #1a1a1a;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.bp-file-list-items {
+  padding: 0.5rem 1.5rem 1.5rem 1.5rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* Individual File Items */
+.bp-modern-file-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
+  border: 1px solid #e9ecef;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.bp-modern-file-item:last-child {
+  margin-bottom: 0;
+}
+
+.bp-modern-file-item:hover {
+  background: #f0f4f8;
+  border-color: #cbd5e0;
+  transform: translateY(-1px);
+}
+
+/* File Icon Section - Left */
+.bp-modern-file-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border-radius: 8px;
+  margin-right: 1rem;
+  position: relative;
+  flex-shrink: 0;
+  border: 1px solid #e9ecef;
+}
+
+.bp-modern-file-icon i {
+  font-size: 1.25rem;
+  color: #6c757d;
+}
+
+/* File Info Section - Center */
+.bp-modern-file-info {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.bp-modern-file-name {
+  font-weight: 600;
+  color: #1a1a1a;
+  font-size: 0.9rem;
+  line-height: 1.3;
+  margin-bottom: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bp-modern-file-size {
+  color: #6c757d;
+  font-size: 0.8rem;
+  line-height: 1.2;
+}
+
+/* Delete Button - Right */
+.bp-modern-file-delete {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  margin-left: 1rem;
+}
+
+.bp-modern-file-delete:hover {
+  background: #fee;
+  border-color: #fcc;
+  color: #dc3545;
+}
+
+.bp-modern-file-delete i {
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+.bp-modern-file-delete:hover i {
+  color: #dc3545;
+}
+
+/* Progress Overlay */
+.bp-modern-progress-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.bp-modern-progress-overlay.active {
+  opacity: 1;
+}
+
+/* Progress Bar */
+.bp-modern-progress-bar {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #e9ecef;
+  border-top: 2px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Alternative progress bar for bottom of file item */
+.bp-modern-progress-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #007bff 0%, #0056b3 100%);
+  border-radius: 0 0 12px 12px;
+  transition: width 0.3s ease;
+  width: 0;
+}
+
+.bp-modern-progress-fill.animate {
+  animation: progressFill 2s ease-in-out infinite;
+}
+
+@keyframes progressFill {
+  0% { width: 0%; }
+  50% { width: 70%; }
+  100% { width: 100%; }
+}
+
+/* Status States */
+.bp-modern-file-item.uploading {
+  border-color: #007bff;
+  background: rgba(0, 123, 255, 0.05);
+}
+
+.bp-modern-file-item.uploading .bp-modern-file-icon {
+  border-color: #007bff;
+  background: rgba(0, 123, 255, 0.1);
+}
+
+.bp-modern-file-item.success {
+  border-color: #28a745;
+  background: rgba(40, 167, 69, 0.05);
+}
+
+.bp-modern-file-item.success .bp-modern-file-icon {
+  border-color: #28a745;
+  background: rgba(40, 167, 69, 0.1);
+}
+
+.bp-modern-file-item.error {
+  border-color: #dc3545;
+  background: rgba(220, 53, 69, 0.05);
+}
+
+.bp-modern-file-item.error .bp-modern-file-icon {
+  border-color: #dc3545;
+  background: rgba(220, 53, 69, 0.1);
+}
+
+/* Error Indicator */
+.bp-modern-error-indicator {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 16px;
+  height: 16px;
+  background: #dc3545;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ffffff;
+}
+
+.bp-modern-error-indicator i {
+  font-size: 0.6rem;
+  color: #ffffff;
+}
+
+/* Completion Message */
+.bp-upload-complete {
+  text-align: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+  border-radius: 12px;
+  margin: 1.5rem;
+}
+
+.bp-upload-complete i {
+  font-size: 3rem;
+  color: #28a745;
+  margin-bottom: 1rem;
+}
+
+.bp-upload-complete h6 {
+  color: #28a745;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.bp-upload-complete p {
+  color: #6c757d;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 576px) {
+  .bp-modern-drop-zone {
+    padding: 2rem 1rem;
+    margin: 1rem;
+  }
+  
+  .bp-drop-title {
+    font-size: 1rem;
+  }
+  
+  .bp-drop-subtitle {
+    font-size: 0.8rem;
+  }
+  
+  .bp-modern-file-item {
+    padding: 0.75rem;
+  }
+  
+  .bp-modern-file-icon {
+    width: 40px;
+    height: 40px;
+    margin-right: 0.75rem;
+  }
+  
+  .bp-modern-file-name {
+    font-size: 0.85rem;
+  }
+  
+  .bp-modern-file-size {
+    font-size: 0.75rem;
+  }
+}
+
+/* Scrollbar Styling for File List */
+.bp-file-list-items::-webkit-scrollbar {
+  width: 6px;
+}
+
+.bp-file-list-items::-webkit-scrollbar-track {
+  background: #f8f9fa;
+  border-radius: 3px;
+}
+
+.bp-file-list-items::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 3px;
+}
+
+.bp-file-list-items::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+</style>
 {% endblock %}

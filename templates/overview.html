@@ -24,74 +24,6 @@
     </div>
   </div>
 
-  <!-- KPI Cards -->
-  <div class="row g-3 mb-4">
-    <div class="col-12 col-sm-6 col-xl-3">
-      <div class="bp-card text-center">
-        <div class="bp-card-body py-3">
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="text-start">
-              <div class="text-muted small">Käive (kuu)</div>
-              <div class="h4 fw-bold mb-0">{{ "%.2f"|format(metrics.revenue_month) }}€</div>
-            </div>
-            <div class="text-primary fs-1">
-              <i class="bi bi-graph-up"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="col-12 col-sm-6 col-xl-3">
-      <div class="bp-card text-center">
-        <div class="bp-card-body py-3">
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="text-start">
-              <div class="text-muted small">Laekumised kokku</div>
-              <div class="h4 fw-bold mb-0">{{ "%.2f"|format(metrics.cash_in) }}€</div>
-            </div>
-            <div class="text-success fs-1">
-              <i class="bi bi-cash-coin"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="col-12 col-sm-6 col-xl-3">
-      <div class="bp-card text-center">
-        <div class="bp-card-body py-3">
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="text-start">
-              <div class="text-muted small">Maksmata arved</div>
-              <div class="h4 fw-bold mb-0">{{ metrics.unpaid }}</div>
-              <small class="text-danger">{{ "%.2f"|format(metrics.outstanding) }}€</small>
-            </div>
-            <div class="text-warning fs-1">
-              <i class="bi bi-exclamation-triangle"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="col-12 col-sm-6 col-xl-3">
-      <div class="bp-card text-center">
-        <div class="bp-card-body py-3">
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="text-start">
-              <div class="text-muted small">Keskmine makseaeg</div>
-              <div class="h4 fw-bold mb-0">{{ metrics.avg_days }} päeva</div>
-            </div>
-            <div class="text-info fs-1">
-              <i class="bi bi-calendar-check"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- Alert Section for Overdue Invoices -->
   {% if metrics.overdue_count > 0 %}
   <div class="alert alert-danger d-flex align-items-center mb-4" role="alert">
@@ -104,122 +36,246 @@
   </div>
   {% endif %}
 
-  <!-- Quick Stats Row -->
+  <!-- KPI Cards -->
   <div class="row g-3 mb-4">
-    <div class="col-md-4">
-      <div class="bp-card">
-        <div class="bp-card-body text-center py-3">
-          <div class="h5 mb-1">{{ metrics.total_clients }}</div>
-          <div class="text-muted small">Kokku kliente</div>
-          <div class="mt-2">
-            <a href="{{ url_for('clients.clients') }}" class="btn btn-outline-primary btn-sm">
-              <i class="bi bi-people me-1"></i>Vaata kliente
-            </a>
+    <div class="col-12 col-lg-4">
+      <div class="d-flex align-items-center p-3" style="background: white; border-radius: 16px; border: 1px solid #e2e8f0;">
+        <div class="me-3">
+          <div class="d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background: #eff6ff; border-radius: 12px;">
+            <i class="bi bi-graph-up" style="color: #2563eb; font-size: 1.5rem;"></i>
+          </div>
+        </div>
+        <div class="flex-grow-1">
+          <div class="fw-bold" style="color: #0f172a; font-size: 1rem; margin-bottom: 2px;">Käive (kuu)</div>
+          <div class="fw-bold" style="color: #2563eb; font-size: 1.1rem;">{{ "%.2f"|format(metrics.revenue_month) }}€</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-12 col-lg-4">
+      <div class="d-flex align-items-center p-3" style="background: white; border-radius: 16px; border: 1px solid #bbf7d0;">
+        <div class="me-3">
+          <div class="d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background: #d1fae5; border-radius: 12px;">
+            <i class="bi bi-cash-coin" style="color: #059669; font-size: 1.5rem;"></i>
+          </div>
+        </div>
+        <div class="flex-grow-1">
+          <div class="fw-bold" style="color: #0f172a; font-size: 1rem; margin-bottom: 2px;">Laekumised kokku</div>
+          <div class="fw-bold" style="color: #059669; font-size: 1.1rem;">{{ "%.2f"|format(metrics.cash_in) }}€</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-12 col-lg-4">
+      <div class="d-flex align-items-center p-3" style="background: white; border-radius: 16px; border: 1px solid #fde68a;">
+        <div class="me-3">
+          <div class="d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background: #fef3c7; border-radius: 12px;">
+            <i class="bi bi-clock-fill" style="color: #d97706; font-size: 1.5rem;"></i>
+          </div>
+        </div>
+        <div class="flex-grow-1">
+          <div class="fw-bold" style="color: #0f172a; font-size: 1rem; margin-bottom: 2px;">Maksmata arved</div>
+          <div class="fw-bold" style="color: #d97706; font-size: 1.1rem;">{{ "%.2f"|format(metrics.outstanding) }}€</div>
+        </div>
+        <div class="ms-2">
+          <div class="d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; border: 2px solid #d97706; border-radius: 8px; background: white;">
+            <span class="fw-bold" style="color: #d97706; font-size: 0.9rem;">{{ metrics.unpaid }}</span>
           </div>
         </div>
       </div>
     </div>
-    <div class="col-md-4">
-      <div class="bp-card">
-        <div class="bp-card-body text-center py-3">
-          <div class="h5 mb-1">{{ metrics.total_invoices }}</div>
-          <div class="text-muted small">Kokku arveid</div>
-          <div class="mt-2">
-            <a href="{{ url_for('invoices.invoices') }}" class="btn btn-outline-primary btn-sm">
-              <i class="bi bi-file-earmark-text me-1"></i>Vaata arveid
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="bp-card">
-        <div class="bp-card-body text-center py-3">
-          <div class="h5 mb-1">{{ ((metrics.cash_in / metrics.total_invoices) if metrics.total_invoices > 0 else 0)|round(0)|currency }}€</div>
-          <div class="text-muted small">Keskmine arve summa</div>
-          <div class="mt-2">
-            <a href="#" class="btn btn-outline-secondary btn-sm" onclick="scrollToChart()">
-              <i class="bi bi-graph-up me-1"></i>Vaata trendi
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
+    
   </div>
 
+
+  <!-- Charts Section -->
   <div class="row g-3 mb-4">
-    <!-- Revenue Chart -->
+    <!-- Revenue Trend Chart -->
     <div class="col-12 col-lg-6">
       <div class="bp-card h-100">
         <div class="bp-card-header d-flex align-items-center justify-content-between">
-          <h2 class="h6 m-0">
-            <i class="bi bi-graph-up me-2"></i>Käibe trend
-          </h2>
+          <h3 class="h6 m-0">
+            <i class="bi bi-bar-chart me-2"></i>Arvete summa kuude lõikes
+          </h3>
           <div class="d-flex gap-2">
-            <button class="btn btn-outline-secondary btn-sm" onclick="exportChart()">
+            <button class="btn btn-outline-secondary btn-sm" onclick="exportRevenueChart()">
               <i class="bi bi-download me-1"></i>Ekspordi
             </button>
           </div>
         </div>
         <div class="bp-card-body">
-          <canvas id="revenueChart" height="120"></canvas>
+          <canvas id="monthlyRevenueChart" height="300"></canvas>
         </div>
       </div>
     </div>
 
-    <!-- Status Distribution Chart -->
-    <div class="col-12 col-lg-2">
+    <!-- Top Customers Chart -->
+    <div class="col-12 col-lg-6">
       <div class="bp-card h-100">
-        <div class="bp-card-header">
-          <h2 class="h6 m-0">
-            <i class="bi bi-pie-chart me-2"></i>Arvete staatus
-          </h2>
-        </div>
-        <div class="bp-card-body d-flex flex-column justify-content-center">
-          <canvas id="statusChart" height="200"></canvas>
-          <div class="mt-3">
-            <div class="d-flex justify-content-between align-items-center mb-1">
-              <small class="text-muted d-flex align-items-center">
-                <span class="me-2 d-inline-block rounded" style="width: 12px; height: 12px; background-color: #28a745;"></span>
-                Makstud
-              </small>
-              <small class="fw-medium">{{ metrics.status_values[0] }}</small>
-            </div>
-            <div class="d-flex justify-content-between align-items-center mb-1">
-              <small class="text-muted d-flex align-items-center">
-                <span class="me-2 d-inline-block rounded" style="width: 12px; height: 12px; background-color: #ffc107;"></span>
-                Maksmata
-              </small>
-              <small class="fw-medium">{{ metrics.status_values[1] }}</small>
-            </div>
-            <div class="d-flex justify-content-between align-items-center">
-              <small class="text-muted d-flex align-items-center">
-                <span class="me-2 d-inline-block rounded" style="width: 12px; height: 12px; background-color: #dc3545;"></span>
-                Ületatud
-              </small>
-              <small class="fw-medium">{{ metrics.status_values[2] }}</small>
-            </div>
+        <div class="bp-card-header d-flex align-items-center justify-content-between">
+          <h3 class="h6 m-0">
+            <i class="bi bi-people me-2"></i>Top 10 klienti arvete summa järgi
+          </h3>
+          <div class="d-flex gap-2">
+            <button class="btn btn-outline-secondary btn-sm" onclick="exportCustomerChart()">
+              <i class="bi bi-download me-1"></i>Ekspordi
+            </button>
           </div>
         </div>
+        <div class="bp-card-body">
+          <canvas id="topCustomersChart" height="300"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Three Column Layout: Activities, Recent Invoices, Overdue -->
+  <div class="row g-3 mb-4">
+    <!-- Recent Activities -->
+    <div class="col-12 col-lg-4">
+      <div class="bp-card h-100">
+        <div class="bp-card-header">
+          <h3 class="h6 m-0">
+            <i class="bi bi-activity me-2"></i>Viimased tegevused
+          </h3>
+        </div>
+        <div class="bp-card-body p-0">
+          {% if recent_invoices %}
+          <div class="list-group list-group-flush">
+            {% for invoice in recent_invoices[:3] %}
+            <div class="list-group-item d-flex align-items-start">
+              <div class="me-3">
+                {% if invoice.status == 'makstud' %}
+                <div class="d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background: #f0fdf4; border-radius: 8px;">
+                  <i class="bi bi-check-circle" style="color: #059669; font-size: 1rem;"></i>
+                </div>
+                {% elif invoice.status == 'saadetud' %}
+                <div class="d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background: #fef3c7; border-radius: 8px;">
+                  <i class="bi bi-send" style="color: #d97706; font-size: 1rem;"></i>
+                </div>
+                {% elif invoice.status == 'mustand' %}
+                <div class="d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background: #f8fafc; border-radius: 8px;">
+                  <i class="bi bi-file-earmark-text" style="color: #64748b; font-size: 1rem;"></i>
+                </div>
+                {% else %}
+                <div class="d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background: #eff6ff; border-radius: 8px;">
+                  <i class="bi bi-plus-circle" style="color: #2563eb; font-size: 1rem;"></i>
+                </div>
+                {% endif %}
+              </div>
+              <div class="me-auto">
+                {% if invoice.status == 'makstud' %}
+                <div class="fw-medium small">Makse laekunud</div>
+                <small class="text-muted">{{ invoice.client }} - {{ invoice.no }}</small>
+                {% elif invoice.status == 'saadetud' %}
+                <div class="fw-medium small">Arve saadetud</div>
+                <small class="text-muted">{{ invoice.client }} - {{ invoice.no }}</small>
+                {% elif invoice.status == 'mustand' %}
+                <div class="fw-medium small">Mustand salvestatud</div>
+                <small class="text-muted">{{ invoice.client }} - {{ invoice.no }}</small>
+                {% else %}
+                <div class="fw-medium small">Arve loodud</div>
+                <small class="text-muted">{{ invoice.client }} - {{ invoice.no }}</small>
+                {% endif %}
+                <div class="small text-muted">{{ invoice.date.split('-')[2] + '.' + invoice.date.split('-')[1] + '.' + invoice.date.split('-')[0] if invoice.date else '' }}</div>
+              </div>
+              <div class="text-end">
+                <div class="fw-medium" style="color: #2563eb;">{{ invoice.total|currency }}€</div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          <div class="p-3 text-center border-top">
+            <a href="{{ url_for('invoices.invoices') }}" class="btn btn-outline-secondary btn-sm" style="background-color: transparent !important; color: #114f68 !important; border: 1px solid #114f68 !important; border-radius: 8px !important;" onmouseover="this.style.backgroundColor='#114f68'; this.style.color='white'; this.style.borderColor='#114f68';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#114f68'; this.style.borderColor='#114f68';">
+              <i class="bi bi-arrow-right me-1"></i>Vaata kõiki arveid
+            </a>
+          </div>
+          {% else %}
+          <div class="text-center py-4">
+            <i class="bi bi-activity display-4 text-muted"></i>
+            <div class="h6 text-muted mt-2">Tegevused puuduvad</div>
+            <p class="text-muted small mb-3">Alustage oma esimese arve loomisega</p>
+            <a href="{{ url_for('invoices.new_invoice') }}" class="btn btn-primary btn-sm">
+              <i class="bi bi-plus-lg me-1"></i>Loo arve
+            </a>
+          </div>
+          {% endif %}
+        </div>
       </div>
     </div>
 
-    <!-- Recent Activity & Overdue Invoices -->
+    <!-- Recent Invoices -->
+    <div class="col-12 col-lg-4">
+      <div class="bp-card h-100">
+        <div class="bp-card-header">
+          <h3 class="h6 m-0">
+            <i class="bi bi-clock-history me-2"></i>Viimased arved
+          </h3>
+        </div>
+        <div class="bp-card-body p-0">
+          {% if recent_invoices %}
+          <div class="list-group list-group-flush">
+            {% for invoice in recent_invoices %}
+            <div class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="me-auto">
+                <div class="fw-medium">{{ invoice.no }}</div>
+                <small class="text-muted">{{ invoice.client }}</small>
+                <div class="small text-muted">{{ invoice.date.split('-')[2] + '.' + invoice.date.split('-')[1] + '.' + invoice.date.split('-')[0] if invoice.date else '' }}</div>
+              </div>
+              <div class="text-end">
+                <div class="fw-medium">{{ invoice.total|currency }}€</div>
+                {% if invoice.status == 'makstud' %}
+                <span class="badge bg-success small" style="background-color: #ffffff !important; color: #059669 !important; border: 1px solid #059669 !important;">Makstud</span>
+                {% elif invoice.status == 'saadetud' %}
+                <span class="badge bg-primary small" style="background-color: #ffffff !important; color: #2563eb !important; border: 1px solid #2563eb !important;">Saadetud</span>
+                {% elif invoice.status == 'mustand' %}
+                <span class="badge bg-secondary small" style="background-color: #ffffff !important; color: #64748b !important; border: 1px solid #64748b !important;">Mustand</span>
+                {% elif invoice.status == 'tähtaeg ületatud' %}
+                <span class="badge bg-danger small" style="background-color: #ffffff !important; color: #dc3545 !important; border: 1px solid #dc3545 !important;">Tähtaeg ületatud</span>
+                {% else %}
+                <span class="badge bg-warning small" style="background-color: #ffffff !important; color: #ca8a04 !important; border: 1px solid #ca8a04 !important;">Maksmata</span>
+                {% endif %}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          <div class="p-3 text-center border-top">
+            <a href="{{ url_for('invoices.invoices') }}" class="btn btn-outline-secondary btn-sm" style="background-color: transparent !important; color: #114f68 !important; border: 1px solid #114f68 !important; border-radius: 8px !important;" onmouseover="this.style.backgroundColor='#114f68'; this.style.color='white'; this.style.borderColor='#114f68';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#114f68'; this.style.borderColor='#114f68';">
+              <i class="bi bi-arrow-right me-1"></i>Vaata kõiki arveid
+            </a>
+          </div>
+          {% else %}
+          <div class="text-center py-4">
+            <i class="bi bi-file-earmark-text display-4 text-muted"></i>
+            <div class="h6 text-muted mt-2">Arveid pole veel</div>
+            <p class="text-muted small mb-3">Alustage oma esimese arve loomisega</p>
+            <a href="{{ url_for('invoices.new_invoice') }}" class="btn btn-primary btn-sm">
+              <i class="bi bi-plus-lg me-1"></i>Loo esimene arve
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Two Cards Stacked -->
     <div class="col-12 col-lg-4">
       <div class="row g-3 h-100">
-        <!-- Overdue Invoices Section -->
-        {% if overdue_invoices %}
+        <!-- Overdue Invoices -->
         <div class="col-12">
           <div class="bp-card">
             <div class="bp-card-header d-flex align-items-center justify-content-between">
               <h3 class="h6 m-0 text-danger">
                 <i class="bi bi-exclamation-triangle me-2"></i>Tähtaja ületanud
               </h3>
-              <span class="badge bg-danger">{{ metrics.overdue_count }}</span>
+              {% if metrics.overdue_count > 0 %}
+              <span class="badge bg-danger" style="background-color: #ffffff !important; color: #dc3545 !important; border: 1px solid #dc3545 !important;">{{ metrics.overdue_count }}</span>
+              {% endif %}
             </div>
             <div class="bp-card-body p-0">
+              {% if overdue_invoices %}
               <div class="list-group list-group-flush">
-                {% for invoice in overdue_invoices %}
+                {% for invoice in overdue_invoices[:3] %}
                 <div class="list-group-item d-flex justify-content-between align-items-start">
                   <div class="me-auto">
                     <div class="fw-medium text-danger">{{ invoice.no }}</div>
@@ -228,69 +284,73 @@
                   </div>
                   <div class="text-end">
                     <div class="fw-medium text-danger">{{ invoice.total|currency }}€</div>
-                    <small class="text-muted">{{ invoice.due_date }}</small>
+                    <small class="text-muted">{{ invoice.due_date.split('-')[2] + '.' + invoice.due_date.split('-')[1] + '.' + invoice.due_date.split('-')[0] if invoice.due_date else '' }}</small>
                   </div>
                 </div>
                 {% endfor %}
               </div>
-              <div class="p-3 text-center border-top">
-                <a href="{{ url_for('invoices.invoices', status='maksmata', sort='due_date', dir='asc') }}" class="btn btn-outline-danger btn-sm">
-                  <i class="bi bi-arrow-right me-1"></i>Vaata kõiki ületanud arveid
+              <div class="p-2 text-center border-top">
+                <a href="{{ url_for('invoices.invoices', status='overdue', sort='due_date', dir='asc') }}" class="btn btn-outline-secondary btn-sm" style="background-color: transparent !important; color: #114f68 !important; border: 1px solid #114f68 !important; border-radius: 8px !important;" onmouseover="this.style.backgroundColor='#114f68'; this.style.color='white'; this.style.borderColor='#114f68';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#114f68'; this.style.borderColor='#114f68';">
+                  <i class="bi bi-arrow-right me-1"></i>Vaata kõiki
                 </a>
               </div>
+              {% else %}
+              <div class="text-center py-3">
+                <i class="bi bi-check-circle display-6 text-success"></i>
+                <div class="small text-muted mt-1">Kõik arved õigeaegsed</div>
+              </div>
+              {% endif %}
             </div>
           </div>
         </div>
-        {% endif %}
         
-        <!-- Recent Invoices Section -->
+        <!-- Unpaid Invoices -->
         <div class="col-12">
           <div class="bp-card h-100">
-            <div class="bp-card-header">
-              <h3 class="h6 m-0">
-                <i class="bi bi-clock-history me-2"></i>Viimased arved
+            <div class="bp-card-header d-flex align-items-center justify-content-between">
+              <h3 class="h6 m-0 text-warning">
+                <i class="bi bi-clock me-2"></i>Maksmata arved
               </h3>
+              <span class="badge bg-warning" style="background-color: #ffffff !important; color: #ca8a04 !important; border: 1px solid #ca8a04 !important;">{{ metrics.unpaid }}</span>
             </div>
             <div class="bp-card-body p-0">
               {% if recent_invoices %}
               <div class="list-group list-group-flush">
-                {% for invoice in recent_invoices %}
+                {% for invoice in recent_invoices[:3] %}
+                {% if invoice.status in ['maksmata', 'saadetud'] %}
                 <div class="list-group-item d-flex justify-content-between align-items-start">
                   <div class="me-auto">
                     <div class="fw-medium">{{ invoice.no }}</div>
                     <small class="text-muted">{{ invoice.client }}</small>
-                    <div class="small text-muted">{{ invoice.date }}</div>
+                    {% if invoice.days_to_due is not none %}
+                      {% if invoice.days_to_due < 0 %}
+                        <div class="small text-danger">{{ -invoice.days_to_due }} päeva üle tähtaja</div>
+                      {% elif invoice.days_to_due == 0 %}
+                        <div class="small text-warning">Tähtab täna</div>
+                      {% else %}
+                        <div class="small text-muted">{{ invoice.days_to_due }} päeva tähtajani</div>
+                      {% endif %}
+                    {% endif %}
                   </div>
                   <div class="text-end">
-                    <div class="fw-medium">{{ invoice.total|currency }}€</div>
-                    {% if invoice.status == 'makstud' %}
-                    <span class="badge bg-success small">Makstud</span>
-                    {% elif invoice.status == 'saadetud' %}
-                    <span class="badge bg-primary small">Saadetud</span>
-                    {% elif invoice.status == 'mustand' %}
-                    <span class="badge bg-secondary small">Mustand</span>
-                    {% elif invoice.status == 'tähtaeg ületatud' %}
-                    <span class="badge bg-danger small">Tähtaeg ületatud</span>
-                    {% else %}
-                    <span class="badge bg-warning small">Maksmata</span>
+                    <div class="fw-medium text-warning">{{ invoice.total|currency }}€</div>
+                    {% if invoice.due_date %}
+                      <small class="text-muted">{{ invoice.due_date.split('-')[2] + '.' + invoice.due_date.split('-')[1] + '.' + invoice.due_date.split('-')[0] }}</small>
                     {% endif %}
                   </div>
                 </div>
+                {% endif %}
                 {% endfor %}
               </div>
-              <div class="p-3 text-center border-top">
-                <a href="{{ url_for('invoices.invoices') }}" class="btn btn-outline-primary btn-sm">
-                  <i class="bi bi-arrow-right me-1"></i>Vaata kõiki arveid
+              <div class="p-2 text-center border-top">
+                <a href="{{ url_for('invoices.invoices', status='maksmata') }}" class="btn btn-outline-secondary btn-sm" style="background-color: transparent !important; color: #114f68 !important; border: 1px solid #114f68 !important; border-radius: 8px !important;" onmouseover="this.style.backgroundColor='#114f68'; this.style.color='white'; this.style.borderColor='#114f68';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#114f68'; this.style.borderColor='#114f68';">
+                  <i class="bi bi-arrow-right me-1"></i>Vaata kõiki
                 </a>
               </div>
               {% else %}
-              <div class="text-center py-4">
-                <i class="bi bi-file-earmark-text display-4 text-muted"></i>
-                <div class="h6 text-muted mt-2">Arveid pole veel</div>
-                <p class="text-muted small mb-3">Alustage oma esimese arve loomisega</p>
-                <a href="{{ url_for('invoices.new_invoice') }}" class="btn btn-primary btn-sm">
-                  <i class="bi bi-plus-lg me-1"></i>Loo esimene arve
-                </a>
+              <div class="text-center py-3">
+                <i class="bi bi-check-circle display-6 text-success"></i>
+                <div class="small text-muted mt-1">Kõik arved tasutud</div>
               </div>
               {% endif %}
             </div>
@@ -300,57 +360,6 @@
     </div>
   </div>
 
-  <!-- Action Cards -->
-  <div class="row g-3">
-    <div class="col-md-6 col-lg-3">
-      <div class="bp-card text-center h-100">
-        <div class="bp-card-body">
-          <i class="bi bi-plus-circle display-4 text-primary mb-3"></i>
-          <h5 class="card-title">Loo uus arve</h5>
-          <p class="text-muted small">Koosta arve olemasolevale kliendile</p>
-          <a href="{{ url_for('invoices.new_invoice') }}" class="btn btn-primary">
-            <i class="bi bi-plus-lg me-1"></i>Alusta
-          </a>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6 col-lg-3">
-      <div class="bp-card text-center h-100">
-        <div class="bp-card-body">
-          <i class="bi bi-person-plus display-4 text-success mb-3"></i>
-          <h5 class="card-title">Lisa klient</h5>
-          <p class="text-muted small">Registreeri uus klient süsteemi</p>
-          <a href="{{ url_for('clients.new_client') }}" class="btn btn-success">
-            <i class="bi bi-person-plus me-1"></i>Lisa
-          </a>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6 col-lg-3">
-      <div class="bp-card text-center h-100">
-        <div class="bp-card-body">
-          <i class="bi bi-graph-up display-4 text-info mb-3"></i>
-          <h5 class="card-title">Aruanded</h5>
-          <p class="text-muted small">Vaata äri statistikat ja aruandeid</p>
-          <a href="{{ url_for('dashboard.reports') }}" class="btn btn-info">
-            <i class="bi bi-bar-chart me-1"></i>Ava
-          </a>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6 col-lg-3">
-      <div class="bp-card text-center h-100">
-        <div class="bp-card-body">
-          <i class="bi bi-gear display-4 text-secondary mb-3"></i>
-          <h5 class="card-title">Seaded</h5>
-          <p class="text-muted small">Kohanda süsteemi oma vajadustele</p>
-          <a href="{{ url_for('dashboard.settings') }}" class="btn btn-secondary">
-            <i class="bi bi-gear me-1"></i>Seadista
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
 </section>
 {% endblock %}
 
@@ -439,6 +448,168 @@ if (ctx) {
     const link = document.createElement('a');
     link.download = 'kaibe-trend.png';
     link.href = revenueChart.toBase64Image();
+    link.click();
+  };
+}
+
+// Monthly Revenue Chart
+const monthlyCtx = document.getElementById('monthlyRevenueChart');
+if (monthlyCtx) {
+  const months = {{ metrics.monthly_labels | tojson }};
+  const revenueData = {{ metrics.monthly_revenue_data | tojson }};
+  
+  const monthlyRevenueChart = new Chart(monthlyCtx, {
+    type: 'bar',
+    data: {
+      labels: months,
+      datasets: [{
+        label: 'Käive (€)',
+        data: revenueData,
+        backgroundColor: 'rgba(37, 99, 235, 0.3)',
+        borderColor: 'rgba(37, 99, 235, 0.5)',
+        borderWidth: 1,
+        borderRadius: 6,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          titleColor: '#ffffff',
+          bodyColor: '#ffffff',
+          borderColor: 'rgba(37, 99, 235, 0.8)',
+          borderWidth: 1,
+          cornerRadius: 8,
+          callbacks: {
+            label: function(context) {
+              return 'Käive: ' + context.parsed.y.toFixed(2) + '€';
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: {
+            display: false
+          },
+          border: {
+            display: false
+          }
+        },
+        y: {
+          beginAtZero: true,
+          grid: {
+            color: 'rgba(0, 0, 0, 0.05)'
+          },
+          border: {
+            display: false
+          },
+          ticks: {
+            callback: function(value) {
+              return value.toFixed(0) + '€';
+            }
+          }
+        }
+      }
+    }
+  });
+  
+  // Export function
+  window.exportRevenueChart = function() {
+    const link = document.createElement('a');
+    link.download = 'kuude-kaive.png';
+    link.href = monthlyRevenueChart.toBase64Image();
+    link.click();
+  };
+}
+
+// Top Customers Chart
+const customersCtx = document.getElementById('topCustomersChart');
+if (customersCtx) {
+  // Real data from backend
+  const customerData = {
+    labels: {{ metrics.top_customers_labels | tojson }},
+    data: {{ metrics.top_customers_data | tojson }}
+  };
+  
+  const topCustomersChart = new Chart(customersCtx, {
+    type: 'bar',
+    data: {
+      labels: customerData.labels,
+      datasets: [{
+        label: 'Arvete summa (€)',
+        data: customerData.data,
+        backgroundColor: 'rgba(17, 214, 222, 0.3)',
+        borderColor: 'rgba(17, 214, 222, 0.5)',
+        borderWidth: 1,
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      indexAxis: 'y',
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          titleColor: '#ffffff',
+          bodyColor: '#ffffff',
+          borderColor: 'rgba(17, 214, 222, 0.8)',
+          borderWidth: 1,
+          cornerRadius: 8,
+          callbacks: {
+            label: function(context) {
+              return 'Summa: ' + context.parsed.x.toFixed(2) + '€';
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          beginAtZero: true,
+          grid: {
+            color: 'rgba(0, 0, 0, 0.05)'
+          },
+          border: {
+            display: false
+          },
+          ticks: {
+            callback: function(value) {
+              return value.toFixed(0) + '€';
+            }
+          }
+        },
+        y: {
+          grid: {
+            display: false
+          },
+          border: {
+            display: false
+          },
+          ticks: {
+            font: {
+              size: 11
+            }
+          }
+        }
+      }
+    }
+  });
+  
+  // Export function
+  window.exportCustomerChart = function() {
+    const link = document.createElement('a');
+    link.download = 'top-kliendid.png';
+    link.href = topCustomersChart.toBase64Image();
     link.click();
   };
 }

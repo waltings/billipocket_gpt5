@@ -16,8 +16,7 @@
     <div class="d-flex gap-2">
       <!-- PDF Template Selector -->
       <div class="dropdown">
-        <button class="btn btn-sm" type="button" id="templateSelector" data-bs-toggle="dropdown" aria-expanded="false" 
-                style="background: var(--bp-surface); border: 1px solid #cbd5e1; color: var(--bp-sidebar); font-size: 13px;">
+        <button class="btn btn-sm bp-btn-cancel" type="button" id="templateSelector" data-bs-toggle="dropdown" aria-expanded="false">
           <span id="templateLabel">PDF: {{ invoice.get_preferred_pdf_template()|title }}</span> <i class="bi bi-file-pdf ms-1"></i>
         </button>
         <ul class="dropdown-menu" aria-labelledby="templateSelector">
@@ -30,25 +29,21 @@
       </div>
       
       <!-- Preview Button -->
-      <button type="button" class="btn btn-sm" onclick="previewInvoice()" 
-              style="background: var(--bp-primary); border: 1px solid var(--bp-primary); color: white; font-size: 13px;">
+      <button type="button" class="btn btn-sm bp-btn-cancel" onclick="previewInvoice()">
         <i class="bi bi-eye me-1"></i>Eelvaade
       </button>
       
       <!-- PDF Download Button -->
-      <button type="button" class="btn btn-sm" onclick="downloadPDF()" 
-              style="background: var(--bp-success); border: 1px solid var(--bp-success); color: white; font-size: 13px;">
+      <button type="button" class="btn btn-sm bp-btn-cancel" onclick="downloadPDF()">
         <i class="bi bi-download me-1"></i>Laadi alla
       </button>
       
       <!-- Action Buttons -->
-      <a href="{{ url_for('invoices.edit_invoice', invoice_id=invoice.id) }}" class="btn btn-sm" 
-         style="background: var(--bp-surface); border: 1px solid #cbd5e1; color: var(--bp-sidebar); font-size: 13px; text-decoration: none;">
+      <a href="{{ url_for('invoices.edit_invoice', invoice_id=invoice.id) }}" class="btn btn-primary" style="text-decoration: none; font-size: 13px;">
         <i class="bi bi-pencil me-1"></i>Muuda
       </a>
       
-      <a href="{{ url_for('invoices.invoices') }}" class="btn btn-sm" 
-         style="background: var(--bp-surface); border: 1px solid #cbd5e1; color: var(--bp-sidebar); font-size: 13px; text-decoration: none;">
+      <a href="{{ url_for('invoices.invoices') }}" class="btn btn-sm bp-btn-cancel" style="text-decoration: none;">
         <i class="bi bi-arrow-left me-1"></i>Tagasi
       </a>
     </div>

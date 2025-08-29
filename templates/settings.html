@@ -1,7 +1,19 @@
 {% extends 'layout.html' %}
 {% block title %}Seaded – Billipocket{% endblock %}
 {% block content %}
-<form method="POST">
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="fw-bold mb-1" style="font-size: 1.8rem;">Seaded</h1>
+  </div>
+  <div class="d-flex gap-2">
+    <button class="btn btn-primary" type="submit" form="settingsForm">
+      <i class="bi bi-check-lg me-1"></i>Salvesta seaded
+    </button>
+  </div>
+</div>
+
+<form method="POST" id="settingsForm">
   {{ form.hidden_tag() }}
   
   <!-- Ettevõtte kaart -->
@@ -137,62 +149,43 @@
         <!-- Kolmas veerg - Logo Galerii -->
         <div class="col-md-4">
           <div class="mb-3">
-            <!-- Logo Galerii Header -->
+            <!-- Logo Üleslaadimine -->
             <div class="d-flex align-items-center justify-content-between mb-3">
               <label class="form-label mb-0">
-                <i class="bi bi-images me-2"></i>Logo Galerii
+                <i class="bi bi-images me-2"></i>Logo Üleslaadimine
               </label>
-              <button type="button" class="btn btn-primary btn-sm shadow-sm" onclick="toggleLogoUpload()" id="toggleLogoBtn">
-                <i class="bi bi-plus-lg me-1"></i>Lisa uus logo
-              </button>
             </div>
             
-            <!-- Old inline upload section - now hidden since we use modal -->
-            <div class="bp-logo-upload-section" id="logoUploadSection" style="display: none !important;">
-              <!-- Hidden - using modal instead -->
-            </div>
-            
-            <!-- Logo Gallery Grid -->
-            <div class="bp-logo-gallery" id="logoGallery">
-              <div class="bp-logo-gallery-loading" id="logoGalleryLoading">
-                <div class="text-center py-5">
-                  <div class="spinner-border text-primary mb-3" role="status">
-                    <span class="visually-hidden">Laadin...</span>
+            <!-- Logo Upload Section -->
+            <div class="bp-logo-upload-section" id="logoUploadSection">
+              <!-- Simplified Drop Zone -->
+              <div class="bp-modern-drop-zone" id="logoDropArea">
+                <div class="bp-modern-drop-content">
+                  <div class="bp-drop-icon-container">
+                    <svg class="bp-modern-drop-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M14.83 8L12 5.17L9.17 8L10.59 9.41L11 9L11 16L13 16L13 9L13.41 9.41L14.83 8Z" fill="currentColor"/>
+                      <path d="M5 18V20H19V18H21V20C21 21.1 20.1 22 19 22H5C3.9 22 3 21.1 3 20V18H5Z" fill="currentColor"/>
+                      <path d="M12 3L7 8H10V12H14V8H17L12 3Z" fill="currentColor"/>
+                    </svg>
                   </div>
-                  <div class="text-muted mb-3">Laadin logosid...</div>
-                  <button type="button" class="btn btn-outline-secondary btn-sm" onclick="loadLogosFromServer()">
-                    <i class="bi bi-arrow-clockwise me-1"></i>Värska
-                  </button>
+                  <div class="bp-drop-text-container">
+                    <p class="bp-drop-title mb-1">Lohista failid siia või vali failid</p>
+                    <p class="bp-drop-subtitle mb-0">Max 2 MB</p>
+                  </div>
                 </div>
               </div>
+              <input type="file" id="logoFileInput" accept="image/*" multiple hidden />
               
-              <!-- Logo cards will be populated by JavaScript -->
-              <div class="bp-logo-cards" id="logoCards">
-                <!-- Dynamic content -->
-              </div>
-              
-              <!-- Empty state -->
-              <div class="bp-logo-empty" id="logoEmpty" style="display: none;">
-                <div class="text-center py-5">
-                  <div class="mb-3">
-                    <i class="bi bi-image" style="font-size: 3rem; color: var(--bp-primary); opacity: 0.6;"></i>
-                  </div>
-                  <h6 class="text-muted mb-2">Logod puuduvad</h6>
-                  <p class="text-muted small mb-3">Lae esimene logo üles, et alustada logode galeriid</p>
-                  <button type="button" class="btn btn-primary btn-sm" onclick="toggleLogoUpload()">
-                    <i class="bi bi-cloud-upload me-2"></i>Lisa esimene logo
-                  </button>
-                </div>
+            </div>
+            
+            <!-- Permanent Logo List -->
+            <div class="bp-logo-files-section mt-3" id="logoFilesSection">
+              <!-- This will show uploaded logos as a list -->
+              <div id="logoFilesList" class="bp-logo-files-list">
+                <!-- Permanent logo files will be shown here -->
               </div>
             </div>
             
-            <!-- Hidden URL field for backward compatibility -->
-            {{ form.company_logo_url(class_="d-none", id="logoUrlField") }}
-            {% if form.company_logo_url.errors %}
-            <div class="invalid-feedback d-block">
-              {{ form.company_logo_url.errors[0] }}
-            </div>
-            {% endif %}
           </div>
         </div>
       </div>
@@ -381,85 +374,66 @@
     <div class="bp-card-body">
       <p class="text-muted mb-4">PDF mallide koostamiseks kasutatavad muutujad (kopeeri ja kleebi PDF template'itesse):</p>
       
-      <div class="row g-4">
-        <!-- Ettevõtte andmed -->
-        <div class="col-lg-6">
-          <h6 class="text-primary mb-3"><i class="bi bi-building me-2"></i>Ettevõtte andmed:</h6>
-          <div class="bg-light p-3 rounded">
-            <code class="d-block mb-1">&#123;&#123; company.company_name &#125;&#125;</code> - Ettevõtte nimi<br>
-            <code class="d-block mb-1">&#123;&#123; company.company_address &#125;&#125;</code> - Aadress<br>
-            <code class="d-block mb-1">&#123;&#123; company.company_registry_code &#125;&#125;</code> - Registrikood<br>
-            <code class="d-block mb-1">&#123;&#123; company.company_vat_number &#125;&#125;</code> - KMKR number<br>
-            <code class="d-block mb-1">&#123;&#123; company.company_phone &#125;&#125;</code> - Telefon<br>
-            <code class="d-block mb-1">&#123;&#123; company.company_email &#125;&#125;</code> - E-post<br>
-            <code class="d-block mb-1">&#123;&#123; company.company_website &#125;&#125;</code> - Veebileht<br>
-            <code class="d-block mb-1">&#123;&#123; company.company_logo_url &#125;&#125;</code> - Logo URL<br>
-            <code class="d-block mb-1">&#123;&#123; company.company_bank &#125;&#125;</code> - Pank<br>
-            <code class="d-block mb-1">&#123;&#123; company.company_bank_account &#125;&#125;</code> - Pangakonto
-          </div>
+      <div class="row">
+        <div class="col-md-4">
+          <h6>Ettevõtte andmed:</h6>
+          <ul class="list-unstyled small">
+            <li>Ettevõtte nimi: <code>&#123;&#123; company.company_name &#125;&#125;</code></li>
+            <li>E-post: <code>&#123;&#123; company.company_email &#125;&#125;</code></li>
+            <li>Telefon: <code>&#123;&#123; company.company_phone &#125;&#125;</code></li>
+            <li>Aadress: <code>&#123;&#123; company.company_address &#125;&#125;</code></li>
+            <li>Registrikood: <code>&#123;&#123; company.company_registry_code &#125;&#125;</code></li>
+            <li>KMKR number: <code>&#123;&#123; company.company_vat_number &#125;&#125;</code></li>
+            <li>Veebileht: <code>&#123;&#123; company.company_website &#125;&#125;</code></li>
+            <li>Template-spetsiifiline logo URL: <code>&#123;&#123; company.get_logo_for_template_new('template_nimi') &#125;&#125;</code></li>
+            <li>Pank: <code>&#123;&#123; company.company_bank &#125;&#125;</code></li>
+            <li>Pangakonto: <code>&#123;&#123; company.company_bank_account &#125;&#125;</code></li>
+            <li>Turundussõnumid: <code>&#123;&#123; company.marketing_messages &#125;&#125;</code></li>
+            <li>Viivis nimi: <code>&#123;&#123; company.default_penalty_rate_obj.name &#125;&#125;</code></li>
+            <li>Viivise määr päevas: <code>&#123;&#123; company.default_penalty_rate_obj.rate_per_day &#125;&#125;</code></li>
+          </ul>
         </div>
-        
-        <!-- Kliendi andmed -->
-        <div class="col-lg-6">
-          <h6 class="text-success mb-3"><i class="bi bi-person me-2"></i>Kliendi andmed:</h6>
-          <div class="bg-light p-3 rounded">
-            <code class="d-block mb-1">&#123;&#123; client.name &#125;&#125;</code> - Kliendi nimi<br>
-            <code class="d-block mb-1">&#123;&#123; client.registry_code &#125;&#125;</code> - Registrikood<br>
-            <code class="d-block mb-1">&#123;&#123; client.email &#125;&#125;</code> - E-post<br>
-            <code class="d-block mb-1">&#123;&#123; client.phone &#125;&#125;</code> - Telefon<br>
-            <code class="d-block mb-1">&#123;&#123; client.address &#125;&#125;</code> - Aadress
-          </div>
+        <div class="col-md-4">
+          <h6>Arve andmed:</h6>
+          <ul class="list-unstyled small">
+            <li>Arve number: <code>&#123;&#123; invoice.number &#125;&#125;</code></li>
+            <li>Arve kuupäev: <code>&#123;&#123; invoice.date &#125;&#125;</code></li>
+            <li>Maksetähtaeg: <code>&#123;&#123; invoice.due_date &#125;&#125;</code></li>
+            <li>Vahesumma: <code>&#123;&#123; invoice.subtotal &#125;&#125;</code></li>
+            <li>Kogusumma: <code>&#123;&#123; invoice.total &#125;&#125;</code></li>
+            <li>KM summa: <code>&#123;&#123; invoice.vat_amount &#125;&#125;</code></li>
+            <li>KM määr: <code>&#123;&#123; invoice.vat_rate &#125;&#125;</code></li>
+            <li>Staatus: <code>&#123;&#123; invoice.status &#125;&#125;</code></li>
+            <li>Märkus: <code>&#123;&#123; invoice.note &#125;&#125;</code></li>
+            <li>Info ja Teadaanded: <code>&#123;&#123; invoice.announcements &#125;&#125;</code></li>
+            <li>Maksetingimus: <code>&#123;&#123; invoice.payment_terms &#125;&#125;</code></li>
+          </ul>
+          <h6 class="mt-3">Arve read:</h6>
+          <ul class="list-unstyled small">
+            <li><code>&#123;% for line in invoice.lines %&#125;</code></li>
+            <li>Kirjeldus: <code>&#123;&#123; line.description &#125;&#125;</code></li>
+            <li>Kogus: <code>&#123;&#123; line.qty &#125;&#125;</code></li>
+            <li>Ühiku hind: <code>&#123;&#123; line.unit_price &#125;&#125;</code></li>
+            <li>Rea summa: <code>&#123;&#123; line.line_total &#125;&#125;</code></li>
+            <li><code>&#123;% endfor %&#125;</code></li>
+          </ul>
         </div>
-        
-        <!-- Arve andmed -->
-        <div class="col-lg-6">
-          <h6 class="text-warning mb-3"><i class="bi bi-receipt me-2"></i>Arve andmed:</h6>
-          <div class="bg-light p-3 rounded">
-            <code class="d-block mb-1">&#123;&#123; invoice.number &#125;&#125;</code> - Arve number<br>
-            <code class="d-block mb-1">&#123;&#123; invoice.date &#125;&#125;</code> - Arve kuupäev<br>
-            <code class="d-block mb-1">&#123;&#123; invoice.due_date &#125;&#125;</code> - Maksetähtaeg<br>
-            <code class="d-block mb-1">&#123;&#123; invoice.subtotal &#125;&#125;</code> - Vahesumma<br>
-            <code class="d-block mb-1">&#123;&#123; invoice.total &#125;&#125;</code> - Kogusumma<br>
-            <code class="d-block mb-1">&#123;&#123; invoice.vat_amount &#125;&#125;</code> - KM summa<br>
-            <code class="d-block mb-1">&#123;&#123; invoice.status &#125;&#125;</code> - Staatus<br>
-            <code class="d-block mb-1">&#123;&#123; invoice.note &#125;&#125;</code> - Märkus<br>
-            <code class="d-block mb-1">&#123;&#123; invoice.announcements &#125;&#125;</code> - Info ja teadaanded<br>
-            <code class="d-block mb-1">&#123;&#123; invoice.client_extra_info &#125;&#125;</code> - Klienti lisainfo
-          </div>
+        <div class="col-md-4">
+          <h6>Kliendi andmed:</h6>
+          <ul class="list-unstyled small">
+            <li>Kliendi nimi: <code>&#123;&#123; invoice.client.name &#125;&#125;</code></li>
+            <li>E-post: <code>&#123;&#123; invoice.client.email &#125;&#125;</code></li>
+            <li>Telefon: <code>&#123;&#123; invoice.client.phone &#125;&#125;</code></li>
+            <li>Aadress: <code>&#123;&#123; invoice.client.address &#125;&#125;</code></li>
+            <li>Registrikood: <code>&#123;&#123; invoice.client.registry_code &#125;&#125;</code></li>
+            <li>Kliendi lisainfo: <code>&#123;&#123; invoice.client_extra_info &#125;&#125;</code></li>
+          </ul>
+          <h6 class="mt-3">Lisaandmed:</h6>
+          <ul class="list-unstyled small">
+            <li>Märkuse liik: <code>&#123;&#123; note_label &#125;&#125;</code></li>
+            <li>Logo absoluutne URL (PDF): <code>&#123;&#123; template_logo_absolute &#125;&#125;</code></li>
+          </ul>
         </div>
-        
-        <!-- Maksetingimused ja viivis -->
-        <div class="col-lg-6">
-          <h6 class="text-info mb-3"><i class="bi bi-calendar-check me-2"></i>Maksetingimused ja viivis:</h6>
-          <div class="bg-light p-3 rounded">
-            <code class="d-block mb-1">&#123;&#123; invoice.payment_terms &#125;&#125;</code> - Maksetingimus<br>
-            <code class="d-block mb-1">&#123;&#123; company.default_penalty_rate_obj.name &#125;&#125;</code> - Viivis<br>
-            <code class="d-block mb-1">&#123;&#123; company.default_penalty_rate_obj.rate_per_day &#125;&#125;</code> - Viivise määr päevas<br>
-            <code class="d-block mb-1">&#123;&#123; invoice.get_effective_vat_rate() &#125;&#125;</code> - Rakendatud KM määr
-          </div>
-        </div>
-        
-        <!-- Arve read -->
-        <div class="col-12">
-          <h6 class="text-danger mb-3"><i class="bi bi-list-ul me-2"></i>Arve read (tsükkel):</h6>
-          <div class="bg-light p-3 rounded">
-            <code class="d-block mb-2">&#123;% for line in invoice.lines %&#125;</code>
-            <div class="ms-4">
-              <code class="d-block mb-1">&#123;&#123; line.description &#125;&#125;</code> - Kirjeldus<br>
-              <code class="d-block mb-1">&#123;&#123; line.qty &#125;&#125;</code> - Kogus<br>
-              <code class="d-block mb-1">&#123;&#123; line.unit_price &#125;&#125;</code> - Ühiku hind<br>
-              <code class="d-block mb-1">&#123;&#123; line.line_total &#125;&#125;</code> - Rea summa
-            </div>
-            <code class="d-block">&#123;% endfor %&#125;</code>
-          </div>
-        </div>
-      </div>
-      
-      <div class="mt-4 p-3 bg-info-subtle rounded">
-        <h6 class="text-info mb-2"><i class="bi bi-info-circle me-2"></i>Kasutusnäited:</h6>
-        <p class="mb-2"><strong>Tingimuslik kuvamine:</strong> <code>&#123;% if invoice.note %&#125;&#123;&#123; invoice.note &#125;&#125;&#123;% endif %&#125;</code></p>
-        <p class="mb-2"><strong>Kuupäeva vormindus:</strong> <code>&#123;&#123; invoice.date.strftime('%d.%m.%Y') &#125;&#125;</code></p>
-        <p class="mb-0"><strong>Summade vormindus:</strong> <code>&#123;&#123; "%.2f"|format(invoice.total) &#125;&#125; €</code></p>
       </div>
     </div>
   </div>
@@ -609,33 +583,34 @@
     </div>
   </div>
   
-  <!-- Action Buttons -->
-  <div class="d-flex gap-2">
-    <button class="btn btn-primary" type="submit">
-      <i class="bi bi-check-lg me-1"></i>Salvesta seaded
-    </button>
-    <a href="{{ url_for('dashboard.overview') }}" class="btn btn-outline-secondary">
-      <i class="bi bi-arrow-left me-1"></i>Tagasi
-    </a>
-  </div>
 </form>
 {% endblock %}
 
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('DOM loaded, initializing logo gallery...');
-  // Initialize new logo gallery system with small delay
+  console.log('DOM loaded, initializing logo upload...');
+  
+  // Debug: Check if elements exist
+  const uploadSection = document.getElementById('logoUploadSection');
+  const dropArea = document.getElementById('logoDropArea');
+  const fileInput = document.getElementById('logoFileInput');
+  
+  console.log('Upload section element:', uploadSection);
+  console.log('Drop area element:', dropArea);
+  console.log('File input element:', fileInput);
+  
+  if (uploadSection) {
+    console.log('Upload section computed style:', window.getComputedStyle(uploadSection).display);
+    console.log('Upload section visibility:', window.getComputedStyle(uploadSection).visibility);
+    console.log('Upload section opacity:', window.getComputedStyle(uploadSection).opacity);
+  }
+  
+  // Initialize logo system with small delay
   setTimeout(() => {
-    initLogoGallery();
+    initLogoSystem();
   }, 100);
   
-  // Load existing logo if URL is provided (backward compatibility)
-  const existingLogoUrl = document.getElementById('logoUrlField').value;
-  if (existingLogoUrl && existingLogoUrl.trim()) {
-    // For backward compatibility, but this will be handled by gallery
-    console.log('Legacy logo URL found:', existingLogoUrl);
-  }
   
   // Systematic hover effect system - works for all blue buttons including dynamic ones
   window.applyHoverEffect = function(element) {
@@ -1197,183 +1172,7 @@ function deletePaymentTerm(id, days) {
   });
 }
 
-function initLogoUpload() {
-  const dropArea = document.getElementById('logoDropArea');
-  const fileInput = document.getElementById('logoFileInput');
-  const logoUrlField = document.getElementById('logoUrlField');
-  
-  // Prevent default drag behaviors
-  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-    dropArea.addEventListener(eventName, preventDefaults, false);
-    document.body.addEventListener(eventName, preventDefaults, false);
-  });
-  
-  // Highlight drop area when item is dragged over it
-  ['dragenter', 'dragover'].forEach(eventName => {
-    dropArea.addEventListener(eventName, highlight, false);
-  });
-  
-  ['dragleave', 'drop'].forEach(eventName => {
-    dropArea.addEventListener(eventName, unhighlight, false);
-  });
-  
-  // Handle dropped files
-  dropArea.addEventListener('drop', handleDrop, false);
-  
-  // Handle file input change
-  fileInput.addEventListener('change', function(e) {
-    if (e.target.files.length > 0) {
-      handleFiles(e.target.files);
-    }
-  });
-  
-  // Handle click on drop area
-  dropArea.addEventListener('click', function(e) {
-    if (e.target.closest('.bp-logo-actions')) return;
-    triggerFileInput();
-  });
-}
-
-function preventDefaults(e) {
-  e.preventDefault();
-  e.stopPropagation();
-}
-
-function highlight() {
-  document.getElementById('logoDropArea').classList.add('dragover');
-}
-
-function unhighlight() {
-  document.getElementById('logoDropArea').classList.remove('dragover');
-}
-
-function handleDrop(e) {
-  const dt = e.dataTransfer;
-  const files = dt.files;
-  handleFiles(files);
-}
-
-function handleFiles(files) {
-  if (files.length === 0) return;
-  
-  const file = files[0];
-  
-  // Validate file type
-  if (!file.type.startsWith('image/')) {
-    BilliPocket.showMessage('Palun valige pildifail (PNG, JPG või SVG)', 'error');
-    return;
-  }
-  
-  // Validate file size (2MB max)
-  if (file.size > 2 * 1024 * 1024) {
-    BilliPocket.showMessage('Faili suurus on liiga suur. Maksimaalne suurus on 2MB', 'error');
-    return;
-  }
-  
-  // Upload file to server
-  uploadLogoToServer(file);
-}
-
-function uploadLogoToServer(file) {
-  const formData = new FormData();
-  formData.append('logo', file);
-  
-  // Add CSRF token
-  const csrfToken = document.querySelector('input[name="csrf_token"]');
-  if (csrfToken) {
-    formData.append('csrf_token', csrfToken.value);
-  }
-  
-  // Show loading state
-  const dropArea = document.getElementById('logoDropArea');
-  const placeholder = document.getElementById('logoPlaceholder');
-  
-  dropArea.style.opacity = '0.5';
-  dropArea.style.pointerEvents = 'none';
-  
-  // Show upload progress
-  placeholder.innerHTML = `
-    <div class="bp-logo-icon">
-      <i class="bi bi-cloud-upload-fill"></i>
-    </div>
-    <h6 class="mt-3 mb-2">Failin üleslaadimine...</h6>
-    <div class="spinner-border spinner-border-sm text-primary" role="status">
-      <span class="visually-hidden">Laadimine...</span>
-    </div>
-  `;
-  
-  fetch('/settings/upload-logo', {
-    method: 'POST',
-    body: formData
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      showLogoPreview(data.url);
-      document.getElementById('logoUrlField').value = data.url;
-      BilliPocket.showMessage('Logo edukalt üles laaditud', 'success');
-    } else {
-      BilliPocket.showMessage(data.message, 'error');
-      resetPlaceholder();
-    }
-  })
-  .catch(error => {
-    console.error('Upload error:', error);
-    BilliPocket.showMessage('Faili üleslaadimisel tekkis viga', 'error');
-    
-    // Reset placeholder on error
-    resetPlaceholder();
-  })
-  .finally(() => {
-    // Reset loading state
-    dropArea.style.opacity = '1';
-    dropArea.style.pointerEvents = 'auto';
-  });
-}
-
-function resetPlaceholder() {
-  const placeholder = document.getElementById('logoPlaceholder');
-  placeholder.innerHTML = `
-    <div class="bp-logo-icon">
-      <i class="bi bi-cloud-upload"></i>
-    </div>
-    <h6 class="mt-3 mb-2">Ettevõtte logo</h6>
-    <p class="text-muted mb-3">Lohista fail siia või <button type="button" class="btn-link p-0" onclick="triggerFileInput()">kliki faili valimiseks</button></p>
-    <small class="text-muted">
-      <strong>Toetatud vormingud:</strong> PNG, JPG, JPEG, SVG, GIF<br>
-      <strong>Maksimaalne suurus:</strong> 2MB<br>
-      <strong>Soovituslik suurus:</strong> 300x100 pikslit
-    </small>
-  `;
-}
-
-function showLogoPreview(imageSrc) {
-  const logoPreview = document.getElementById('logoPreview');
-  const logoPlaceholder = document.getElementById('logoPlaceholder');
-  const logoImage = document.getElementById('logoImage');
-  const logoEditBtn = document.getElementById('logoEditBtn');
-  const logoRemoveBtn = document.getElementById('logoRemoveBtn');
-  
-  logoImage.src = imageSrc;
-  logoPreview.style.display = 'block';
-  logoPlaceholder.style.display = 'none';
-  
-  // Show action buttons in header
-  logoEditBtn.style.display = 'inline-block';
-  logoRemoveBtn.style.display = 'inline-block';
-  
-  // Apply hover effects to newly visible buttons
-  setTimeout(() => {
-    if (window.applyHoverEffect) {
-      window.applyHoverEffect(logoEditBtn);
-      window.applyHoverEffect(logoRemoveBtn);
-    }
-  }, 50);
-}
-
-function triggerFileInput() {
-  document.getElementById('logoFileInput').click();
-}
+// Removed old duplicate logo upload functions - replaced by new centralized system
 
 // =============================================================================
 // LOGO GALLERY SYSTEM - New Centralized Logo Management
@@ -1382,14 +1181,14 @@ function triggerFileInput() {
 let logoGalleryData = [];
 let isUploadSectionVisible = false;
 
-function initLogoGallery() {
-  console.log('Initializing logo gallery system...');
+function initLogoSystem() {
+  console.log('Initializing logo system...');
   
   // Ensure DOM elements exist before initializing
-  const galleryElement = document.getElementById('logoGallery');
-  if (!galleryElement) {
-    console.warn('Logo gallery element not found, retrying in 100ms...');
-    setTimeout(initLogoGallery, 100);
+  const filesListElement = document.getElementById('logoFilesList');
+  if (!filesListElement) {
+    console.warn('Logo files list element not found, retrying in 100ms...');
+    setTimeout(initLogoSystem, 100);
     return;
   }
   
@@ -1400,334 +1199,24 @@ function initLogoGallery() {
   setTimeout(() => {
     loadLogosFromServer();
   }, 50);
-  
-  // Initialize file input handler
-  const fileInput = document.getElementById('logoFileInput');
-  if (fileInput) {
-    fileInput.addEventListener('change', handleLogoFileSelection);
-  }
 }
 
-function toggleLogoUpload() {
-  showLogoUploadModal();
-}
 
-function showLogoUploadModal() {
-  // Remove existing modal if any
-  const existingModal = document.getElementById('logoUploadModal');
-  if (existingModal) {
-    existingModal.remove();
-  }
-  
-  // Create upload modal HTML
-  const modalHtml = `
-    <div class="modal fade" id="logoUploadModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content bp-modern-upload-modal">
-          <div class="modal-header border-0 pb-2">
-            <h5 class="modal-title d-flex align-items-center">
-              <i class="bi bi-cloud-upload text-primary me-2"></i>
-              Lisa uued logod
-            </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body p-0">
-            <!-- Modern Drop Zone - Top Section -->
-            <div class="bp-modern-drop-zone" id="modalDropArea">
-              <div class="bp-modern-drop-content">
-                <div class="bp-drop-icon-container">
-                  <i class="bi bi-cloud-upload-fill bp-modern-drop-icon"></i>
-                </div>
-                <div class="bp-drop-text-container">
-                  <h6 class="bp-drop-title mb-1">Drop your files here or browse</h6>
-                  <p class="bp-drop-subtitle mb-0">Max file size up to 2 MB</p>
-                </div>
-                <button type="button" class="bp-browse-button" onclick="triggerModalFileInput()">
-                  <i class="bi bi-folder2-open me-2"></i>Vali failid
-                </button>
-              </div>
-            </div>
-            <input type="file" id="modalFileInput" accept="image/*" multiple style="display: none;" />
-            
-            <!-- File List - Bottom Section -->
-            <div class="bp-file-list-container" id="modalUploadList" style="display: none;">
-              <div class="bp-file-list-header">
-                <h6 class="mb-0">Failid</h6>
-              </div>
-              <div class="bp-file-list-items" id="modalFileItems">
-                <!-- Dynamic upload items -->
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-  
-  // Add modal to page
-  document.body.insertAdjacentHTML('beforeend', modalHtml);
-  
-  const modal = new bootstrap.Modal(document.getElementById('logoUploadModal'));
-  
-  // Initialize drag & drop for modal
-  initModalDragDrop();
-  
-  // Handle modal cleanup
-  document.getElementById('logoUploadModal').addEventListener('hidden.bs.modal', function() {
-    this.remove();
-  });
-  
-  modal.show();
-}
 
-function triggerLogoFileInput() {
-  document.getElementById('logoFileInput').click();
-}
 
-function triggerModalFileInput() {
-  document.getElementById('modalFileInput').click();
-}
 
-// Modal drag & drop functionality
-function initModalDragDrop() {
-  const dropArea = document.getElementById('modalDropArea');
-  const fileInput = document.getElementById('modalFileInput');
-  
-  if (!dropArea || !fileInput) return;
-  
-  // Prevent default drag behaviors
-  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-    dropArea.addEventListener(eventName, preventDefaults, false);
-  });
-  
-  // Highlight drop area when item is dragged over it
-  ['dragenter', 'dragover'].forEach(eventName => {
-    dropArea.addEventListener(eventName, () => dropArea.classList.add('dragover'), false);
-  });
-  
-  ['dragleave', 'drop'].forEach(eventName => {
-    dropArea.addEventListener(eventName, () => dropArea.classList.remove('dragover'), false);
-  });
-  
-  // Handle dropped files
-  dropArea.addEventListener('drop', handleModalDrop, false);
-  
-  // Handle click to select files
-  dropArea.addEventListener('click', triggerModalFileInput);
-  
-  // Handle file input change
-  fileInput.addEventListener('change', function(e) {
-    handleModalFiles(e.target.files);
-  });
-}
 
-function handleModalDrop(e) {
-  const files = e.dataTransfer.files;
-  handleModalFiles(files);
-}
 
-function handleModalFiles(files) {
-  if (files.length === 0) return;
-  
-  const uploadList = document.getElementById('modalUploadList');
-  const fileItems = document.getElementById('modalFileItems');
-  
-  // Show upload list
-  uploadList.style.display = 'block';
-  
-  // Clear previous items
-  fileItems.innerHTML = '';
-  
-  const maxSize = 2 * 1024 * 1024; // 2MB
-  const allowedTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml', 'image/gif'];
-  
-  Array.from(files).forEach((file, index) => {
-    // Validate file
-    let isValid = true;
-    let errorMessage = '';
-    
-    if (!allowedTypes.includes(file.type)) {
-      isValid = false;
-      errorMessage = 'Lubatud ainult pildi failid (PNG, JPG, SVG, GIF)';
-    } else if (file.size > maxSize) {
-      isValid = false;
-      errorMessage = 'Faili suurus on liiga suur (max 2MB)';
-    }
-    
-    // Create file item
-    const fileItem = createModalFileItem(file, index);
-    fileItems.appendChild(fileItem);
-    
-    if (!isValid) {
-      updateModalFileItemStatus(fileItem, 'error', errorMessage);
-    } else {
-      // Start upload
-      uploadModalFile(file, fileItem);
-    }
-  });
-}
 
-function createModalFileItem(file, index) {
-  const fileItem = document.createElement('div');
-  fileItem.className = 'bp-modern-file-item uploading';
-  fileItem.setAttribute('data-file-index', index);
-  
-  const fileSizeFormatted = (file.size / 1024).toFixed(0) + ' KB';
-  
-  fileItem.innerHTML = `
-    <div class="bp-modern-file-icon">
-      <i class="bi bi-file-earmark-image text-muted"></i>
-      <div class="bp-modern-progress-overlay active">
-        <div class="bp-modern-progress-bar"></div>
-      </div>
-      <div class="bp-modern-progress-fill animate"></div>
-    </div>
-    <div class="bp-modern-file-info">
-      <div class="bp-modern-file-name">${file.name}</div>
-      <div class="bp-modern-file-size">${fileSizeFormatted}</div>
-    </div>
-    <div class="bp-modern-file-delete" onclick="removeModalFileItem(this)" title="Eemalda fail">
-      <i class="bi bi-trash"></i>
-    </div>
-  `;
-  
-  return fileItem;
-}
-
-function updateModalFileItemStatus(fileItem, status, message = '') {
-  // Remove old status classes
-  fileItem.classList.remove('uploading', 'error', 'success');
-  fileItem.classList.add(status);
-  
-  const icon = fileItem.querySelector('.bp-modern-file-icon');
-  const sizeElement = fileItem.querySelector('.bp-modern-file-size');
-  
-  // Update icon and progress based on status
-  if (status === 'uploading') {
-    icon.innerHTML = `
-      <i class="bi bi-file-earmark-image text-primary"></i>
-      <div class="bp-modern-progress-overlay active">
-        <div class="bp-modern-progress-bar"></div>
-      </div>
-      <div class="bp-modern-progress-fill animate"></div>
-    `;
-  } else if (status === 'error') {
-    icon.innerHTML = `
-      <i class="bi bi-file-earmark-image text-danger"></i>
-      <div class="bp-modern-error-indicator">
-        <i class="bi bi-exclamation-circle-fill"></i>
-      </div>
-    `;
-    if (message) {
-      sizeElement.innerHTML = `<span class="text-danger">${message}</span>`;
-    }
-  } else if (status === 'success') {
-    icon.innerHTML = `
-      <i class="bi bi-file-earmark-image text-success"></i>
-    `;
-    // Hide the progress overlay for success
-    const progressOverlay = icon.querySelector('.bp-modern-progress-overlay');
-    if (progressOverlay) {
-      progressOverlay.classList.remove('active');
-    }
-  }
-}
-
-function removeModalFileItem(button) {
-  const fileItem = button.closest('.bp-modern-file-item');
-  if (fileItem) {
-    fileItem.remove();
-    
-    // Check if file list is empty
-    const fileList = document.getElementById('modalFileItems');
-    if (fileList && fileList.children.length === 0) {
-      // Hide file list section if no files
-      const uploadList = document.getElementById('modalUploadList');
-      if (uploadList) {
-        uploadList.style.display = 'none';
-      }
-    }
-  }
-}
-
-function uploadModalFile(file, fileItem) {
-  const formData = new FormData();
-  formData.append('logo', file);
-  
-  // Add CSRF token
-  const csrfToken = document.querySelector('input[name="csrf_token"]');
-  if (csrfToken) {
-    formData.append('csrf_token', csrfToken.value);
-  }
-  
-  fetch('/settings/logos/upload', {
-    method: 'POST',
-    body: formData
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      updateModalFileItemStatus(fileItem, 'success');
-      
-      // Auto-remove successful items after 2 seconds
-      setTimeout(() => {
-        fileItem.style.opacity = '0';
-        setTimeout(() => fileItem.remove(), 300);
-        
-        // Refresh gallery
-        loadLogosFromServer();
-        
-        // Check if all items are done
-        checkModalUploadComplete();
-      }, 2000);
-    } else {
-      updateModalFileItemStatus(fileItem, 'error', data.message);
-    }
-  })
-  .catch(error => {
-    console.error('Error uploading file:', error);
-    updateModalFileItemStatus(fileItem, 'error', 'Üleslaadimine ebaõnnestus');
-  });
-}
-
-function checkModalUploadComplete() {
-  const fileItems = document.getElementById('modalFileItems');
-  if (fileItems && fileItems.children.length === 0) {
-    const uploadList = document.getElementById('modalUploadList');
-    if (uploadList) {
-      uploadList.innerHTML = `
-        <div class="text-center py-4">
-          <i class="bi bi-check-circle text-success" style="font-size: 2rem;"></i>
-          <h6 class="mt-2 text-success">Kõik logod on üles laaditud!</h6>
-          <p class="text-muted small">Modaal sulgub automaatselt 3 sekundi pärast</p>
-        </div>
-      `;
-      
-      // Auto-close modal after 3 seconds
-      setTimeout(() => {
-        const modal = bootstrap.Modal.getInstance(document.getElementById('logoUploadModal'));
-        if (modal) modal.hide();
-      }, 3000);
-    }
-  }
-}
 
 function loadLogosFromServer() {
   console.log('Loading logos from server...');
-  const loadingElement = document.getElementById('logoGalleryLoading');
-  const cardsElement = document.getElementById('logoCards');
-  const emptyElement = document.getElementById('logoEmpty');
+  const logoFilesList = document.getElementById('logoFilesList');
   
-  // Ensure all elements exist
-  if (!loadingElement || !cardsElement || !emptyElement) {
-    console.error('Logo gallery elements not found');
+  if (!logoFilesList) {
+    console.error('Logo files list element not found');
     return;
   }
-  
-  // Show loading state
-  loadingElement.style.display = 'block';
-  cardsElement.style.display = 'none';
-  emptyElement.style.display = 'none';
   
   fetch('/settings/logos', {
     method: 'GET',
@@ -1746,92 +1235,126 @@ function loadLogosFromServer() {
   .then(data => {
     console.log('Loaded logos:', data);
     logoGalleryData = data.logos || [];
-    renderLogoGallery();
+    renderLogoList();
   })
   .catch(error => {
     console.error('Error loading logos:', error);
     
-    // Hide loading and show error state
-    loadingElement.style.display = 'none';
-    cardsElement.style.display = 'none';
-    emptyElement.innerHTML = `
-      <div class="text-center py-5">
-        <div class="mb-3">
-          <i class="bi bi-exclamation-triangle" style="font-size: 3rem; color: #dc3545; opacity: 0.6;"></i>
-        </div>
-        <h6 class="text-danger mb-2">Logode laadimine ebaõnnestus</h6>
-        <p class="text-muted small mb-3">Kontrolli internetiühendust ja proovi uuesti</p>
-        <button type="button" class="btn btn-outline-primary btn-sm" onclick="loadLogosFromServer()">
-          <i class="bi bi-arrow-clockwise me-2"></i>Proovi uuesti
-        </button>
+    // Show error message in the files list area
+    logoFilesList.innerHTML = `
+      <div class="text-center py-4 text-muted">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        Logode laadimine ebaõnnestus
       </div>
     `;
-    emptyElement.style.display = 'block';
   });
 }
 
-function renderLogoGallery() {
-  console.log('Rendering logo gallery, data length:', logoGalleryData.length);
-  const loadingElement = document.getElementById('logoGalleryLoading');
-  const cardsElement = document.getElementById('logoCards');
-  const emptyElement = document.getElementById('logoEmpty');
+function renderLogoList() {
+  console.log('Rendering logo list, data length:', logoGalleryData.length);
+  const logoFilesList = document.getElementById('logoFilesList');
   
-  // Ensure all elements exist
-  if (!loadingElement || !cardsElement || !emptyElement) {
-    console.error('Logo gallery render elements not found');
+  if (!logoFilesList) {
+    console.error('Logo files list element not found');
     return;
   }
-  
-  // Hide loading
-  loadingElement.style.display = 'none';
   
   if (logoGalleryData.length === 0) {
-    console.log('No logos, showing empty state');
-    // Show empty state
-    cardsElement.style.display = 'none';
-    emptyElement.style.display = 'block';
+    console.log('No logos to show');
+    logoFilesList.innerHTML = '';
     return;
   }
   
-  console.log('Showing logo cards');
-  // Show logo cards
-  cardsElement.style.display = 'grid';
-  emptyElement.style.display = 'none';
+  console.log('Showing logo files list');
   
-  // Generate HTML for logo cards
+  // Generate HTML for logo file items
   let html = '';
   logoGalleryData.forEach(logo => {
     const uploadDate = new Date(logo.upload_date).toLocaleDateString('et-EE');
-    const fileSize = logo.file_size_mb || ((logo.file_size / 1024).toFixed(1) + ' KB');
+    const fileSize = (logo.file_size_mb ? (logo.file_size_mb * 1024).toFixed(0) + ' KB' : (((logo.file_size || 0) / 1024).toFixed(0) + ' KB'));
     
     html += `
-      <div class="bp-logo-card" data-logo-id="${logo.id}" onclick="selectLogo(${logo.id})">
-        <div class="bp-logo-card-actions">
-          <button type="button" class="bp-logo-card-action" 
-                  onclick="event.stopPropagation(); deleteLogoFromGallery(${logo.id})" 
-                  title="Kustuta logo">
-            <i class="bi bi-trash"></i>
-          </button>
+      <div class="logo-item" data-logo-id="${logo.id}" onclick="selectLogo(${logo.id})" 
+           style="display: flex; align-items: center; background: #fff; border: 1px solid #e9ecef; border-radius: 6px; padding: 0.5rem 0.75rem; margin-bottom: 0.3rem; cursor: pointer; min-height: 60px;">
+        <img src="${logo.url}" alt="${logo.original_name}" 
+             style="width: 48px; height: 48px; object-fit: contain; border-radius: 6px; background: #f8f9fa; margin-right: 0.75rem; flex-shrink: 0;"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div style="display: none; width: 48px; height: 48px; background: #f8f9fa; border-radius: 6px; margin-right: 0.75rem; flex-shrink: 0; align-items: center; justify-content: center;">
+          <i class="bi bi-file-earmark-image" style="color: #6c757d;"></i>
         </div>
-        
-        <img src="${logo.url}" alt="${logo.original_name}" class="bp-logo-card-image" />
-        <div class="bp-logo-card-name">${logo.original_name}</div>
-        <div class="bp-logo-card-meta">${uploadDate} • ${fileSize}</div>
+        <div style="flex: 1; min-width: 0;">
+          <div style="font-size: 0.875rem; font-weight: 500; color: #212529; margin: 0 0 0.25rem 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${logo.original_name}</div>
+          <div style="font-size: 0.75rem; color: #6c757d; margin: 0; display: flex; gap: 1rem;">
+            <span style="display: flex; align-items: center; gap: 0.25rem;">
+              <i class="bi bi-calendar3"></i>${uploadDate}
+            </span>
+            <span style="display: flex; align-items: center; gap: 0.25rem;">
+              <i class="bi bi-hdd"></i>${fileSize}
+            </span>
+          </div>
+        </div>
+        <button type="button" onclick="event.stopPropagation(); deleteLogoFromList(${logo.id})" 
+                title="Eemalda logo"
+                class="bp-logo-remove-btn-simple">
+          ×
+        </button>
       </div>
     `;
   });
   
-  cardsElement.innerHTML = html;
+  logoFilesList.innerHTML = html;
+  console.log('Logo files list updated, total logos:', logoGalleryData.length);
   
-  // Apply hover effects to new buttons
-  setTimeout(() => {
-    const actionButtons = cardsElement.querySelectorAll('.bp-logo-card-action');
-    actionButtons.forEach(button => {
-      if (window.applyHoverEffect) {
-        window.applyHoverEffect(button);
-      }
-    });
-  }, 100);
+  // No longer needed - using simple text-based remove buttons
+}
+
+
+function deleteLogoFromList(logoId) {
+  console.log('Deleting logo from list:', logoId);
+  
+  const logoData = logoGalleryData.find(logo => logo.id === logoId);
+  const logoName = logoData ? logoData.original_name : 'see logo';
+  
+  // Use custom confirmation modal instead of browser confirm
+  showCustomConfirm(
+    'Kustuta logo',
+    `Kas oled kindel, et soovid kustutada logo "${logoName}"?`,
+    function() {
+      // Confirmed - proceed with deletion
+      executeLogoDelete(logoId);
+    }
+  );
+}
+
+function executeLogoDelete(logoId) {
+  // Add CSRF token
+  const formData = new FormData();
+  const csrfToken = document.querySelector('input[name="csrf_token"]');
+  if (csrfToken) {
+    formData.append('csrf_token', csrfToken.value);
+  }
+  
+  fetch(`/settings/logos/${logoId}`, {
+    method: 'POST',
+    headers: {
+      'X-HTTP-Method-Override': 'DELETE'
+    },
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      console.log('Logo deleted successfully');
+      BilliPocket.showMessage('Logo edukalt kustutatud', 'success');
+      loadLogosFromServer(); // Refresh list
+    } else {
+      BilliPocket.showMessage(data.message || 'Viga logo kustutamisel', 'error');
+    }
+  })
+  .catch(error => {
+    console.error('Error deleting logo:', error);
+    BilliPocket.showMessage('Viga logo kustutamisel', 'error');
+  });
 }
 
 function selectLogo(logoId) {
@@ -1877,27 +1400,9 @@ function showLogoPreviewModal(logoData) {
                 </div>
                 <div class="col-6">
                   <i class="bi bi-hdd me-1"></i>
-                  Suurus: ${logoData.file_size_mb || ((logoData.file_size / 1024).toFixed(1) + ' KB')}
+                  Suurus: ${logoData.file_size_mb ? (logoData.file_size_mb * 1024).toFixed(0) + ' KB' : ((logoData.file_size / 1024).toFixed(0) + ' KB')}
                 </div>
               </div>
-            </div>
-          </div>
-          <div class="modal-footer border-0 pt-2 d-flex justify-content-between">
-            <div>
-              <button type="button" class="btn btn-outline-secondary me-2" style="font-size: 14px; background-color: transparent !important; color: #114f68 !important; border: 1px solid #114f68 !important; border-radius: 8px !important; padding: 0.25rem 0.5rem;" onclick="showRenameInput(${logoData.id}, '${logoData.original_name}')">
-                <i class="bi bi-pencil me-1"></i>Nimeta ümber
-              </button>
-              <button type="button" class="btn btn-outline-secondary" style="font-size: 14px; background-color: transparent !important; color: #dc3545 !important; border: 1px solid #dc3545 !important; border-radius: 8px !important; padding: 0.25rem 0.5rem;" onclick="deleteLogoFromPreview(${logoData.id})">
-                <i class="bi bi-trash me-1"></i>Kustuta logo
-              </button>
-            </div>
-            <div>
-              <button type="button" class="btn btn-outline-secondary me-2" style="font-size: 14px; background-color: transparent !important; color: #6c757d !important; border: 1px solid #6c757d !important; border-radius: 8px !important; padding: 0.25rem 0.5rem;" data-bs-dismiss="modal">
-                <i class="bi bi-x-lg me-1"></i>Sulge
-              </button>
-              <button type="button" class="btn btn-outline-secondary" style="font-size: 14px; background-color: #114f68 !important; color: white !important; border: 1px solid #114f68 !important; border-radius: 8px !important; padding: 0.25rem 0.5rem;" onclick="confirmSelectLogo(${logoData.id})">
-                <i class="bi bi-check-lg me-1"></i>Vali see logo
-              </button>
             </div>
           </div>
         </div>
@@ -1918,49 +1423,6 @@ function showLogoPreviewModal(logoData) {
   modal.show();
 }
 
-function confirmSelectLogo(logoId) {
-  const logoData = logoGalleryData.find(logo => logo.id === logoId);
-  if (!logoData) return;
-  
-  // Remove previous selections
-  document.querySelectorAll('.bp-logo-card').forEach(card => {
-    card.classList.remove('selected');
-  });
-  
-  // Select logo in gallery
-  const selectedCard = document.querySelector(`[data-logo-id="${logoId}"]`);
-  if (selectedCard) {
-    selectedCard.classList.add('selected');
-  }
-  
-  // Update hidden field for backward compatibility
-  document.getElementById('logoUrlField').value = logoData.url;
-  
-  // Close preview modal
-  const modal = bootstrap.Modal.getInstance(document.getElementById('logoPreviewModal'));
-  if (modal) modal.hide();
-  
-  // Show success message
-  const message = `
-    <div class="d-flex align-items-center">
-      <img src="${logoData.url}" alt="${logoData.original_name}" 
-           style="width: 32px; height: 32px; object-fit: contain; margin-right: 0.5rem; border-radius: 4px; background: #f8f9fa;">
-      <span>Logo "${logoData.original_name}" valitud</span>
-    </div>
-  `;
-  BilliPocket.showMessage(message, 'success');
-  
-  // Auto-hide success message after 3 seconds
-  setTimeout(() => {
-    const alerts = document.querySelectorAll('.alert-success');
-    alerts.forEach(alert => {
-      if (alert.textContent.includes('valitud')) {
-        alert.style.opacity = '0';
-        setTimeout(() => alert.remove(), 300);
-      }
-    });
-  }, 3000);
-}
 
 function deleteLogoFromPreview(logoId) {
   // Close preview modal first
@@ -1971,178 +1433,68 @@ function deleteLogoFromPreview(logoId) {
   deleteLogoFromGallery(logoId);
 }
 
-function showRenameInput(logoId, currentName) {
-  const logoInfo = document.querySelector('#logoPreviewModal .bp-logo-info');
-  const escapedName = currentName.replace(/'/g, '&apos;');
-  
-  logoInfo.innerHTML = `
-    <div class="bp-rename-section">
-      <label class="form-label mb-2">Logo nimi:</label>
-      <div class="input-group mb-3">
-        <input type="text" class="form-control" id="renameInput" value="${escapedName}" maxlength="255">
-        <button class="btn btn-outline-secondary" style="font-size: 14px; background-color: #114f68 !important; color: white !important; border: 1px solid #114f68 !important; border-radius: 8px !important; padding: 0.25rem 0.5rem;" type="button" onclick="saveLogoRename(${logoId})">
-          <i class="bi bi-check-lg"></i>
-        </button>
-        <button class="btn btn-outline-secondary" style="font-size: 14px; background-color: transparent !important; color: #6c757d !important; border: 1px solid #6c757d !important; border-radius: 8px !important; padding: 0.25rem 0.5rem;" type="button" onclick="cancelRename(${logoId}, '${escapedName}')">
-          <i class="bi bi-x-lg"></i>
-        </button>
-      </div>
-      <small class="text-muted">
-        <i class="bi bi-info-circle me-1"></i>
-        Ainult faili nimi muutub, faili sisu ja URL jääb samaks
-      </small>
-    </div>
-  `;
-  
-  // Focus and select input
-  const input = document.getElementById('renameInput');
-  input.focus();
-  input.select();
-  
-  // Handle Enter key
-  input.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-      saveLogoRename(logoId);
-    } else if (e.key === 'Escape') {
-      cancelRename(logoId, currentName);
-    }
-  });
-}
 
-function saveLogoRename(logoId) {
-  const newName = document.getElementById('renameInput').value.trim();
-  
-  if (!newName) {
-    BilliPocket.showMessage('Logo nimi ei saa olla tühi', 'error');
-    return;
-  }
-  
-  if (newName.length > 255) {
-    BilliPocket.showMessage('Logo nimi on liiga pikk (max 255 tähemärki)', 'error');
-    return;
-  }
-  
-  // Show loading
-  const logoInfo = document.querySelector('#logoPreviewModal .bp-logo-info');
-  logoInfo.innerHTML = `
-    <div class="text-center py-3">
-      <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
-        <span class="visually-hidden">Salvestamine...</span>
-      </div>
-      Salvestame uut nime...
-    </div>
-  `;
-  
-  // Make API call to rename logo
-  fetch(`/settings/logos/${logoId}/rename`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'X-Requested-With': 'XMLHttpRequest'
-    },
-    body: JSON.stringify({
-      name: newName,
-      csrf_token: document.querySelector('input[name="csrf_token"]')?.value
-    })
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      // Update logo data in memory
-      const logoData = logoGalleryData.find(logo => logo.id === logoId);
-      if (logoData) {
-        logoData.original_name = newName;
-      }
-      
-      // Refresh gallery to show new name
-      loadLogosFromServer();
-      
-      // Update modal title
-      const modalTitle = document.querySelector('#logoPreviewModal .modal-title');
-      modalTitle.innerHTML = `
-        <i class="bi bi-image text-primary me-2"></i>
-        Logo eelvaade
-      `;
-      
-      // Restore info section
-      const uploadDate = logoData ? logoData.upload_date : '';
-      const fileSize = logoData ? (logoData.file_size_mb || ((logoData.file_size / 1024).toFixed(1) + ' KB')) : '';
-      
-      logoInfo.innerHTML = `
-        <h6 class="mb-2">${newName}</h6>
-        <div class="row text-muted small">
-          <div class="col-6">
-            <i class="bi bi-calendar3 me-1"></i>
-            Üles laaditud: ${uploadDate}
-          </div>
-          <div class="col-6">
-            <i class="bi bi-hdd me-1"></i>
-            Suurus: ${fileSize}
-          </div>
-        </div>
-      `;
-      
-      BilliPocket.showMessage(`Logo nimi muudetud: "${newName}"`, 'success');
-    } else {
-      BilliPocket.showMessage(data.message || 'Viga logo ümbernimetamisel', 'error');
-      // Restore original info on error
-      cancelRename(logoId, logoGalleryData.find(logo => logo.id === logoId)?.original_name || '');
-    }
-  })
-  .catch(error => {
-    console.error('Error renaming logo:', error);
-    BilliPocket.showMessage('Viga logo ümbernimetamisel', 'error');
-    // Restore original info on error
-    cancelRename(logoId, logoGalleryData.find(logo => logo.id === logoId)?.original_name || '');
-  });
-}
 
-function cancelRename(logoId, originalName) {
-  const logoData = logoGalleryData.find(logo => logo.id === logoId);
-  if (!logoData) return;
-  
-  // Restore original info display
-  const logoInfo = document.querySelector('#logoPreviewModal .bp-logo-info');
-  logoInfo.innerHTML = `
-    <h6 class="mb-2">${originalName}</h6>
-    <div class="row text-muted small">
-      <div class="col-6">
-        <i class="bi bi-calendar3 me-1"></i>
-        Üles laaditud: ${logoData.upload_date}
-      </div>
-      <div class="col-6">
-        <i class="bi bi-hdd me-1"></i>
-        Suurus: ${logoData.file_size_mb || ((logoData.file_size / 1024).toFixed(1) + ' KB')}
-      </div>
-    </div>
-  `;
-}
 
 function initLogoDragDrop() {
+  console.log('Initializing logo drag & drop...');
+  
   const dropArea = document.getElementById('logoDropArea');
-  if (!dropArea) return;
+  const fileInput = document.getElementById('logoFileInput');
+  
+  if (!dropArea) {
+    console.error('Drop area not found');
+    return;
+  }
+  
+  if (!fileInput) {
+    console.error('File input not found');
+    return;
+  }
+  
+  console.log('Drop area and file input found, setting up event listeners...');
+  
+  // Clear any existing event listeners by cloning the elements
+  const newDropArea = dropArea.cloneNode(true);
+  const newFileInput = fileInput.cloneNode(true);
+  
+  dropArea.parentNode.replaceChild(newDropArea, dropArea);
+  fileInput.parentNode.replaceChild(newFileInput, fileInput);
+  
+  // Update references to new elements
+  const finalDropArea = document.getElementById('logoDropArea');
+  const finalFileInput = document.getElementById('logoFileInput');
   
   // Prevent default drag behaviors
   ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-    dropArea.addEventListener(eventName, preventDefaults, false);
+    finalDropArea.addEventListener(eventName, preventDefaults, false);
     document.body.addEventListener(eventName, preventDefaults, false);
   });
   
   // Highlight drop area when item is dragged over it
   ['dragenter', 'dragover'].forEach(eventName => {
-    dropArea.addEventListener(eventName, highlightDropArea, false);
+    finalDropArea.addEventListener(eventName, highlightDropArea, false);
   });
   
   ['dragleave', 'drop'].forEach(eventName => {
-    dropArea.addEventListener(eventName, unhighlightDropArea, false);
+    finalDropArea.addEventListener(eventName, unhighlightDropArea, false);
   });
   
   // Handle dropped files
-  dropArea.addEventListener('drop', handleLogoDrop, false);
+  finalDropArea.addEventListener('drop', handleLogoDrop, false);
   
-  // Handle click on drop area
-  dropArea.addEventListener('click', triggerLogoFileInput);
+  // Make entire drop area clickable for file selection
+  finalDropArea.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('Drop area clicked, triggering file input...');
+    finalFileInput.click();
+  });
+  
+  // Handle file input change
+  finalFileInput.addEventListener('change', handleLogoFileSelection);
+  
+  console.log('All event listeners added successfully');
 }
 
 function preventDefaults(e) {
@@ -2166,22 +1518,22 @@ function handleLogoDrop(e) {
 function handleLogoFileSelection(e) {
   const files = e.target.files;
   handleLogoFiles(files);
+  
+  // Reset the input to allow selecting the same file again
+  e.target.value = '';
 }
 
 function handleLogoFiles(files) {
   if (files.length === 0) return;
   
-  // Clear any existing file list
-  const fileList = document.getElementById('logoFileList');
-  fileList.innerHTML = '';
+  console.log('Handling logo files:', files.length);
   
-  // Process each file
+  // Process each file directly without temporary list
   const maxSize = 2 * 1024 * 1024; // 2MB
   const allowedTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml', 'image/gif'];
   
   Array.from(files).forEach((file, index) => {
-    const fileItem = createFileItem(file, index);
-    fileList.appendChild(fileItem);
+    console.log(`Processing file ${index + 1}:`, file.name, file.type, file.size);
     
     // Validate file
     let isValid = true;
@@ -2190,16 +1542,20 @@ function handleLogoFiles(files) {
     if (!allowedTypes.includes(file.type)) {
       isValid = false;
       errorMessage = 'Faili tüüp ei ole toetatud';
+      console.log('File type not supported:', file.type);
     } else if (file.size > maxSize) {
       isValid = false;
       errorMessage = 'Faili suurus on liiga suur (max 2MB)';
+      console.log('File too large:', file.size);
     }
     
     if (!isValid) {
-      updateFileItemStatus(fileItem, 'error', errorMessage);
+      alert(`${file.name}: ${errorMessage}`);
+      console.log('File validation failed:', errorMessage);
     } else {
-      // Start upload
-      uploadSingleLogoFile(file, fileItem);
+      console.log('Starting upload for:', file.name);
+      // Upload directly to server
+      uploadLogoToServerDirect(file);
     }
   });
 }
@@ -2278,21 +1634,13 @@ function removeFileItem(button) {
   if (fileItem) {
     fileItem.remove();
     
-    // Check if file list is empty
-    const fileList = document.getElementById('logoFileList');
-    if (fileList.children.length === 0) {
-      // Hide upload section if no files
-      setTimeout(() => {
-        const uploadSection = document.getElementById('logoUploadSection');
-        if (uploadSection.style.display !== 'none' && fileList.children.length === 0) {
-          toggleLogoUpload();
-        }
-      }, 1000);
-    }
+    // File handled - permanent list will be refreshed
   }
 }
 
-function uploadSingleLogoFile(file, fileItem) {
+function uploadLogoToServerDirect(file) {
+  console.log('Uploading logo directly to server:', file.name);
+  
   const formData = new FormData();
   formData.append('logo', file);
   
@@ -2309,75 +1657,88 @@ function uploadSingleLogoFile(file, fileItem) {
   .then(response => response.json())
   .then(data => {
     if (data.success) {
+      console.log('Logo uploaded successfully:', data.logo);
+      // Refresh the logo gallery
+      loadLogosFromServer();
+      // Show success message
+      BilliPocket.showMessage(`Logo "${file.name}" edukalt üles laaditud!`, 'success');
+    } else {
+      console.error('Upload failed:', data.message);
+      alert(`Viga logo üleslaadimisel: ${data.message}`);
+    }
+  })
+  .catch(error => {
+    console.error('Upload error:', error);
+    alert('Viga logo üleslaadimisel. Palun proovi uuesti.');
+  });
+}
+
+function uploadSingleLogoFile(file, fileItem) {
+  console.log('Starting upload for file:', file.name);
+  
+  const formData = new FormData();
+  formData.append('logo', file);
+  
+  // Add CSRF token
+  const csrfToken = document.querySelector('input[name="csrf_token"]');
+  if (csrfToken) {
+    formData.append('csrf_token', csrfToken.value);
+    console.log('CSRF token added');
+  } else {
+    console.warn('CSRF token not found');
+  }
+  
+  fetch('/settings/logos/upload', {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest'
+    }
+  })
+  .then(response => {
+    console.log('Upload response status:', response.status);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log('Upload response data:', data);
+    
+    if (data.success) {
       updateFileItemStatus(fileItem, 'success');
-      console.log('Logo uploaded:', data.logo);
+      console.log('Logo uploaded successfully:', data.logo);
       
-      // Auto-remove after 3 seconds
+      // Logo uploaded successfully - refresh gallery to show new logo
       setTimeout(() => {
-        fileItem.remove();
-        
-        // Refresh gallery and check if list is empty
         loadLogosFromServer();
-        
-        const fileList = document.getElementById('logoFileList');
-        if (fileList.children.length === 0) {
-          setTimeout(() => {
-            const uploadSection = document.getElementById('logoUploadSection');
-            if (uploadSection.style.display !== 'none') {
-              toggleLogoUpload();
-            }
-          }, 500);
+      }, 500);
+      
+      // Keep successful upload visible for 5 seconds instead of 2
+      setTimeout(() => {
+        if (fileItem && fileItem.parentNode) {
+          fileItem.remove();
+
+          // Upload list no longer used
         }
-      }, 2000);
+      }, 5000);
       
     } else {
+      console.error('Upload failed:', data.message);
       updateFileItemStatus(fileItem, 'error', data.message || 'Üleslaadimise viga');
     }
   })
   .catch(error => {
     console.error('Upload error:', error);
-    updateFileItemStatus(fileItem, 'error', 'Üleslaadimise viga');
+    updateFileItemStatus(fileItem, 'error', `Viga: ${error.message}`);
   });
 }
 
-// Legacy function - now handled by individual file upload
-function uploadLogoFiles(files) {
-  console.log('Legacy uploadLogoFiles called, redirecting to new system');
-  handleLogoFiles(files);
-}
+// Legacy function removed - handled by new centralized system
 
+// Alias for compatibility with other parts of the code
 function deleteLogoFromGallery(logoId) {
-  const logoData = logoGalleryData.find(logo => logo.id === logoId);
-  if (!logoData) return;
-  
-  if (!confirm(`Kas oled kindel, et soovid kustutada logo "${logoData.original_name}"?`)) {
-    return;
-  }
-  
-  // Add CSRF token
-  const formData = new FormData();
-  const csrfToken = document.querySelector('input[name="csrf_token"]');
-  if (csrfToken) {
-    formData.append('csrf_token', csrfToken.value);
-  }
-  
-  fetch(`/settings/logos/${logoId}`, {
-    method: 'DELETE',
-    body: formData
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      BilliPocket.showMessage(`Logo "${logoData.original_name}" kustutatud`, 'success');
-      loadLogosFromServer(); // Refresh gallery
-    } else {
-      BilliPocket.showMessage(data.message || 'Viga logo kustutamisel', 'error');
-    }
-  })
-  .catch(error => {
-    console.error('Delete error:', error);
-    BilliPocket.showMessage('Viga logo kustutamisel', 'error');
-  });
+  deleteLogoFromList(logoId);
 }
 
 function renameLogoPrompt(logoId, currentName) {
@@ -2420,13 +1781,7 @@ function renameLogo(logoId, newName) {
 // =============================================================================
 
 function removeLogo() {
-  // Clear selection in new system
-  document.querySelectorAll('.bp-logo-card').forEach(card => {
-    card.classList.remove('selected');
-  });
-  
-  document.getElementById('logoUrlField').value = '';
-  BilliPocket.showMessage('Logo valik tühistatud', 'success');
+  BilliPocket.showMessage('Logo preview suletud', 'info');
 }
 
 // Penalty Rates Management Functions
@@ -2505,7 +1860,8 @@ function addNewPenaltyRate() {
         } else if (rate === Math.floor(rate)) {
           displayName = `${Math.floor(rate)}% päevas`;
         } else {
-          displayName = `${rate.toFixed(1)}% päevas`.replace('.', ',');
+          // Preserve exact input without rounding - remove trailing zeros
+          displayName = `${rate.toString().replace('.', ',')}% päevas`;
         }
         
         const newListItem = document.createElement('li');
@@ -2736,7 +2092,7 @@ function showCustomConfirm(title, message, onConfirm, onCancel) {
             <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
               <i class="bi bi-x-lg me-1"></i>Tühista
             </button>
-            <button type="button" class="btn btn-danger" id="confirmButton">
+            <button type="button" class="btn btn-primary" id="confirmButton" style="background-color: var(--bp-primary-600) !important; border-color: var(--bp-primary-600) !important;">
               <i class="bi bi-check-lg me-1"></i>Kinnita
             </button>
           </div>
@@ -2766,50 +2122,7 @@ function showCustomConfirm(title, message, onConfirm, onCancel) {
   modal.show();
 }
 
-// Update delete function to use custom confirm
-function deleteLogoFromGallery(logoId) {
-  const logoData = logoGalleryData.find(logo => logo.id === logoId);
-  const logoName = logoData ? logoData.original_name : 'see logo';
-  
-  showCustomConfirm(
-    'Kustuta logo',
-    `Kas oled kindel, et soovid kustutada logo "${logoName}"?`,
-    function() {
-      // Confirmed - proceed with deletion
-      const csrfToken = document.querySelector('input[name="csrf_token"]');
-      
-      // Use POST with method override for CSRF compatibility
-      const formData = new FormData();
-      formData.append('_method', 'DELETE');
-      if (csrfToken) {
-        formData.append('csrf_token', csrfToken.value);
-      }
-      
-      fetch(`/settings/logos/${logoId}`, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: formData
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          BilliPocket.showMessage(data.message, 'success');
-          loadLogosFromServer(); // Refresh gallery
-        } else {
-          BilliPocket.showMessage(data.message || 'Viga logo kustutamisel', 'error');
-        }
-      })
-      .catch(error => {
-        console.error('Error deleting logo:', error);
-        BilliPocket.showMessage('Viga logo kustutamisel', 'error');
-      });
-    },
-    null // No action on cancel
-  );
-}
+// Duplicate function removed - already defined above
 
 </script>
 
@@ -2835,14 +2148,29 @@ function deleteLogoFromGallery(logoId) {
   color: #1a1a1a;
 }
 
-/* Drop Zone - Top Section */
+/* Logo Upload Section */
+.bp-logo-upload-section {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  border: none !important;
+}
+
+.bp-logo-upload-section * {
+  box-sizing: border-box;
+}
+
+/* Drop Zone - Top Section - Reduced Height */
 .bp-modern-drop-zone {
   background: linear-gradient(135deg, #f8f9fb 0%, #e9ecef 100%);
-  border: 2px dashed #cbd5e0;
   border-radius: 12px;
-  padding: 3rem 2rem;
-  margin: 1.5rem;
-  margin-bottom: 0;
+  border: 2px dashed #cbd5e0;
+  padding: 0.6rem 1rem;
+  margin: 0;
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -2867,20 +2195,27 @@ function deleteLogoFromGallery(logoId) {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 0.75rem;
+  min-height: 120px;
 }
 
 .bp-drop-icon-container {
-  background: #ffffff;
+  background: transparent;
+  border: 2px solid #114f68;
   border-radius: 50%;
-  padding: 1rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 1.2rem;
   margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
 }
 
 .bp-modern-drop-icon {
-  font-size: 2.5rem;
-  color: #6c757d;
+  width: 32px;
+  height: 32px;
+  color: #114f68;
   transition: all 0.3s ease;
 }
 
@@ -2889,15 +2224,21 @@ function deleteLogoFromGallery(logoId) {
   transform: scale(1.1);
 }
 
+.bp-modern-drop-zone:hover .bp-drop-icon-container {
+  border-color: #2196f3;
+  transform: scale(1.05);
+}
+
 .bp-drop-text-container {
   text-align: center;
+  margin-top: 0.5rem;
 }
 
 .bp-drop-title {
   font-size: 1.1rem;
-  font-weight: 600;
-  color: #1a1a1a;
-  margin-bottom: 0.25rem;
+  font-weight: 500;
+  color: #495057;
+  margin-bottom: 0.15rem;
 }
 
 .bp-drop-subtitle {
@@ -2910,10 +2251,11 @@ function deleteLogoFromGallery(logoId) {
   background: #114f68;
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
   font-weight: 500;
-  margin-top: 0.5rem;
+  margin-top: 0.4rem;
   transition: all 0.3s ease;
   cursor: pointer;
 }
@@ -2924,69 +2266,7 @@ function deleteLogoFromGallery(logoId) {
   box-shadow: 0 4px 12px rgba(17, 79, 104, 0.3);
 }
 
-/* File List Container - Bottom Section */
-.bp-file-list-container {
-  background: #ffffff;
-  border-top: 1px solid #e9ecef;
-  padding: 0;
-  margin: 0;
-}
-
-.bp-file-list-header {
-  padding: 1rem 1.5rem 0.5rem 1.5rem;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.bp-file-list-header h6 {
-  color: #1a1a1a;
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-
-.bp-file-list-items {
-  padding: 0.5rem 1.5rem 1.5rem 1.5rem;
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-/* Individual File Items */
-.bp-modern-file-item {
-  display: flex;
-  align-items: center;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 12px;
-  margin-bottom: 0.75rem;
-  border: 1px solid #e9ecef;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.bp-modern-file-item:last-child {
-  margin-bottom: 0;
-}
-
-.bp-modern-file-item:hover {
-  background: #f0f4f8;
-  border-color: #cbd5e0;
-  transform: translateY(-1px);
-}
-
-/* File Icon Section - Left */
-.bp-modern-file-icon {
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #ffffff;
-  border-radius: 8px;
-  margin-right: 1rem;
-  position: relative;
-  flex-shrink: 0;
-  border: 1px solid #e9ecef;
-}
+/* === CLEAN LOGO SECTION STYLES === */
 
 .bp-modern-file-icon i {
   font-size: 1.25rem;
@@ -3152,6 +2432,148 @@ function deleteLogoFromGallery(logoId) {
 .bp-modern-error-indicator i {
   font-size: 0.6rem;
   color: #ffffff;
+}
+
+/* Logo Files List Section */
+.bp-logo-files-section {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.bp-logo-files-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+/* Individual Logo File Item */
+.bp-logo-file-item {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  min-height: 60px;
+}
+
+.bp-logo-file-item:hover {
+  background: #f8f9fa;
+  border-color: #dee2e6;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+
+/* Logo File Thumbnail */
+.bp-logo-thumbnail {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  border-radius: 6px;
+  background: #f8f9fa;
+  margin-right: 0.75rem;
+  flex-shrink: 0;
+}
+
+/* Logo File Metadata */
+.bp-logo-metadata {
+  flex: 1;
+  min-width: 0;
+}
+
+.bp-logo-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #212529;
+  margin: 0 0 0.25rem 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bp-logo-details {
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin: 0;
+  display: flex;
+  gap: 1rem;
+}
+
+.bp-logo-detail-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Remove Button - Simplified and Always Visible */
+.bp-logo-remove-btn {
+  background: none !important;
+  border: none !important;
+  outline: none !important;
+  color: #dc3545 !important;
+  font-size: 1.2rem !important;
+  padding: 4px !important;
+  margin: 0 !important;
+  cursor: pointer !important;
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 24px !important;
+  height: 24px !important;
+  text-align: center !important;
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
+  position: relative !important;
+}
+
+.bp-logo-remove-btn:hover {
+  color: #a71e2a !important;
+}
+
+.bp-logo-remove-btn i {
+  font-size: 1rem !important;
+  color: inherit !important;
+  display: block !important;
+  width: 100% !important;
+  text-align: center !important;
+}
+
+/* Force button visibility in file item */
+.bp-logo-file-item .bp-logo-remove-btn {
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  margin-left: auto !important;
+  order: 999 !important;
+}
+
+/* New simplified remove button - system dark blue theme */
+.bp-logo-remove-btn-simple {
+  background: none !important;
+  border: none !important;
+  color: var(--bp-primary-600) !important; /* System dark blue */
+  font-size: 1.4rem !important;
+  font-weight: bold !important;
+  padding: 2px 8px !important;
+  cursor: pointer !important;
+  margin-left: auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 28px !important;
+  height: 28px !important;
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
+  border-radius: 4px !important;
+  transition: all 0.2s ease !important;
+}
+
+.bp-logo-remove-btn-simple:hover {
+  background-color: rgba(17, 79, 104, 0.1) !important; /* System dark blue with transparency */
+  color: var(--bp-primary-700) !important; /* Darker system blue */
 }
 
 /* Completion Message */

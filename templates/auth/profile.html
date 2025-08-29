@@ -1,0 +1,112 @@
+{% extends "layout.html" %}
+
+{% block title %}Kasutajaprofiil{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>
+                    <i class="fas fa-user-circle text-primary me-2"></i>
+                    Kasutajaprofiil
+                </h2>
+                <div>
+                    <a href="{{ url_for('auth.change_password') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-key me-2"></i>
+                        Muuda parooli
+                    </a>
+                    {% if current_user.is_admin %}
+                        <a href="{{ url_for('auth.users') }}" class="btn btn-outline-secondary ms-2">
+                            <i class="fas fa-users me-2"></i>
+                            Kasutajate haldus
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="bp-card">
+                        <div class="bp-card-header">
+                            <h6 class="mb-0">Profiili andmed</h6>
+                        </div>
+                        <div class="bp-card-body">
+                            <form method="POST">
+                                {{ form.hidden_tag() }}
+                                
+                                <div class="mb-3">
+                                    {{ form.username.label(class="form-label") }}
+                                    {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else "")) }}
+                                    {% if form.username.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.username.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    {{ form.email.label(class="form-label") }}
+                                    {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else "")) }}
+                                    {% if form.email.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.email.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-2"></i>
+                                        Salvesta muudatused
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="bp-card">
+                        <div class="bp-card-header">
+                            <h6 class="mb-0">Konto info</h6>
+                        </div>
+                        <div class="bp-card-body">
+                            <div class="mb-3">
+                                <strong>Roll:</strong>
+                                {% if current_user.is_admin %}
+                                    <span class="badge bg-primary">Administraator</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Kasutaja</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <strong>Registreeritud:</strong>
+                                <br>
+                                <small class="text-muted">
+                                    {{ current_user.created_at.strftime('%d.%m.%Y %H:%M') }}
+                                </small>
+                            </div>
+                            
+                            {% if current_user.last_login %}
+                                <div class="mb-3">
+                                    <strong>Viimane sisselogimine:</strong>
+                                    <br>
+                                    <small class="text-muted">
+                                        {{ current_user.last_login.strftime('%d.%m.%Y %H:%M') }}
+                                    </small>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

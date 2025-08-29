@@ -425,9 +425,16 @@
                             <td class="detail-label">Viivis:</td>
                             <td>
                                 {% if company.default_penalty_rate_obj %}
-                                    {{ "%.3f"|format(company.default_penalty_rate_obj.rate_per_day|float) }}% päevas
+                                    {% set rate = company.default_penalty_rate_obj.rate_per_day|float %}
+                                    {% if rate == 0 %}
+                                        0% päevas
+                                    {% elif rate == (rate|int) %}
+                                        {{ rate|int }}% päevas
+                                    {% else %}
+                                        {{ ("%g"|format(rate)).replace('.', ',') }}% päevas
+                                    {% endif %}
                                 {% else %}
-                                    0.05% päevas
+                                    0,05% päevas
                                 {% endif %}
                             </td>
                         </tr>
@@ -475,7 +482,7 @@
                         <td class="amount">{{ invoice.subtotal|currency }}€</td>
                     </tr>
                     <tr>
-                        <td class="label">KM ({{ "%.2f"|format(invoice.vat_rate|float) }}%):</td>
+                        <td class="label">KM ({{ invoice.vat_rate|vat_rate }}%):</td>
                         <td class="amount">{{ invoice.vat_amount|currency }}€</td>
                     </tr>
                     <tr class="total-final">

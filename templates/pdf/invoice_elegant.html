@@ -418,17 +418,21 @@
         <div class="header-top">
             <!-- Ettevõtte info -->
             <div class="company-section">
-                {% set template_logo = company.get_logo_for_template_new('elegant') %}
-                {% if company_logo_absolute %}
-                <div class="company-logo">
-                    <img src="{{ company_logo_absolute }}" alt="{{ company.company_name or 'Logo' }}">
-                </div>
-                {% elif template_logo %}
-                <div class="company-logo">
-                    <img src="{{ template_logo }}" alt="{{ company.company_name or 'Logo' }}">
-                </div>
+                {% if template_logo_absolute %}
+                    <!-- For PDF: use absolute URL provided by route -->
+                    <div class="company-logo">
+                        <img src="{{ template_logo_absolute }}" alt="{{ company.company_name or 'Logo' }}">
+                    </div>
                 {% else %}
-                <div class="company-name">{{ company.company_name or 'BilliPocket' }}</div>
+                    {% set template_logo_url = company.get_logo_for_template_new('elegant') %}
+                    {% if template_logo_url %}
+                        <!-- For HTML preview: use relative URL -->
+                        <div class="company-logo">
+                            <img src="{{ template_logo_url }}" alt="{{ company.company_name or 'Logo' }}">
+                        </div>
+                    {% else %}
+                        <div class="company-name">{{ company.company_name or 'BilliPocket' }}</div>
+                    {% endif %}
                 {% endif %}
                 
                 <div class="company-details">
@@ -552,9 +556,16 @@
                 <span class="label">Viivis:</span>
                 <span class="value">
                     {% if company.default_penalty_rate_obj %}
-                        {{ "%.3f"|format(company.default_penalty_rate_obj.rate_per_day|float) }}% päevas
+                        {% set rate = company.default_penalty_rate_obj.rate_per_day|float %}
+                        {% if rate == 0 %}
+                            0% päevas
+                        {% elif rate == (rate|int) %}
+                            {{ rate|int }}% päevas
+                        {% else %}
+                            {{ ("%g"|format(rate)).replace('.', ',') }}% päevas
+                        {% endif %}
                     {% else %}
-                        0.05% päevas
+                        0,05% päevas
                     {% endif %}
                 </span>
             </div>
@@ -567,7 +578,7 @@
                 <span>{{ invoice.subtotal|currency }}€</span>
             </div>
             <div class="total-line vat">
-                <span>Käibemaks ({{ "%.2f"|format(invoice.vat_rate|float) }}%):</span>
+                <span>Käibemaks ({{ invoice.vat_rate|vat_rate }}%):</span>
                 <span>{{ invoice.vat_amount|currency }}€</span>
             </div>
             <div class="total-line grand-total">

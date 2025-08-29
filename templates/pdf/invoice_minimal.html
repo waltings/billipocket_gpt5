@@ -450,6 +450,22 @@
                     <td class="header-left">
                         <!-- Company Info -->
                         <div class="company-section">
+                            <!-- Logo section for minimal template -->
+                            {% if template_logo_absolute %}
+                                <!-- For PDF: use absolute URL provided by route -->
+                                <div class="company-logo" style="margin-bottom: 10px;">
+                                    <img src="{{ template_logo_absolute }}" alt="{{ company.company_name or 'Logo' }}" style="max-height: 40px; max-width: 120px;">
+                                </div>
+                            {% else %}
+                                {% set template_logo_url = company.get_logo_for_template_new('minimal') %}
+                                {% if template_logo_url %}
+                                    <!-- For HTML preview: use relative URL -->
+                                    <div class="company-logo" style="margin-bottom: 10px;">
+                                        <img src="{{ template_logo_url }}" alt="{{ company.company_name or 'Logo' }}" style="max-height: 40px; max-width: 120px;">
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                            
                             <div class="company-name">
                                 {{ company.company_name.replace(' OÜ', '').replace(' AS', '').replace(' MTÜ', '') }}
                             </div>

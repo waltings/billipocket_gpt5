@@ -31,6 +31,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding-bottom: 10px;
+            padding-top: 10px;
             margin-bottom: 25px;
             border-bottom: 1.5px solid #18476b;
         }
@@ -374,13 +376,17 @@
     <div class="header-section">
         <div class="header">
             <div class="company-logo">
-                {% set template_logo = company.get_logo_for_template_new('standard') %}
-                {% if company_logo_absolute %}
-                <img src="{{ company_logo_absolute }}" alt="{{ company.company_name or 'Logo' }}">
-                {% elif template_logo %}
-                <img src="{{ template_logo }}" alt="{{ company.company_name or 'Logo' }}">
+                {% if template_logo_absolute %}
+                    <!-- For PDF: use absolute URL provided by route -->
+                    <img src="{{ template_logo_absolute }}" alt="{{ company.company_name or 'Logo' }}">
                 {% else %}
-                <div style="font-size: 18px; font-weight: bold; color: #18476b;">{{ company.company_name or 'BilliPocket' }}</div>
+                    {% set template_logo_url = company.get_logo_for_template_new('standard') %}
+                    {% if template_logo_url %}
+                        <!-- For HTML preview: use relative URL -->
+                        <img src="{{ template_logo_url }}" alt="{{ company.company_name or 'Logo' }}">
+                    {% else %}
+                        <div style="font-size: 18px; font-weight: bold; color: #18476b;">{{ company.company_name or 'BilliPocket' }}</div>
+                    {% endif %}
                 {% endif %}
             </div>
             <div class="invoice-info">
@@ -426,9 +432,16 @@
                             <td class="detail-label">Viivis:</td>
                             <td>
                                 {% if company.default_penalty_rate_obj %}
-                                    {{ "%.3f"|format(company.default_penalty_rate_obj.rate_per_day|float) }}% päevas
+                                    {% set rate = company.default_penalty_rate_obj.rate_per_day|float %}
+                                    {% if rate == 0 %}
+                                        0% päevas
+                                    {% elif rate == (rate|int) %}
+                                        {{ rate|int }}% päevas
+                                    {% else %}
+                                        {{ ("%g"|format(rate)).replace('.', ',') }}% päevas
+                                    {% endif %}
                                 {% else %}
-                                    0.05% päevas
+                                    0,05% päevas
                                 {% endif %}
                             </td>
                         </tr>
@@ -476,7 +489,7 @@
                         <td class="amount">{{ invoice.subtotal|currency }}€</td>
                     </tr>
                     <tr>
-                        <td class="label">KM ({{ "%.2f"|format(invoice.vat_rate|float) }}%):</td>
+                        <td class="label">KM ({{ invoice.vat_rate|vat_rate }}%):</td>
                         <td class="amount">{{ invoice.vat_amount|currency }}€</td>
                     </tr>
                     <tr class="total-final">

@@ -4,214 +4,89 @@
 {% block extra_css %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 <style>
-.template-card {
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    border: 2px solid transparent;
-}
-.template-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-}
-.template-card.default {
-    border-color: #0d6efd;
-    background: linear-gradient(135deg, rgba(13,110,253,0.1) 0%, rgba(13,110,253,0.05) 100%);
-}
-.template-preview {
-    height: 200px;
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    position: relative;
-}
-.template-preview iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-    transform: scale(0.3);
-    transform-origin: top left;
-    width: 333%;
-    height: 333%;
-}
-.template-actions {
-    display: flex;
-    gap: 8px;
-}
-.template-status {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-}
 
-/* Template Logo Styles */
+/* List-style Logo Section */
 .logo-section {
-    border-top: 1px solid #eee;
-    padding-top: 1rem;
+    padding: 0;
 }
 
-.template-logo-selector {
-    text-align: center;
+.logo-list-item {
+    background: #f8f9fa;
+    border-radius: 6px;
+    padding: 0.5rem;
+    border: 1px solid #e9ecef;
 }
 
-.template-logo-img {
-    max-width: 80px;
-    max-height: 40px;
+.logo-thumbnail {
+    width: 32px;
+    height: 32px;
     object-fit: contain;
     border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.template-logo-img.fallback {
-    opacity: 0.7;
-    border: 2px dashed #ddd;
-}
-
-.logo-dropdown {
-    position: relative;
-    display: inline-block;
-    width: 100%;
-    max-width: 200px;
-}
-
-.logo-dropdown-button {
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
+    border: 1px solid #dee2e6;
     background: white;
-    cursor: pointer;
+}
+
+.logo-placeholder {
+    width: 32px;
+    height: 32px;
+    background: #e9ecef;
+    border-radius: 4px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    text-align: left;
+    justify-content: center;
+    border: 1px solid #dee2e6;
+}
+
+.logo-placeholder i {
     font-size: 0.875rem;
-    transition: all 0.2s ease;
 }
 
-.logo-dropdown-button:hover {
-    border-color: #0d6efd;
-    box-shadow: 0 0 0 2px rgba(13,110,253,0.1);
-}
-
-.logo-dropdown-button.open {
-    border-color: #0d6efd;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-}
-
-.logo-dropdown-content {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: white;
-    border: 1px solid #0d6efd;
-    border-top: none;
-    border-radius: 0 0 6px 6px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    z-index: 1000;
-    max-height: 300px;
-    overflow-y: auto;
-    display: none;
-}
-
-.logo-dropdown-content.show {
-    display: block;
-}
-
-.logo-dropdown-item {
-    padding: 8px 12px;
-    cursor: pointer;
-    border-bottom: 1px solid #f8f9fa;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: background-color 0.2s ease;
-}
-
-.logo-dropdown-item:hover {
-    background-color: #f8f9fa;
-}
-
-.logo-dropdown-item:last-child {
-    border-bottom: none;
-}
-
-.logo-dropdown-item img {
-    width: 24px;
-    height: 24px;
-    object-fit: contain;
-    border-radius: 2px;
-}
-
-.logo-dropdown-item .logo-info {
-    flex: 1;
-    min-width: 0;
-}
-
-.logo-dropdown-item .logo-name {
-    font-size: 0.875rem;
-    font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.logo-dropdown-item .logo-size {
-    font-size: 0.75rem;
-    color: #6c757d;
-}
-
-.current-logo-preview {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    min-height: 32px;
-}
-
-.current-logo-preview img {
-    width: 24px;
-    height: 24px;
-    object-fit: contain;
-    border-radius: 2px;
-}
-
-.current-logo-preview .no-logo-text {
-    color: #6c757d;
-    font-style: italic;
-}
-
-.logo-actions {
-    margin-top: 8px;
+.logo-actions-inline {
     display: flex;
     gap: 4px;
+}
+
+.logo-actions-inline .btn {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: flex;
+    align-items: center;
     justify-content: center;
+    font-size: 0.75rem;
 }
 
-.loading-indicator {
-    text-align: center;
-    padding: 12px;
-    color: #6c757d;
+/* Override Bootstrap primary colors to match app theme */
+:root {
+    --bs-primary: #114f68;
+    --bs-primary-rgb: 17, 79, 104;
 }
 
-.error-message {
-    text-align: center;
-    padding: 12px;
-    color: #dc3545;
-    font-size: 0.875rem;
+.btn-outline-primary {
+    color: #114f68 !important;
+    border-color: #114f68 !important;
+    background-color: transparent !important;
 }
 
-.spin {
-    animation: spin 1s linear infinite;
+.btn-outline-primary:hover {
+    background-color: #114f68 !important;
+    border-color: #114f68 !important;
+    color: white !important;
 }
 
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+.btn-outline-primary:focus {
+    background-color: transparent !important;
+    color: #114f68 !important;
+    border-color: #114f68 !important;
+    box-shadow: 0 0 0 0.2rem rgba(17, 79, 104, 0.25) !important;
 }
+
+.btn-outline-primary:active {
+    background-color: #114f68 !important;
+    border-color: #114f68 !important;
+    color: white !important;
+}
+
 </style>
 {% endblock %}
 
@@ -220,142 +95,30 @@
   <!-- Page Header -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-      <h1 class="h3 mb-1">PDF Mallide Haldamine</h1>
-      <p class="text-muted mb-0">Kohanda oma arvete PDF malle ja vaata eelvaateid</p>
+      <h1 class="fw-bold mb-1" style="font-size: 1.8rem;">PDF Mallid</h1>
     </div>
     <div class="d-flex gap-2">
-      <a href="{{ url_for('dashboard.settings') }}" class="btn btn-outline-secondary">
+      <a href="{{ url_for('dashboard.settings') }}" 
+         class="btn btn-outline-primary">
         <i class="bi bi-arrow-left me-1"></i>Tagasi seadetesse
       </a>
     </div>
   </div>
 
   <!-- Templates Grid -->
-  <div class="row g-4">
+  <div class="row g-3">
     {% for template in templates %}
-    <div class="col-md-4">
-      <div class="bp-card template-card h-100 {% if template.id == default_template %}default{% endif %}">
-        {% if template.id == default_template %}
-        <div class="template-status">
-          <span class="badge bg-primary">Vaikimisi</span>
-        </div>
-        {% endif %}
+    <div class="col-lg-4 col-md-6 col-sm-12">
+      <div class="bp-card mb-4">
         
-        <div class="bp-card-body text-center">
-          <!-- Template Preview -->
-          <div class="template-preview mb-3">
-            <div class="text-center">
-              <i class="bi bi-file-earmark-pdf display-4 text-muted"></i>
-              <div class="mt-2">
-                <small class="text-muted">{{ template.name }} Mall</small>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Template Info -->
-          <h5 class="card-title mb-2">{{ template.name }}</h5>
-          <p class="card-text text-muted mb-3">{{ template.description }}</p>
-          
-          <!-- Logo Section -->
-          <div class="logo-section mb-3">
-            <h6 class="small text-muted mb-2">
-              <i class="bi bi-image me-1"></i>Logo
-            </h6>
-            <div class="template-logo-selector" id="logoSelector{{ template.id|title }}" data-template="{{ template.id }}">
-              <!-- Current Logo Display -->
-              <div class="mb-2">
-                <img src="{% if template.has_logo %}{{ template.logo_url }}{% elif template.fallback_logo %}{{ template.fallback_logo }}{% endif %}" 
-                     alt="{% if template.has_logo %}{{ template.name }} logo{% else %}Peamine logo{% endif %}" 
-                     class="template-logo-img {% if not template.has_logo and template.fallback_logo %}fallback{% endif %}"
-                     id="currentLogo{{ template.id|title }}"
-                     {% if not template.has_logo and not template.fallback_logo %}style="display: none;"{% endif %}>
-                <div class="no-logo-placeholder" id="noLogoPlaceholder{{ template.id|title }}" 
-                     {% if template.has_logo or template.fallback_logo %}style="display: none;"{% endif %}>
-                  <i class="bi bi-image text-muted" style="font-size: 1.5rem;"></i>
-                  <small class="text-muted d-block">Logo puudub</small>
-                </div>
-                {% if not template.has_logo and template.fallback_logo %}
-                  <small class="text-muted d-block mt-1">Peamine logo</small>
-                {% endif %}
-              </div>
-              
-              <!-- Logo Dropdown -->
-              <div class="logo-dropdown">
-                <button type="button" class="logo-dropdown-button" id="logoDropdownBtn{{ template.id|title }}" 
-                        onclick="toggleLogoDropdown('{{ template.id }}')">
-                  <div class="current-logo-preview">
-                    <span class="current-selection" id="currentSelection{{ template.id|title }}">
-                      {% if template.has_logo %}
-                        Kohandatud logo
-                      {% elif template.fallback_logo %}
-                        Peamine logo
-                      {% else %}
-                        <span class="no-logo-text">Vali logo...</span>
-                      {% endif %}
-                    </span>
-                  </div>
-                  <i class="bi bi-chevron-down"></i>
-                </button>
-                <div class="logo-dropdown-content" id="logoDropdownContent{{ template.id|title }}">
-                  <!-- Dropdown items will be populated by JavaScript -->
-                </div>
-              </div>
-              
-              <!-- Actions -->
-              {% if template.has_logo %}
-              <div class="logo-actions">
-                <button type="button" class="btn btn-outline-danger btn-sm" 
-                        onclick="removeTemplateLogo('{{ template.id }}')">
-                  <i class="bi bi-trash me-1"></i>Eemalda
-                </button>
-              </div>
-              {% endif %}
-            </div>
-          </div>
-          
-          <!-- Template Stats -->
-          <div class="row text-center mb-3">
-            <div class="col-6">
-              <small class="text-muted">Faili suurus</small>
-              <div class="fw-medium">
-                {% if template.exists %}
-                  {{ "%.1f"|format(template.size / 1024) }} KB
-                {% else %}
-                  N/A
-                {% endif %}
-              </div>
-            </div>
-            <div class="col-6">
-              <small class="text-muted">Staatus</small>
-              <div class="fw-medium">
-                {% if template.exists %}
-                  <span class="text-success">Saadaval</span>
-                {% else %}
-                  <span class="text-danger">Puudub</span>
-                {% endif %}
-              </div>
-            </div>
-          </div>
-          
-          <!-- Actions -->
-          <div class="template-actions justify-content-center">
+        <div class="bp-card-header">
+          <div class="d-flex justify-content-between align-items-center">
+            <h2 class="h6 m-0"><i class="bi bi-file-earmark-code me-2"></i>{{ template.name }}</h2>
             {% if template.exists %}
-              <a href="{{ url_for('dashboard.visual_pdf_template', template_id=template.id) }}" 
-                 class="btn btn-primary btn-sm">
-                <i class="bi bi-brush me-1"></i>Visuaalne
-              </a>
               <a href="{{ url_for('dashboard.view_pdf_template', template_id=template.id) }}" 
                  class="btn btn-outline-primary btn-sm">
                 <i class="bi bi-code-slash me-1"></i>Kood
               </a>
-              <button type="button" class="btn btn-outline-secondary btn-sm" 
-                      onclick="previewTemplate('{{ template.id }}')">
-                <i class="bi bi-eye me-1"></i>Eelvaade
-              </button>
-              <button type="button" class="btn btn-outline-info btn-sm"
-                      onclick="downloadTemplate('{{ template.id }}')">
-                <i class="bi bi-download me-1"></i>Laadi alla
-              </button>
             {% else %}
               <button class="btn btn-outline-danger btn-sm" disabled>
                 <i class="bi bi-exclamation-triangle me-1"></i>Puudub
@@ -363,237 +126,235 @@
             {% endif %}
           </div>
         </div>
+        <div class="bp-card-body">
+          <!-- Removed large template preview to save space -->
+          
+          <!-- Logo Section -->
+          <div class="logo-section">
+            <div class="logo-list-item" data-template="{{ template.id }}" id="logoItem{{ template.id|title }}">
+              {% if template.has_logo %}
+                <div class="d-flex align-items-center">
+                  <img src="{{ template.logo_url }}" alt="{{ template.name }} logo" class="logo-thumbnail me-3">
+                  <div class="flex-grow-1">
+                    <div class="fw-medium">{{ template.logo_name or 'Logo määratud' }}</div>
+                    <small class="text-muted">Logo määratud</small>
+                  </div>
+                  <div class="logo-actions-inline">
+                    <button type="button" class="btn btn-sm btn-outline-secondary me-1" 
+                            onclick="openLogoModal('{{ template.id }}')" title="Vaheta logo">
+                      <i class="bi bi-arrow-repeat"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-danger" 
+                            onclick="removeTemplateLogo('{{ template.id }}')" title="Eemalda logo">
+                      <i class="bi bi-x"></i>
+                    </button>
+                  </div>
+                </div>
+              {% else %}
+                <div class="d-flex align-items-center">
+                  <div class="logo-placeholder me-3">
+                    <i class="bi bi-image text-muted"></i>
+                  </div>
+                  <div class="flex-grow-1">
+                    <div class="text-muted">Logo puudub</div>
+                    <small class="text-muted">Lisa template'ile logo</small>
+                  </div>
+                  <div class="logo-actions-inline">
+                    <button type="button" class="btn btn-sm btn-outline-primary" 
+                            onclick="openLogoModal('{{ template.id }}')" title="Lisa logo">
+                      <i class="bi bi-plus"></i>
+                    </button>
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+          
+          
+        </div>
       </div>
     </div>
     {% endfor %}
   </div>
 
-  <!-- Info Section -->
-  <div class="bp-card mt-4">
-    <div class="bp-card-header">
-      <h5 class="mb-0">
-        <i class="bi bi-info-circle me-2"></i>Mallide kohta
-      </h5>
-    </div>
-    <div class="bp-card-body">
-      <div class="row">
-        <div class="col-md-6">
-          <h6>Mallide tüübid:</h6>
-          <ul class="list-unstyled">
-            <li><strong>Standard:</strong> Klassikaline ärilik disain, sobib kõigile ettevõtetele</li>
-            <li><strong>Modern:</strong> Kaasaegne disain gradientidega, noorem ja dünaamilisem</li>
-            <li><strong>Elegant:</strong> Elegantne disain seriifkirjaga, sobib luksusettevõtetele</li>
-          </ul>
-        </div>
-        <div class="col-md-6">
-          <h6>Kohandamise võimalused:</h6>
-          <ul class="list-unstyled">
-            <li>• HTML/CSS koodi muutmine</li>
-            <li>• Värvide ja fontide kohandamine</li>
-            <li>• Logo ja ettevõtte andmete paigutus</li>
-            <li>• Erinevate andmeväljade lisamine/eemaldamine</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
 </section>
 
-<!-- Preview Modal -->
-<div class="modal fade" id="previewModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-xl">
+<!-- Simple Logo Selection Modal -->
+<div class="modal fade" id="logoModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">PDF Eelvaade</h5>
+        <h5 class="modal-title">Vali logo template'ile</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body p-0">
-        <iframe id="previewFrame" style="width: 100%; height: 70vh; border: none;"></iframe>
+      <div class="modal-body">
+        <div id="logoGallery" class="row g-3">
+          <!-- Logo gallery will be loaded here -->
+        </div>
+        <div id="logoLoading" class="text-center py-4" style="display: none;">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Laadib...</span>
+          </div>
+          <p class="mt-2 text-muted">Laadib logosid...</p>
+        </div>
+        <div id="logoError" class="alert alert-danger" style="display: none;"></div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sulge</button>
-        <button type="button" class="btn btn-primary" onclick="downloadPreviewedPdf()">
-          <i class="bi bi-download me-1"></i>Laadi PDF alla
+        <button type="button" class="btn btn-outline-danger" onclick="selectNoLogo()">
+          <i class="bi bi-x-circle me-1"></i>Pole logo
         </button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sulge</button>
       </div>
     </div>
   </div>
 </div>
+
 {% endblock %}
 
 {% block extra_js %}
 <script>
 let currentPreviewTemplate = null;
 
-// Template Logo Management Functions
-let availableLogos = [];
-let logoDropdownStates = {};
+// Simplified Logo Management
+let currentTemplateId = null;
+let logoModal = null;
 
-function toggleLogoDropdown(templateId) {
-  const btnId = 'logoDropdownBtn' + capitalize(templateId);
-  const contentId = 'logoDropdownContent' + capitalize(templateId);
-  const button = document.getElementById(btnId);
-  const content = document.getElementById(contentId);
+function openLogoModal(templateId) {
+  currentTemplateId = templateId;
   
-  const isOpen = content.classList.contains('show');
-  
-  // Close all other dropdowns first
-  document.querySelectorAll('.logo-dropdown-content.show').forEach(dropdown => {
-    if (dropdown.id !== contentId) {
-      dropdown.classList.remove('show');
-      const otherBtn = dropdown.parentElement.querySelector('.logo-dropdown-button');
-      if (otherBtn) otherBtn.classList.remove('open');
-    }
-  });
-  
-  if (isOpen) {
-    // Close this dropdown
-    content.classList.remove('show');
-    button.classList.remove('open');
-  } else {
-    // Open this dropdown
-    loadLogosForTemplateDropdown(templateId);
-    content.classList.add('show');
-    button.classList.add('open');
+  if (!logoModal) {
+    logoModal = new bootstrap.Modal(document.getElementById('logoModal'));
   }
+  
+  // Reset modal state before showing
+  resetModalState();
+  
+  // Show modal and load logos
+  logoModal.show();
+  loadLogosForModal();
 }
 
-function loadLogosForTemplateDropdown(templateId) {
-  const contentId = 'logoDropdownContent' + capitalize(templateId);
-  const content = document.getElementById(contentId);
+function resetModalState() {
+  const gallery = document.getElementById('logoGallery');
+  const loading = document.getElementById('logoLoading');
+  const error = document.getElementById('logoError');
   
-  // Show loading state
-  content.innerHTML = '<div class="loading-indicator"><i class="bi bi-arrow-clockwise spin me-2"></i>Laadib logosid...</div>';
+  // Reset visibility
+  gallery.style.display = 'none';
+  loading.style.display = 'none';
+  error.style.display = 'none';
   
-  // Fetch logos from API
+  // Clear content
+  gallery.innerHTML = '';
+  error.textContent = '';
+}
+
+function loadLogosForModal() {
+  const gallery = document.getElementById('logoGallery');
+  const loading = document.getElementById('logoLoading');
+  const error = document.getElementById('logoError');
+  
+  // Show loading
+  gallery.style.display = 'none';
+  loading.style.display = 'block';
+  error.style.display = 'none';
+  
   fetch('/settings/logos', {
     method: 'GET',
-    headers: {
-      'Accept': 'application/json'
-    }
+    headers: { 'Accept': 'application/json' }
   })
   .then(response => response.json())
   .then(data => {
+    loading.style.display = 'none';
+    
     if (data.success) {
-      availableLogos = data.logos;
-      renderLogoDropdownContent(templateId, data.logos);
+      renderLogoGallery(data.logos);
+      gallery.style.display = 'block';
     } else {
-      content.innerHTML = '<div class="error-message">Logode laadmisel tekkis viga</div>';
+      error.textContent = data.message || 'Logode laadmisel tekkis viga';
+      error.style.display = 'block';
     }
   })
-  .catch(error => {
-    console.error('Error loading logos:', error);
-    content.innerHTML = '<div class="error-message">Logode laadmisel tekkis viga</div>';
+  .catch(err => {
+    console.error('Logo loading error:', err);
+    loading.style.display = 'none';
+    error.textContent = 'Võrguühenduse viga: ' + err.message;
+    error.style.display = 'block';
+    
+    // Show empty gallery as fallback
+    setTimeout(() => {
+      if (error.style.display === 'block') {
+        gallery.innerHTML = '<div class="col-12 text-center"><p class="text-muted">Logo laadmine ebaõnnestus. Proovige uuesti.</p></div>';
+        gallery.style.display = 'block';
+        error.style.display = 'none';
+      }
+    }, 3000);
   });
 }
 
-function renderLogoDropdownContent(templateId, logos) {
-  const contentId = 'logoDropdownContent' + capitalize(templateId);
-  const content = document.getElementById(contentId);
+function renderLogoGallery(logos) {
+  const gallery = document.getElementById('logoGallery');
   
   let html = '';
   
-  // "Pole logo" option
-  html += `
-    <div class="logo-dropdown-item" onclick="selectLogoForTemplate('${templateId}', null)">
-      <div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">
-        <i class="bi bi-x-circle text-muted"></i>
-      </div>
-      <div class="logo-info">
-        <div class="logo-name">Pole logo</div>
-        <div class="logo-size">Logo puudub</div>
-      </div>
-    </div>
-  `;
-  
-  // "Peamine logo" option (if exists)
-  {% if company_settings.company_logo_url %}
-  html += `
-    <div class="logo-dropdown-item" onclick="selectLogoForTemplate('${templateId}', 'fallback')">
-      <img src="{{ company_settings.company_logo_url }}" alt="Peamine logo">
-      <div class="logo-info">
-        <div class="logo-name">Peamine logo</div>
-        <div class="logo-size">Ettevõtte põhilogo</div>
-      </div>
-    </div>
-  `;
-  {% endif %}
-  
-  // Available logos
   if (logos && logos.length > 0) {
     logos.forEach(logo => {
       html += `
-        <div class="logo-dropdown-item" onclick="selectLogoForTemplate('${templateId}', ${logo.id})">
-          <img src="${logo.url}" alt="${logo.original_name}">
-          <div class="logo-info">
-            <div class="logo-name" title="${logo.original_name}">${logo.original_name}</div>
-            <div class="logo-size">${logo.file_size_mb} MB</div>
+        <div class="col-md-4 col-sm-6">
+          <div class="card h-100 logo-card" onclick="selectLogo(${logo.id})" style="cursor: pointer;">
+            <div class="card-body text-center p-2">
+              <img src="${logo.url}" alt="${logo.original_name}" 
+                   style="max-width: 80px; max-height: 40px; object-fit: contain; margin-bottom: 8px;">
+              <h6 class="card-title small mb-1" title="${logo.original_name}">
+                ${logo.original_name.length > 15 ? logo.original_name.substring(0, 15) + '...' : logo.original_name}
+              </h6>
+              <small class="text-muted">${logo.file_size_mb} MB</small>
+            </div>
           </div>
         </div>
       `;
     });
+  } else {
+    html = '<div class="col-12 text-center"><p class="text-muted">Galeriis pole logosid</p></div>';
   }
   
-  if (html === '' || (!fallbackLogo && logos.length === 0)) {
-    html = '<div class="error-message">Galeriis pole logosid</div>';
-  }
-  
-  content.innerHTML = html;
+  gallery.innerHTML = html;
 }
 
-function getCurrentFallbackLogo() {
-  // Try to get fallback logo from template data
-  const fallbackElements = document.querySelectorAll('.template-logo-img.fallback');
-  if (fallbackElements.length > 0) {
-    return fallbackElements[0].src;
-  }
+function selectLogo(logoId) {
+  if (!currentTemplateId) return;
   
-  // Fallback: try to get from server-provided data
-  {% if company_settings.company_logo_url %}
-  return '{{ company_settings.company_logo_url }}';
-  {% endif %}
+  logoModal.hide();
   
-  return null;
-}
-
-function selectLogoForTemplate(templateId, logoId) {
-  // Close dropdown
-  toggleLogoDropdown(templateId);
-  
-  if (logoId === null) {
-    // Remove logo assignment
-    removeTemplateLogo(templateId);
-    return;
-  }
-  
-  if (logoId === 'fallback') {
-    // Remove custom logo to fall back to main logo
-    removeTemplateLogo(templateId);
-    return;
-  }
-  
-  // Assign specific logo
-  const assignUrl = `/settings/templates/${templateId}/logo/${logoId}`;
+  const assignUrl = `/settings/templates/${currentTemplateId}/logo/${logoId}`;
+  const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
   
   fetch(assignUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'X-CSRFToken': csrfToken || ''
     }
   })
   .then(response => response.json())
   .then(data => {
     if (data.success) {
       BilliPocket.showMessage(data.message, 'success');
-      updateTemplateLogoDisplay(templateId, data.logo);
+      updateTemplateLogoDisplay(currentTemplateId, data.logo);
     } else {
       BilliPocket.showMessage(data.message, 'error');
     }
   })
   .catch(error => {
-    console.error('Assignment error:', error);
     BilliPocket.showMessage('Logo määramisel tekkis viga', 'error');
   });
+}
+
+function selectNoLogo() {
+  if (!currentTemplateId) return;
+  
+  logoModal.hide();
+  removeTemplateLogo(currentTemplateId);
 }
 
 function removeTemplateLogo(templateId) {
@@ -603,6 +364,7 @@ function removeTemplateLogo(templateId) {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
+      'X-CSRFToken': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
     }
   })
   .then(response => response.json())
@@ -621,59 +383,48 @@ function removeTemplateLogo(templateId) {
 }
 
 function updateTemplateLogoDisplay(templateId, logoData) {
-  const currentLogoImg = document.getElementById('currentLogo' + capitalize(templateId));
-  const noLogoPlaceholder = document.getElementById('noLogoPlaceholder' + capitalize(templateId));
-  const currentSelection = document.getElementById('currentSelection' + capitalize(templateId));
-  const logoSelector = document.getElementById('logoSelector' + capitalize(templateId));
+  const logoItem = document.getElementById('logoItem' + capitalize(templateId));
   
-  // Update current logo image
   if (logoData && logoData.url) {
-    currentLogoImg.src = logoData.url;
-    currentLogoImg.alt = logoData.filename + ' logo';
-    currentLogoImg.className = 'template-logo-img';
-    currentLogoImg.style.display = 'block';
-    noLogoPlaceholder.style.display = 'none';
-    
-    // Update selection text
-    currentSelection.innerHTML = 'Kohandatud logo';
-    
-    // Show remove actions
-    let actionsContainer = logoSelector.querySelector('.logo-actions');
-    if (!actionsContainer) {
-      actionsContainer = document.createElement('div');
-      actionsContainer.className = 'logo-actions';
-      logoSelector.appendChild(actionsContainer);
-    }
-    
-    actionsContainer.innerHTML = `
-      <button type="button" class="btn btn-outline-danger btn-sm" 
-              onclick="removeTemplateLogo('${templateId}')">
-        <i class="bi bi-trash me-1"></i>Eemalda
-      </button>
+    // Update to show logo with list layout
+    logoItem.innerHTML = `
+      <div class="d-flex align-items-center">
+        <img src="${logoData.url}" alt="${logoData.original_name} logo" class="logo-thumbnail me-3">
+        <div class="flex-grow-1">
+          <div class="fw-medium">${logoData.original_name || logoData.filename || 'Template logo'}</div>
+          <small class="text-muted">Logo määratud</small>
+        </div>
+        <div class="logo-actions-inline">
+          <button type="button" class="btn btn-sm btn-outline-secondary me-1" 
+                  onclick="openLogoModal('${templateId}')" title="Vaheta logo">
+            <i class="bi bi-arrow-repeat"></i>
+          </button>
+          <button type="button" class="btn btn-sm btn-outline-danger" 
+                  onclick="removeTemplateLogo('${templateId}')" title="Eemalda logo">
+            <i class="bi bi-x"></i>
+          </button>
+        </div>
+      </div>
     `;
-    
   } else {
-    // Check if fallback logo should be shown
-    {% if company_settings.company_logo_url %}
-    currentLogoImg.src = '{{ company_settings.company_logo_url }}';
-    currentLogoImg.alt = 'Peamine logo';
-    currentLogoImg.className = 'template-logo-img fallback';
-    currentLogoImg.style.display = 'block';
-    noLogoPlaceholder.style.display = 'none';
-    
-    currentSelection.innerHTML = 'Peamine logo';
-    {% else %}
-    currentLogoImg.style.display = 'none';
-    noLogoPlaceholder.style.display = 'block';
-    
-    currentSelection.innerHTML = '<span class="no-logo-text">Vali logo...</span>';
-    {% endif %}
-    
-    // Hide remove actions
-    const actionsContainer = logoSelector.querySelector('.logo-actions');
-    if (actionsContainer) {
-      actionsContainer.remove();
-    }
+    // Update to show no logo with list layout
+    logoItem.innerHTML = `
+      <div class="d-flex align-items-center">
+        <div class="logo-placeholder me-3">
+          <i class="bi bi-image text-muted"></i>
+        </div>
+        <div class="flex-grow-1">
+          <div class="text-muted">Logo puudub</div>
+          <small class="text-muted">Lisa template'ile logo</small>
+        </div>
+        <div class="logo-actions-inline">
+          <button type="button" class="btn btn-sm btn-outline-primary" 
+                  onclick="openLogoModal('${templateId}')" title="Lisa logo">
+            <i class="bi bi-plus"></i>
+          </button>
+        </div>
+      </div>
+    `;
   }
 }
 
@@ -685,63 +436,29 @@ function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-function previewTemplate(templateId) {
-  // For preview we need a real invoice. Let's try to get the most recent one.
-  fetch('/invoices', {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json'
+
+// Add hover effect to logo cards and modal event listeners
+document.addEventListener('DOMContentLoaded', function() {
+  const style = document.createElement('style');
+  style.textContent = `
+    .logo-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transition: all 0.2s ease;
     }
-  })
-  .then(response => {
-    // If we can't get invoices via API, we'll use a fixed invoice ID
-    // In a real implementation, you might want to create a sample invoice
-    previewWithSampleInvoice(templateId);
-  })
-  .catch(error => {
-    console.log('Using sample preview');
-    previewWithSampleInvoice(templateId);
-  });
-}
-
-function previewWithSampleInvoice(templateId) {
-  // Use a sample/dummy invoice for preview
-  currentPreviewTemplate = templateId;
+    .logo-card {
+      transition: all 0.2s ease;
+    }
+  `;
+  document.head.appendChild(style);
   
-  // For now, we'll show the template preview URL
-  // In production, you'd want to create a sample invoice or use an existing one
-  const previewUrl = `/invoice/preview/${templateId}`;
-  
-  document.getElementById('previewFrame').src = previewUrl;
-  
-  const modal = new bootstrap.Modal(document.getElementById('previewModal'));
-  modal.show();
-}
-
-function downloadTemplate(templateId) {
-  // Create a download link for the template file
-  const link = document.createElement('a');
-  link.href = `/settings/pdf-templates/${templateId}/download`;
-  link.download = `invoice_${templateId}.html`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
-
-function downloadPreviewedPdf() {
-  if (currentPreviewTemplate) {
-    // This would download the actual PDF
-    window.open(`/invoice/sample/pdf/${currentPreviewTemplate}`, '_blank');
-  }
-}
-
-// Close dropdown when clicking outside
-document.addEventListener('click', function(event) {
-  if (!event.target.closest('.logo-dropdown')) {
-    document.querySelectorAll('.logo-dropdown-content.show').forEach(dropdown => {
-      dropdown.classList.remove('show');
-      const btn = dropdown.parentElement.querySelector('.logo-dropdown-button');
-      if (btn) btn.classList.remove('open');
+  // Add modal event listeners
+  const logoModalElement = document.getElementById('logoModal');
+  if (logoModalElement) {
+    logoModalElement.addEventListener('hidden.bs.modal', function () {
+      // Reset state when modal is closed
+      resetModalState();
+      currentTemplateId = null;
     });
   }
 });

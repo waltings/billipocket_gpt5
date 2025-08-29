@@ -482,15 +482,19 @@
         <div class="header-section">
             <div class="header-content">
                 <div class="brand-section">
-                    {% set template_logo = company.get_logo_for_template_new('classic') %}
-                    {% if company_logo_absolute %}
-                    <div class="brand-logo">
-                        <img src="{{ company_logo_absolute }}" alt="{{ company.company_name or 'Logo' }}">
-                    </div>
-                    {% elif template_logo %}
-                    <div class="brand-logo">
-                        <img src="{{ template_logo }}" alt="{{ company.company_name or 'Logo' }}">
-                    </div>
+                    {% if template_logo_absolute %}
+                        <!-- For PDF: use absolute URL provided by route -->
+                        <div class="brand-logo">
+                            <img src="{{ template_logo_absolute }}" alt="{{ company.company_name or 'Logo' }}">
+                        </div>
+                    {% else %}
+                        {% set template_logo_url = company.get_logo_for_template_new('classic') %}
+                        {% if template_logo_url %}
+                            <!-- For HTML preview: use relative URL -->
+                            <div class="brand-logo">
+                                <img src="{{ template_logo_url }}" alt="{{ company.company_name or 'Logo' }}">
+                            </div>
+                        {% endif %}
                     {% endif %}
                     <div class="brand-info">
                         <h1>{{ company.company_name or 'Ettevõte' }}</h1>
@@ -577,7 +581,7 @@
                             <td class="totals-amount num">{{ invoice.subtotal|currency }} €</td>
                         </tr>
                         <tr>
-                            <td class="totals-label">VAT ({{ "%.2f"|format(invoice.vat_rate|float) }}%)</td>
+                            <td class="totals-label">VAT ({{ invoice.vat_rate|vat_rate }}%)</td>
                             <td class="totals-amount num">{{ invoice.vat_amount|currency }} €</td>
                         </tr>
                         <tr class="total-final">

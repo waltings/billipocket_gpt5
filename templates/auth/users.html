@@ -1,0 +1,398 @@
+{% extends "layout.html" %}
+
+{% block title %}Kasutajate haldus{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="fas fa-users text-primary me-2"></i>
+            Kasutajate haldus
+        </h2>
+        <div>
+            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                <i class="bi bi-person-plus me-2"></i>
+                Lisa uus kasutaja
+            </button>
+            <a href="{{ url_for('auth.profile') }}" class="btn btn-outline-secondary ms-2">
+                <i class="bi bi-person-circle me-2"></i>
+                Minu profiil
+            </a>
+        </div>
+    </div>
+    
+    <div class="bp-card">
+        <div class="bp-card-header">
+            <h6 class="mb-0">Registreeritud kasutajad</h6>
+        </div>
+        <div class="bp-card-body p-0">
+            {% if users %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Kasutajanimi</th>
+                                <th>E-post</th>
+                                <th>Roll</th>
+                                <th>Registreeritud</th>
+                                <th>Viimane sisselogimine</th>
+                                <th class="text-center">Toimingud</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ user.username }}</strong>
+                                        {% if user.id == current_user.id %}
+                                            <span class="badge bg-info ms-2">See oled sina</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ user.email }}</td>
+                                    <td>
+                                        {% if user.is_admin %}
+                                            <span class="badge bg-primary">Administraator</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Kasutaja</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">
+                                            {{ user.created_at.strftime('%d.%m.%Y %H:%M') }}
+                                        </small>
+                                    </td>
+                                    <td>
+                                        {% if user.last_login %}
+                                            <small class="text-muted">
+                                                {{ user.last_login.strftime('%d.%m.%Y %H:%M') }}
+                                            </small>
+                                        {% else %}
+                                            <small class="text-muted">Pole veel sisseloginud</small>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        {% if user.id != current_user.id %}
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <form method="POST" action="{{ url_for('auth.toggle_admin', user_id=user.id) }}" class="d-inline">
+                                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                                    <button type="submit" 
+                                                            class="btn btn-outline-{% if user.is_admin %}warning{% else %}primary{% endif %}"
+                                                            onclick="return confirm('Kas oled kindel, et soovid muuta kasutaja {{ user.username }} õigusi?')">
+                                                        {% if user.is_admin %}
+                                                            <i class="fas fa-user-minus me-1"></i>
+                                                            Eemalda admin
+                                                        {% else %}
+                                                            <i class="fas fa-user-shield me-1"></i>
+                                                            Tee admin
+                                                        {% endif %}
+                                                    </button>
+                                                </form>
+                                                
+                                                <form method="POST" action="{{ url_for('auth.deactivate_user', user_id=user.id) }}" class="d-inline">
+                                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                                    <button type="submit" 
+                                                            class="btn btn-outline-danger"
+                                                            onclick="return confirm('Kas oled kindel, et soovid deaktiveerida kasutaja {{ user.username }}? Seda toimingut ei saa tagasi võtta.')">
+                                                        <i class="fas fa-user-times me-1"></i>
+                                                        Deaktiveeri
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        {% else %}
+                                            <span class="text-muted">
+                                                <i class="fas fa-lock me-1"></i>
+                                                Oma kontot
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-users text-muted" style="font-size: 3rem;"></i>
+                    <p class="text-muted mt-3">Kasutajaid pole veel registreeritud.</p>
+                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                        <i class="fas fa-user-plus me-2"></i>
+                        Lisa esimene kasutaja
+                    </button>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Info card -->
+    <div class="bp-card mt-3">
+        <div class="bp-card-body">
+            <h6 class="card-title">
+                <i class="fas fa-info-circle text-info me-2"></i>
+                Tähtis teave
+            </h6>
+            <ul class="mb-0 small text-muted">
+                <li>Ainult administraatorid saavad hallata teiste kasutajate õigusi</li>
+                <li>Viimast administraatorit ei saa deaktiveerida ega tema õigusi eemaldada</li>
+                <li>Sa ei saa enda kontot deaktiveerida</li>
+                <li>Deaktiveeritud kasutajad ei saa süsteemi sisse logida</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Add User Modal -->
+<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addUserModalLabel">
+                    <i class="bi bi-person-plus me-2"></i>
+                    Lisa uus kasutaja
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addUserForm" method="POST" action="{{ url_for('auth.register') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Kasutajanimi <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Sisesta kasutajanimi" required>
+                        <div class="form-text">Vähemalt 3 tähemärki</div>
+                        <div class="invalid-feedback" id="usernameError"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label">E-posti aadress <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Sisesta e-posti aadress" required>
+                        <div class="invalid-feedback" id="emailError"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Parool <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Sisesta parool" required>
+                        <div class="form-text">Vähemalt 8 tähemärki</div>
+                        <div class="invalid-feedback" id="passwordError"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password2" class="form-label">Korda parooli <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control" id="password2" name="password2" placeholder="Korda parooli" required>
+                        <div class="invalid-feedback" id="password2Error"></div>
+                    </div>
+                    
+                    <div class="alert alert-info d-flex align-items-center" role="alert">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <div>Uued kasutajad luuakse tavalise kasutaja õigustega</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-2"></i>
+                    Tühista
+                </button>
+                <button type="submit" form="addUserForm" class="btn btn-secondary" id="submitUserBtn">
+                    <i class="bi bi-person-plus me-2"></i>
+                    Loo kasutaja
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Table styling to exactly match invoices page */
+.table tbody tr:hover {
+  background-color: #f8fafc;
+  transition: background-color 0.15s ease;
+}
+
+.table td {
+  color: #475569;
+}
+
+/* Modal styling */
+.modal-content {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.modal-header {
+  border-bottom: 1px solid #e2e8f0;
+  padding: 1.5rem;
+}
+
+.modal-title {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-footer {
+  border-top: 1px solid #e2e8f0;
+  padding: 1.5rem;
+}
+
+.form-control:focus {
+  border-color: #10b981;
+  box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
+}
+
+.btn-secondary {
+  background-color: #10b981;
+  border-color: #10b981;
+}
+
+.btn-secondary:hover {
+  background-color: #059669;
+  border-color: #059669;
+}
+
+.alert-info {
+  background-color: #f0f9ff;
+  border-color: #bae6fd;
+  color: #0c4a6e;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const addUserForm = document.getElementById('addUserForm');
+    const submitBtn = document.getElementById('submitUserBtn');
+    const modal = document.getElementById('addUserModal');
+    const bsModal = new bootstrap.Modal(modal);
+    
+    // Form submission with AJAX
+    addUserForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Clear previous errors
+        clearErrors();
+        
+        // Show loading state
+        submitBtn.innerHTML = '<i class="bi bi-arrow-clockwise spin me-2"></i>Loomine...';
+        submitBtn.disabled = true;
+        
+        // Get form data
+        const formData = new FormData(addUserForm);
+        
+        // Submit with fetch
+        fetch('{{ url_for("auth.register") }}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.text();
+            }
+            return response.text().then(text => {
+                throw new Error(text);
+            });
+        })
+        .then(html => {
+            // Success - reload page to show new user
+            bsModal.hide();
+            location.reload();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            // Try to parse error response for validation errors
+            try {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(error.message, 'text/html');
+                const errors = doc.querySelectorAll('.bp-form-error, .invalid-feedback');
+                
+                // Show errors
+                errors.forEach(errorEl => {
+                    const fieldName = errorEl.closest('.bp-form-group, .mb-3').querySelector('input').name;
+                    showFieldError(fieldName, errorEl.textContent.trim());
+                });
+            } catch (parseError) {
+                // Generic error
+                showAlert('Viga kasutaja loomisel. Palun proovige uuesti.', 'danger');
+            }
+        })
+        .finally(() => {
+            // Reset button
+            submitBtn.innerHTML = '<i class="bi bi-person-plus me-2"></i>Loo kasutaja';
+            submitBtn.disabled = false;
+        });
+    });
+    
+    // Password confirmation validation
+    const password = document.getElementById('password');
+    const password2 = document.getElementById('password2');
+    
+    password2.addEventListener('input', function() {
+        if (password.value !== password2.value && password2.value !== '') {
+            password2.classList.add('is-invalid');
+            document.getElementById('password2Error').textContent = 'Paroolid ei kattu';
+        } else {
+            password2.classList.remove('is-invalid');
+            document.getElementById('password2Error').textContent = '';
+        }
+    });
+    
+    // Clear form when modal is hidden
+    modal.addEventListener('hidden.bs.modal', function() {
+        addUserForm.reset();
+        clearErrors();
+    });
+    
+    // Auto-focus first input when modal opens
+    modal.addEventListener('shown.bs.modal', function() {
+        document.getElementById('username').focus();
+    });
+    
+    function clearErrors() {
+        const errorElements = document.querySelectorAll('.invalid-feedback');
+        const inputElements = document.querySelectorAll('.form-control');
+        
+        errorElements.forEach(el => el.textContent = '');
+        inputElements.forEach(el => el.classList.remove('is-invalid'));
+    }
+    
+    function showFieldError(fieldName, message) {
+        const input = document.querySelector(`[name="${fieldName}"]`);
+        const errorEl = document.getElementById(`${fieldName}Error`);
+        
+        if (input && errorEl) {
+            input.classList.add('is-invalid');
+            errorEl.textContent = message;
+        }
+    }
+    
+    function showAlert(message, type = 'danger') {
+        const alertHtml = `
+            <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+        
+        const modalBody = document.querySelector('#addUserModal .modal-body');
+        modalBody.insertAdjacentHTML('afterbegin', alertHtml);
+    }
+});
+</script>
+
+<style>
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+</style>
+{% endblock %}

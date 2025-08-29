@@ -1146,10 +1146,7 @@
             {% for invoice in invoices %}
             <tr>
               <td>
-                <a href="{{ url_for('invoices.view_invoice', invoice_id=invoice.id) }}" 
-                   class="text-decoration-none fw-medium">
-                  {{ invoice.no }}
-                </a>
+                <div class="fw-medium">{{ invoice.no }}</div>
               </td>
               <td>
                 <div class="fw-medium">{{ invoice.client }}</div>
@@ -1175,25 +1172,30 @@
                 <div class="d-flex justify-content-end">
                   <!-- All actions in one compact btn-group -->
                   <div class="btn-group btn-group-sm" role="group">
-                    <a href="{{ url_for('invoices.edit_invoice', invoice_id=invoice.id) }}" 
+                    <a href="{{ url_for('invoices.view_invoice', invoice_id=invoice.id) }}" 
                        class="btn btn-outline-primary" 
+                       title="Vaata arvet">
+                      <i class="bi bi-eye"></i>
+                    </a>
+                    <a href="{{ url_for('invoices.edit_invoice', invoice_id=invoice.id) }}" 
+                       class="btn btn-outline-secondary" 
                        title="Muuda arvet">
                       <i class="bi bi-pencil"></i>
                     </a>
                     <a href="/invoice/{{ invoice.id }}/pdf/{{ default_pdf_template }}" 
-                       class="btn btn-outline-primary" 
+                       class="btn btn-outline-success" 
                        target="_blank"
                        title="Laadi alla PDF ({{ default_pdf_template }})">
                       <i class="bi bi-download"></i>
                     </a>
                     <button type="button" 
-                            class="btn btn-outline-primary" 
+                            class="btn btn-outline-info" 
                             onclick="emailInvoice({{ invoice.id }}, '{{ invoice.no }}', '{{ invoice.client }}')"
                             title="Saada e-mailiga">
                       <i class="bi bi-envelope"></i>
                     </button>
                     <button type="button" 
-                            class="btn btn-outline-primary" 
+                            class="btn btn-outline-warning" 
                             onclick="duplicateInvoice({{ invoice.id }}, '{{ invoice.no }}')"
                             title="Dubleeri arve">
                       <i class="bi bi-copy"></i>
@@ -1290,8 +1292,8 @@
             {% endif %}
           {% endfor %}
           
-          {% if end_page != total_pages %}
-            {% if end_page != (total_pages - 1) %}
+          {% if end_page < total_pages %>
+            {% if end_page < total_pages - 1 %}
               <span class="text-muted small">...</span>
             {% endif %}
             <a href="{{ url_for('invoices.invoices', page=total_pages, per_page=per_page, status=current_status, client_id=current_client_id, search=current_search, date_from=request.args.get('date_from', ''), date_to=request.args.get('date_to', ''), sort=current_sort, dir=current_dir) }}" 
@@ -1299,7 +1301,7 @@
           {% endif %}
           
           <!-- Next page -->
-          {% if current_page != total_pages %}
+          {% if current_page < total_pages %}
           <a href="{{ url_for('invoices.invoices', page=current_page+1, per_page=per_page, status=current_status, client_id=current_client_id, search=current_search, date_from=request.args.get('date_from', ''), date_to=request.args.get('date_to', ''), sort=current_sort, dir=current_dir) }}" 
              class="btn btn-outline-primary btn-sm">
             <i class="bi bi-chevron-right"></i>
@@ -1310,6 +1312,7 @@
           </button>
           {% endif %}
         </div>
+        {% endif %}
       </div>
     </div>
   </div>
@@ -1390,8 +1393,8 @@
     </div>
   </div>
 </div>
-{% endif %}
 {% endblock %}
+
 {% block extra_js %}
 <!-- Custom calendar - no external dependencies -->
 <script>
@@ -1416,7 +1419,7 @@ function performRealtimeSearch() {
   
   // Update statistics in the info bar  
   const visibleRows = document.querySelectorAll('.table tbody tr:not([style*="display: none"])');
-  const leitudCount = document.querySelector('.dropdown-item .badge.bg-primary');
+  const leitudCount = document.querySelector('.badge.bg-primary');
   if (leitudCount) {
     leitudCount.textContent = visibleRows.length;
   }

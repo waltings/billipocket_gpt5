@@ -10,7 +10,7 @@
   <!-- Page Header -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-      <h1 class="h3 mb-1">Arve {{ invoice.number }}</h1>
+      <h1 class="fw-bold mb-1" style="font-size: 1.8rem;">Arve {{ invoice.number }}</h1>
       <p class="text-muted mb-0">{{ invoice.client.name }} · {{ invoice.date.strftime('%d.%m.%Y') }}</p>
     </div>
     <div class="d-flex gap-2">
@@ -212,7 +212,7 @@
                 <td class="text-end">{{ invoice.subtotal|currency }}€</td>
               </tr>
               <tr>
-                <td class="text-muted">KM ({{ invoice.vat_rate }}%):</td>
+                <td class="text-muted">KM ({{ invoice.vat_rate|vat_rate }}%):</td>
                 <td class="text-end">{{ invoice.vat_amount|currency }}€</td>
               </tr>
               <tr class="border-top">

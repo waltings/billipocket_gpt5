@@ -4,6 +4,84 @@
 {% block extra_css %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 <style>
+/* Override Bootstrap primary colors to match app theme */
+:root {
+    --bs-primary: #114f68;
+    --bs-primary-rgb: 17, 79, 104;
+}
+
+.btn-outline-primary {
+    color: #114f68 !important;
+    border-color: #114f68 !important;
+    background-color: transparent !important;
+}
+
+.btn-outline-primary:hover {
+    background-color: #114f68 !important;
+    border-color: #114f68 !important;
+    color: white !important;
+}
+
+.btn-outline-primary:focus {
+    background-color: transparent !important;
+    color: #114f68 !important;
+    border-color: #114f68 !important;
+    box-shadow: 0 0 0 0.2rem rgba(17, 79, 104, 0.25) !important;
+}
+
+.btn-outline-primary:active {
+    background-color: #114f68 !important;
+    border-color: #114f68 !important;
+    color: white !important;
+}
+
+/* Real-time search styling */
+.search-section .bp-card-body {
+  padding: 1rem 1.5rem;
+}
+
+.search-input-container {
+  position: relative;
+}
+
+.search-input-container .search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #64748b;
+  z-index: 5;
+}
+
+.search-input-container .form-control {
+  padding-left: 2.5rem;
+}
+
+/* Delete button styling - consistent with invoices */
+.btn-outline-danger {
+  border-color: #fca5a5;
+  color: #dc2626 !important;
+  background-color: #ffffff !important;
+  box-shadow: none;
+}
+.btn-outline-danger:hover {
+  background-color: #fee2e2 !important;
+  border-color: #f87171 !important;
+  color: #b91c1c !important;
+  box-shadow: none;
+}
+.btn-outline-danger:focus {
+  background-color: #ffffff !important;
+  border-color: #fca5a5 !important;
+  color: #dc2626 !important;
+  box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25) !important;
+}
+.btn-outline-danger:active {
+  background-color: #fee2e2 !important;
+  border-color: #f87171 !important;
+  color: #b91c1c !important;
+}
+
 /* Match dropdown styling from invoices template */
 .dropdown-toggle {
   border: 1px solid #e2e8f0;
@@ -53,6 +131,7 @@
   background-color: rgba(17, 214, 222, 0.15) !important;
   color: #114f68 !important;
 }
+
 </style>
 {% endblock %}
 
@@ -61,8 +140,7 @@
   <!-- Page Header -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-      <h1 class="h3 mb-1">Kliendid</h1>
-      <p class="text-muted mb-0">Halda oma kliendibaasi ja vaata statistikat</p>
+      <h1 class="fw-bold mb-1" style="font-size: 1.8rem;">Kliendid</h1>
     </div>
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clientModal">
       <i class="bi bi-plus-lg me-1"></i>Lisa uus klient
@@ -70,24 +148,16 @@
   </div>
 
   <!-- Search and Filter Section -->
-  <div class="bp-card mb-4">
+  <div class="bp-card mb-4 search-section">
     <div class="bp-card-body">
-      <form method="GET" class="row g-3">
-        {{ search_form.hidden_tag() }}
-        <div class="col-md-8">
-          {{ search_form.search(class_="form-control", placeholder="Otsi klientide hulgast...", value=search_query or '') }}
-        </div>
-        <div class="col-md-4">
-          <div class="d-flex gap-2">
-            <button type="submit" class="btn btn-outline-primary">
-              <i class="bi bi-search me-1"></i>Otsi
-            </button>
-            <a href="{{ url_for('clients.clients') }}" class="btn btn-outline-secondary">
-              <i class="bi bi-arrow-clockwise me-1"></i>Lähtesta
-            </a>
+      <div class="row g-3">
+        <div class="col-12">
+          <div class="search-input-container">
+            <i class="bi bi-search search-icon"></i>
+            <input type="text" class="form-control" id="realtime-search" placeholder="Otsi klientide hulgast..." value="{{ search_query or '' }}">
           </div>
         </div>
-      </form>
+      </div>
     </div>
   </div>
 
@@ -97,7 +167,7 @@
     <div class="bp-card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
       <h2 class="h6 m-0">Klientide nimekiri</h2>
       <div class="d-flex gap-2">
-        <button class="btn btn-outline-secondary btn-sm" onclick="window.print()">
+        <button class="btn btn-outline-primary btn-sm" onclick="window.print()">
           <i class="bi bi-printer me-1"></i>Prindi
         </button>
       </div>
@@ -105,14 +175,74 @@
     <div class="bp-card-body p-0">
       {% if clients %}
       <div class="table-responsive">
-        <table class="table table-hover mb-0">
+        <table class="table table-hover mb-0" id="clientsTable">
           <thead class="table-light">
             <tr>
-              <th class="border-0">Klient</th>
-              <th class="border-0">Kontakt</th>
-              <th class="border-0 text-center">Arveid</th>
-              <th class="border-0 text-center">Viimane arve</th>
-              <th class="border-0 text-end">Käive</th>
+              <th class="border-0">
+                <a href="{{ url_for('clients.clients', sort='name', dir='asc' if current_sort == 'name' and current_dir == 'desc' else 'desc', page=current_page, per_page=per_page, search=search_query) }}" 
+                   class="text-decoration-none text-dark">
+                  Klient
+                  {% if current_sort == 'name' %}
+                    {% if current_dir == 'asc' %}
+                      <i class="bi bi-chevron-up"></i>
+                    {% else %}
+                      <i class="bi bi-chevron-down"></i>
+                    {% endif %}
+                  {% endif %}
+                </a>
+              </th>
+              <th class="border-0">
+                <a href="{{ url_for('clients.clients', sort='email', dir='asc' if current_sort == 'email' and current_dir == 'desc' else 'desc', page=current_page, per_page=per_page, search=search_query) }}" 
+                   class="text-decoration-none text-dark">
+                  Kontakt
+                  {% if current_sort == 'email' %}
+                    {% if current_dir == 'asc' %}
+                      <i class="bi bi-chevron-up"></i>
+                    {% else %}
+                      <i class="bi bi-chevron-down"></i>
+                    {% endif %}
+                  {% endif %}
+                </a>
+              </th>
+              <th class="border-0 text-center">
+                <a href="{{ url_for('clients.clients', sort='invoices', dir='asc' if current_sort == 'invoices' and current_dir == 'desc' else 'desc', page=current_page, per_page=per_page, search=search_query) }}" 
+                   class="text-decoration-none text-dark">
+                  Arveid
+                  {% if current_sort == 'invoices' %}
+                    {% if current_dir == 'asc' %}
+                      <i class="bi bi-chevron-up"></i>
+                    {% else %}
+                      <i class="bi bi-chevron-down"></i>
+                    {% endif %}
+                  {% endif %}
+                </a>
+              </th>
+              <th class="border-0 text-center">
+                <a href="{{ url_for('clients.clients', sort='last_invoice', dir='asc' if current_sort == 'last_invoice' and current_dir == 'desc' else 'desc', page=current_page, per_page=per_page, search=search_query) }}" 
+                   class="text-decoration-none text-dark">
+                  Viimane arve
+                  {% if current_sort == 'last_invoice' %}
+                    {% if current_dir == 'asc' %}
+                      <i class="bi bi-chevron-up"></i>
+                    {% else %}
+                      <i class="bi bi-chevron-down"></i>
+                    {% endif %}
+                  {% endif %}
+                </a>
+              </th>
+              <th class="border-0 text-end">
+                <a href="{{ url_for('clients.clients', sort='revenue', dir='asc' if current_sort == 'revenue' and current_dir == 'desc' else 'desc', page=current_page, per_page=per_page, search=search_query) }}" 
+                   class="text-decoration-none text-dark">
+                  Käive
+                  {% if current_sort == 'revenue' %}
+                    {% if current_dir == 'asc' %}
+                      <i class="bi bi-chevron-up"></i>
+                    {% else %}
+                      <i class="bi bi-chevron-down"></i>
+                    {% endif %}
+                  {% endif %}
+                </a>
+              </th>
               <th class="border-0 text-end">Toimingud</th>
             </tr>
           </thead>
@@ -161,7 +291,7 @@
                     <i class="bi bi-eye"></i>
                   </a>
                   <a href="{{ url_for('clients.edit_client', client_id=client.id) }}" 
-                     class="btn btn-outline-secondary" 
+                     class="btn btn-outline-primary" 
                      title="Muuda klienti">
                     <i class="bi bi-pencil"></i>
                   </a>
@@ -174,6 +304,12 @@
               </td>
             </tr>
             {% endfor %}
+            <!-- No search results row -->
+            <tr id="noResultsRow" style="display: none;">
+              <td colspan="4" class="text-center py-4 text-muted">
+                <i class="bi bi-search me-2"></i>Otsingu järgi ei leitud ühtegi klienti.
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -185,7 +321,7 @@
         <h5 class="text-muted mb-2">Kliente ei leitud</h5>
         {% if search_query %}
         <p class="text-muted mb-3">Otsingu "{{ search_query }}" järgi ei leitud ühtegi klienti.</p>
-        <a href="{{ url_for('clients.clients') }}" class="btn btn-outline-secondary">Näita kõiki kliente</a>
+        <a href="{{ url_for('clients.clients') }}" class="btn btn-outline-primary">Näita kõiki kliente</a>
         {% else %}
         <p class="text-muted mb-3">Lisa esimene klient, et alustada arvete loomist.</p>
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clientModal">
@@ -202,7 +338,7 @@
       <div class="d-flex align-items-center gap-2">
         <span class="text-muted small fw-medium">Ridu lehel:</span>
         <div class="dropdown">
-          <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 12px; min-width: 60px;">
+          <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 12px; min-width: 60px;">
             {{ request.args.get('per_page', '10') }}
           </button>
           <ul class="dropdown-menu">
@@ -230,12 +366,12 @@
         <div class="d-flex align-items-center gap-1">
           <!-- Previous page -->
           {% if current_page > 1 %}
-          <a href="{{ url_for('clients.clients', page=current_page-1, per_page=per_page, search=search_query) }}" 
-             class="btn btn-outline-secondary btn-sm">
+          <a href="{{ url_for('clients.clients', page=current_page-1, per_page=per_page, search=search_query, sort=current_sort, dir=current_dir) }}" 
+             class="btn btn-outline-primary btn-sm">
             <i class="bi bi-chevron-left"></i>
           </a>
           {% else %}
-          <button class="btn btn-outline-secondary btn-sm" disabled>
+          <button class="btn btn-outline-primary btn-sm" disabled>
             <i class="bi bi-chevron-left"></i>
           </button>
           {% endif %}
@@ -245,8 +381,8 @@
           {% set end_page = [total_pages, current_page + 2]|min %}
           
           {% if start_page > 1 %}
-            <a href="{{ url_for('clients.clients', page=1, per_page=per_page, search=search_query) }}" 
-               class="btn btn-outline-secondary btn-sm">1</a>
+            <a href="{{ url_for('clients.clients', page=1, per_page=per_page, search=search_query, sort=current_sort, dir=current_dir) }}" 
+               class="btn btn-outline-primary btn-sm">1</a>
             {% if start_page > 2 %}
               <span class="text-muted small">...</span>
             {% endif %}
@@ -256,8 +392,8 @@
             {% if page_num == current_page %}
               <button class="btn btn-primary btn-sm">{{ page_num }}</button>
             {% else %}
-              <a href="{{ url_for('clients.clients', page=page_num, per_page=per_page, search=search_query) }}" 
-                 class="btn btn-outline-secondary btn-sm">{{ page_num }}</a>
+              <a href="{{ url_for('clients.clients', page=page_num, per_page=per_page, search=search_query, sort=current_sort, dir=current_dir) }}" 
+                 class="btn btn-outline-primary btn-sm">{{ page_num }}</a>
             {% endif %}
           {% endfor %}
           
@@ -265,18 +401,18 @@
             {% if end_page < total_pages - 1 %}
               <span class="text-muted small">...</span>
             {% endif %}
-            <a href="{{ url_for('clients.clients', page=total_pages, per_page=per_page, search=search_query) }}" 
-               class="btn btn-outline-secondary btn-sm">{{ total_pages }}</a>
+            <a href="{{ url_for('clients.clients', page=total_pages, per_page=per_page, search=search_query, sort=current_sort, dir=current_dir) }}" 
+               class="btn btn-outline-primary btn-sm">{{ total_pages }}</a>
           {% endif %}
           
           <!-- Next page -->
           {% if current_page < total_pages %}
-          <a href="{{ url_for('clients.clients', page=current_page+1, per_page=per_page, search=search_query) }}" 
-             class="btn btn-outline-secondary btn-sm">
+          <a href="{{ url_for('clients.clients', page=current_page+1, per_page=per_page, search=search_query, sort=current_sort, dir=current_dir) }}" 
+             class="btn btn-outline-primary btn-sm">
             <i class="bi bi-chevron-right"></i>
           </a>
           {% else %}
-          <button class="btn btn-outline-secondary btn-sm" disabled>
+          <button class="btn btn-outline-primary btn-sm" disabled>
             <i class="bi bi-chevron-right"></i>
           </button>
           {% endif %}
@@ -360,11 +496,58 @@
 
 {% block extra_js %}
 <script>
+// Real-time search functionality
+let searchTimeout;
+const searchInput = document.getElementById('realtime-search');
+
+function performRealtimeSearch() {
+  const searchTerm = searchInput.value.toLowerCase().trim();
+  const tableRows = document.querySelectorAll('#clientsTable tbody tr');
+  let visibleCount = 0;
+  
+  tableRows.forEach(row => {
+    const clientName = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+    const clientEmail = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+    const clientPhone = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+    
+    if (searchTerm === '' || 
+        clientName.includes(searchTerm) || 
+        clientEmail.includes(searchTerm) || 
+        clientPhone.includes(searchTerm)) {
+      row.style.display = '';
+      visibleCount++;
+    } else {
+      row.style.display = 'none';
+    }
+  });
+  
+  // Show/hide "no results" message
+  const noResultsRow = document.getElementById('noResultsRow');
+  if (noResultsRow) {
+    noResultsRow.style.display = (visibleCount === 0 && searchTerm !== '') ? '' : 'none';
+  }
+}
+
+// Initialize real-time search
+if (searchInput) {
+  searchInput.addEventListener('input', function() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(performRealtimeSearch, 150); // Debounce for better performance
+  });
+}
+
 // Pagination function
 function changeRowsPerPage(perPage) {
   const currentUrl = new URL(window.location);
   currentUrl.searchParams.set('per_page', perPage);
   currentUrl.searchParams.set('page', '1'); // Reset to first page when changing page size
+  // Preserve sorting parameters
+  {% if current_sort %}
+  currentUrl.searchParams.set('sort', '{{ current_sort }}');
+  {% endif %}
+  {% if current_dir %}
+  currentUrl.searchParams.set('dir', '{{ current_dir }}');
+  {% endif %}
   window.location.href = currentUrl.toString();
 }
 

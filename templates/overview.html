@@ -4,6 +4,38 @@
 {% block extra_css %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+/* Override Bootstrap primary colors to match app theme */
+:root {
+    --bs-primary: #114f68;
+    --bs-primary-rgb: 17, 79, 104;
+}
+
+.btn-outline-primary {
+    color: #114f68 !important;
+    border-color: #114f68 !important;
+    background-color: transparent !important;
+}
+
+.btn-outline-primary:hover {
+    background-color: #114f68 !important;
+    border-color: #114f68 !important;
+    color: white !important;
+}
+
+.btn-outline-primary:focus {
+    background-color: transparent !important;
+    color: #114f68 !important;
+    border-color: #114f68 !important;
+    box-shadow: 0 0 0 0.2rem rgba(17, 79, 104, 0.25) !important;
+}
+
+.btn-outline-primary:active {
+    background-color: #114f68 !important;
+    border-color: #114f68 !important;
+    color: white !important;
+}
+</style>
 {% endblock %}
 
 {% block content %}
@@ -11,14 +43,13 @@
   <!-- Page Header -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-      <h1 class="h3 mb-1">Tere tulemast tagasi!</h1>
-      <p class="text-muted mb-0">Siin on ülevaade teie äri hetkeseisust</p>
+      <h1 class="fw-bold mb-1" style="font-size: 1.8rem;">Ülevaade</h1>
     </div>
     <div class="d-flex gap-2">
       <a href="{{ url_for('invoices.new_invoice') }}" class="btn btn-primary">
         <i class="bi bi-plus-lg me-1"></i>Loo arve
       </a>
-      <a href="{{ url_for('clients.clients') }}" class="btn btn-outline-secondary">
+      <a href="{{ url_for('clients.clients') }}" class="btn btn-outline-primary">
         <i class="bi bi-person-plus me-1"></i>Lisa klient
       </a>
     </div>
@@ -98,7 +129,7 @@
             <i class="bi bi-bar-chart me-2"></i>Arvete summa kuude lõikes
           </h3>
           <div class="d-flex gap-2">
-            <button class="btn btn-outline-secondary btn-sm" onclick="exportRevenueChart()">
+            <button class="btn btn-outline-primary btn-sm" onclick="exportRevenueChart()">
               <i class="bi bi-download me-1"></i>Ekspordi
             </button>
           </div>
@@ -117,7 +148,7 @@
             <i class="bi bi-people me-2"></i>Top 10 klienti arvete summa järgi
           </h3>
           <div class="d-flex gap-2">
-            <button class="btn btn-outline-secondary btn-sm" onclick="exportCustomerChart()">
+            <button class="btn btn-outline-primary btn-sm" onclick="exportCustomerChart()">
               <i class="bi bi-download me-1"></i>Ekspordi
             </button>
           </div>
@@ -186,7 +217,7 @@
             {% endfor %}
           </div>
           <div class="p-3 text-center border-top">
-            <a href="{{ url_for('invoices.invoices') }}" class="btn btn-outline-secondary btn-sm" style="background-color: transparent !important; color: #114f68 !important; border: 1px solid #114f68 !important; border-radius: 8px !important;" onmouseover="this.style.backgroundColor='#114f68'; this.style.color='white'; this.style.borderColor='#114f68';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#114f68'; this.style.borderColor='#114f68';">
+            <a href="{{ url_for('invoices.invoices') }}" class="btn btn-outline-primary btn-sm">
               <i class="bi bi-arrow-right me-1"></i>Vaata kõiki arveid
             </a>
           </div>
@@ -240,7 +271,7 @@
             {% endfor %}
           </div>
           <div class="p-3 text-center border-top">
-            <a href="{{ url_for('invoices.invoices') }}" class="btn btn-outline-secondary btn-sm" style="background-color: transparent !important; color: #114f68 !important; border: 1px solid #114f68 !important; border-radius: 8px !important;" onmouseover="this.style.backgroundColor='#114f68'; this.style.color='white'; this.style.borderColor='#114f68';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#114f68'; this.style.borderColor='#114f68';">
+            <a href="{{ url_for('invoices.invoices') }}" class="btn btn-outline-primary btn-sm">
               <i class="bi bi-arrow-right me-1"></i>Vaata kõiki arveid
             </a>
           </div>
@@ -290,7 +321,7 @@
                 {% endfor %}
               </div>
               <div class="p-2 text-center border-top">
-                <a href="{{ url_for('invoices.invoices', status='overdue', sort='due_date', dir='asc') }}" class="btn btn-outline-secondary btn-sm" style="background-color: transparent !important; color: #114f68 !important; border: 1px solid #114f68 !important; border-radius: 8px !important;" onmouseover="this.style.backgroundColor='#114f68'; this.style.color='white'; this.style.borderColor='#114f68';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#114f68'; this.style.borderColor='#114f68';">
+                <a href="{{ url_for('invoices.invoices', status='overdue', sort='due_date', dir='asc') }}" class="btn btn-outline-primary btn-sm">
                   <i class="bi bi-arrow-right me-1"></i>Vaata kõiki
                 </a>
               </div>
@@ -343,7 +374,7 @@
                 {% endfor %}
               </div>
               <div class="p-2 text-center border-top">
-                <a href="{{ url_for('invoices.invoices', status='maksmata') }}" class="btn btn-outline-secondary btn-sm" style="background-color: transparent !important; color: #114f68 !important; border: 1px solid #114f68 !important; border-radius: 8px !important;" onmouseover="this.style.backgroundColor='#114f68'; this.style.color='white'; this.style.borderColor='#114f68';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#114f68'; this.style.borderColor='#114f68';">
+                <a href="{{ url_for('invoices.invoices', status='maksmata') }}" class="btn btn-outline-primary btn-sm">
                   <i class="bi bi-arrow-right me-1"></i>Vaata kõiki
                 </a>
               </div>

@@ -4,29 +4,58 @@
 
   // Global utilities
   window.BilliPocket = {
-    // Flash message helper
+    // Flash message helper - now uses toast notifications
     showMessage: function(message, type = 'info') {
-      const alertClass = type === 'error' ? 'danger' : type;
-      const iconClass = {
-        'success': 'bi-check-circle',
-        'danger': 'bi-x-circle',
-        'warning': 'bi-exclamation-triangle',
-        'info': 'bi-info-circle'
-      }[alertClass] || 'bi-info-circle';
+      this.showToast(message, type);
+    },
 
-      const alertHtml = `
-        <div class="alert alert-${alertClass} alert-dismissible fade show" role="alert">
-          <i class="${iconClass} me-2"></i>
-          ${message}
-          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    // Toast notification system (similar to invoice pages)
+    showToast: function(message, type = 'info') {
+      // Create toast element
+      const toastId = 'billipocketToast' + Date.now();
+      const alertClass = type === 'error' ? 'danger' : type;
+      const bgColor = {
+        'success': '#198754',
+        'danger': '#dc3545',
+        'warning': '#ffc107',
+        'info': '#0dcaf0'
+      }[alertClass] || '#0dcaf0';
+      
+      const toastHtml = `
+        <div class="toast bp-toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true" id="${toastId}" style="background-color: ${bgColor};">
+          <div class="d-flex">
+            <div class="toast-body" style="color: white !important;">
+              ${message}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
         </div>
       `;
-
-      const container = document.querySelector('.flash-messages') || 
-                       document.querySelector('.container-fluid');
-      if (container) {
-        container.insertAdjacentHTML('afterbegin', alertHtml);
+      
+      // Add to toast container (create if doesn't exist)
+      let toastContainer = document.getElementById('toastContainer');
+      if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.id = 'toastContainer';
+        toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+        toastContainer.style.zIndex = '9999';
+        document.body.appendChild(toastContainer);
       }
+      
+      toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+      
+      // Show toast
+      const toastElement = document.getElementById(toastId);
+      const toast = new bootstrap.Toast(toastElement, {
+        autohide: true,
+        delay: 4000 // 4 seconds
+      });
+      toast.show();
+      
+      // Remove from DOM after hiding
+      toastElement.addEventListener('hidden.bs.toast', () => {
+        toastElement.remove();
+      });
     },
 
     // CSRF token helper
@@ -86,8 +115,12 @@
     }
   };
 
+  // Sidebar functionality moved to components/sidebar.js
+
   // Global form enhancement
   document.addEventListener('DOMContentLoaded', function() {
+    // Sidebar functionality handled by components/sidebar.js
+
     // Auto-dismiss alerts after 5 seconds
     const alerts = document.querySelectorAll('.alert:not(.alert-permanent)');
     alerts.forEach(alert => {

@@ -87,13 +87,13 @@
 
         /* Logo sektsioon */
         .logo {
-            margin-bottom: 12mm;
+            margin-bottom: 8mm;
         }
 
         .logo img {
             display: block;
             max-width: 90%;
-            max-height: 22.5mm;
+            max-height: 50mm;
         }
 
         .logo .placeholder {
@@ -104,8 +104,8 @@
 
         /* Arve number suur */
         .invno {
+            padding-bottom: 0mm;
             margin-bottom: 8mm;
-            padding-bottom: 5mm;
             border-bottom: 0.2mm solid rgba(26, 54, 93, 0.2);
         }
 
@@ -121,7 +121,6 @@
         .invno .number {
             font-size: 22px;
             font-weight: 700;
-            letter-spacing: -0.2mm;
             display: block;
         }
 
@@ -206,8 +205,8 @@
         /* Turundussõnum - FLEX abil automaatselt alla */
 
         .left-marketing {
-            margin-top: 30mm; /* Lükkab ennast alla */
-            padding-top: 8mm;
+            margin-top: 20mm; /* Lükkab ennast alla */
+            padding-top: 4mm;
             font-size: 10px;
             color: rgba(26, 54, 93, 0.7);
             line-height: 1.5;
@@ -473,13 +472,17 @@
             <div class="left-bg">
                 <!-- Logo -->
                 <div class="logo">
-                    {% set template_logo = company.get_logo_for_template_new('modern') %}
-                    {% if company_logo_absolute %}
-                    <img src="{{ company_logo_absolute }}" alt="{{ company.company_name or 'Logo' }}">
-                    {% elif template_logo %}
-                    <img src="{{ template_logo }}" alt="{{ company.company_name or 'Logo' }}">
+                    {% if template_logo_absolute %}
+                        <!-- For PDF: use absolute URL provided by route -->
+                        <img src="{{ template_logo_absolute }}" alt="{{ company.company_name or 'Logo' }}">
                     {% else %}
-                    <div class="placeholder">{{ company.company_name or 'BilliPocket' }}</div>
+                        {% set template_logo_url = company.get_logo_for_template_new('modern') %}
+                        {% if template_logo_url %}
+                            <!-- For HTML preview: use relative URL -->
+                            <img src="{{ template_logo_url }}" alt="{{ company.company_name or 'Logo' }}">
+                        {% else %}
+                            <div class="placeholder">{{ company.company_name or 'BilliPocket' }}</div>
+                        {% endif %}
                     {% endif %}
                 </div>
 

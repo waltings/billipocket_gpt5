@@ -301,24 +301,17 @@
   <!-- Page Header -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-      <h1 class="h3 mb-1">{{ title }}</h1>
-      <p class="text-muted mb-0">
-        {% if invoice %}
-        Muuda arve "{{ invoice.number }}" andmeid
-        {% else %}
-        Loo uus arve oma kliendile
-        {% endif %}
-      </p>
+      <h1 class="fw-bold mb-1" style="font-size: 1.8rem;">{{ title }}</h1>
     </div>
     <div class="d-flex gap-2 align-items-center">
       <!-- VAT Rate Selector Button -->
       <div class="dropdown">
         <button class="btn btn-sm bp-btn-cancel" type="button" id="vatRateSelector" data-bs-toggle="dropdown" aria-expanded="false">
-          <span id="vatRateLabel">KM ({{ current_vat_rate.rate if current_vat_rate else 24 }}%)</span> <i class="bi bi-pencil-square ms-1"></i>
+          <span id="vatRateLabel">KM ({{ current_vat_rate.rate|vat_rate if current_vat_rate else 24 }}%)</span> <i class="bi bi-pencil-square ms-1"></i>
         </button>
         <ul class="dropdown-menu" aria-labelledby="vatRateSelector" id="vatRateDropdown">
           {% for vr in vat_rates %}
-          <li><a class="dropdown-item vat-rate-option{% if current_vat_rate and current_vat_rate.id == vr.id %} active{% elif not current_vat_rate and form.vat_rate_id.data|string == vr.id|string %} active{% endif %}" href="#" data-rate-id="{{ vr.id }}" data-rate="{{ vr.rate }}">{{ vr.name }} ({{ vr.rate }}%)</a></li>
+          <li><a class="dropdown-item vat-rate-option{% if current_vat_rate and current_vat_rate.id == vr.id %} active{% elif not current_vat_rate and form.vat_rate_id.data|string == vr.id|string %} active{% endif %}" href="#" data-rate-id="{{ vr.id }}" data-rate="{{ vr.rate }}">{{ vr.name }} ({{ vr.rate|vat_rate }}%)</a></li>
           {% endfor %}
         </ul>
       </div>
@@ -424,7 +417,7 @@
                   <ul class="dropdown-menu w-100" aria-labelledby="clientSelector" id="clientDropdown">
                     <li><a class="dropdown-item client-option{% if not form.client_id.data %} active{% endif %}" href="#" data-client-id="">Vali klient...</a></li>
                     {% for client in clients %}
-                    <li><a class="dropdown-item client-option{% if form.client_id.data|string == client.id|string %} active{% endif %}" href="#" data-client-id="{{ client.id }}" data-client-name="{{ client.name }}" data-client-email="{{ client.email }}">{{ client.name }} ({{ client.email }})</a></li>
+                    <li><a class="dropdown-item client-option{% if form.client_id.data|string == client.id|string %} active{% endif %}" href="#" data-client-id="{{ client.id }}" data-client-name="{{ client.name }}" data-client-email="{{ client.email }}">{{ client.name }}</a></li>
                     {% endfor %}
                   </ul>
                 </div>
@@ -538,7 +531,7 @@
             <h3 class="h6 m-0">
               <i class="bi bi-list-ul me-2"></i>Arve read
             </h3>
-            <button type="button" class="btn btn-outline-primary btn-sm" onclick="addInvoiceLine()">
+            <button type="button" class="btn btn-sm bp-btn-cancel" onclick="addInvoiceLine()">
               <i class="bi bi-plus-lg me-1"></i>Lisa rida
             </button>
           </div>
@@ -1104,7 +1097,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update button text
         if (clientLabel) {
           if (clientId && clientName) {
-            clientLabel.textContent = `${clientName} (${clientEmail})`;
+            clientLabel.textContent = clientName;
           } else {
             clientLabel.textContent = 'Vali klient...';
           }
@@ -1351,7 +1344,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const clientName = clientOption.getAttribute('data-client-name');
       const clientEmail = clientOption.getAttribute('data-client-email');
       if (clientName) {
-        clientLabel.textContent = `${clientName} (${clientEmail})`;
+        clientLabel.textContent = clientName;
         // Set active class on correct option
         document.querySelectorAll('.client-option').forEach(opt => opt.classList.remove('active'));
         clientOption.classList.add('active');

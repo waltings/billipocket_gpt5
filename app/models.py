@@ -1,8 +1,135 @@
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, date
 from decimal import Decimal
 
 db = SQLAlchemy()
+
+
+class User(UserMixin, db.Model):
+    """User model for authentication."""
+    __tablename__ = 'users'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False, index=True)
+    email = db.Column(db.String(120), unique=True, nullable=False, index=True)
+    password_hash = db.Column(db.String(255), nullable=False)
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
+    is_admin = db.Column(db.Boolean, default=False, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    last_login = db.Column(db.DateTime)
+    
+    def __repr__(self):
+        return f'<User {self.username} ({self.email})>'
+    
+    def set_password(self, password):
+        """Set password hash."""
+        self.password_hash = generate_password_hash(password, method='pbkdf2:sha256')
+    
+    def check_password(self, password):
+        """Check password against hash."""
+        return check_password_hash(self.password_hash, password)
+    
+    def update_last_login(self):
+        """Update last login timestamp."""
+        self.last_login = datetime.utcnow()
+        db.session.commit()
+    
+    @classmethod
+    def create_user(cls, username, email, password, is_admin=False):
+        """Create a new user with hashed password."""
+        if cls.query.filter_by(username=username).first():
+            raise ValueError(f'Kasutajanimi "{username}" on juba kasutusel')
+        
+        if cls.query.filter_by(email=email).first():
+            raise ValueError(f'E-posti aadress "{email}" on juba kasutusel')
+        
+        user = cls(
+            username=username,
+            email=email,
+            is_admin=is_admin
+        )
+        user.set_password(password)
+        
+        try:
+            db.session.add(user)
+            db.session.commit()
+            return user
+        except Exception:
+            db.session.rollback()
+            raise
+    
+    @classmethod
+    def get_by_username(cls, username):
+        """Get user by username."""
+        return cls.query.filter_by(username=username, is_active=True).first()
+    
+    @classmethod
+    def get_by_email(cls, email):
+        """Get user by email."""
+        return cls.query.filter_by(email=email, is_active=True).first()
+    
+    def deactivate(self):
+        """Deactivate user account."""
+        self.is_active = False
+        db.session.commit()
+    
+    def activate(self):
+        """Activate user account."""
+        self.is_active = True
+        db.session.commit()
+
+
+class LoginAttempt(db.Model):
+    """Track login attempts for security monitoring."""
+    __tablename__ = 'login_attempts'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    ip_address = db.Column(db.String(45), nullable=False, index=True)  # IPv6 support
+    username = db.Column(db.String(80), nullable=True, index=True)
+    success = db.Column(db.Boolean, nullable=False, default=False)
+    attempted_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    user_agent = db.Column(db.Text, nullable=True)
+    
+    def __repr__(self):
+        status = "SUCCESS" if self.success else "FAILED"
+        return f'<LoginAttempt {self.username or "anonymous"} from {self.ip_address} - {status}>'
+    
+    @classmethod
+    def log_attempt(cls, ip_address, username=None, success=False, user_agent=None):
+        """Log a login attempt."""
+        attempt = cls(
+            ip_address=ip_address,
+            username=username,
+            success=success,
+            user_agent=user_agent
+        )
+        db.session.add(attempt)
+        try:
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+    
+    @classmethod
+    def get_recent_failures(cls, ip_address, minutes=15):
+        """Get recent failed login attempts from an IP address."""
+        from datetime import datetime, timedelta
+        cutoff = datetime.utcnow() - timedelta(minutes=minutes)
+        return cls.query.filter(
+            cls.ip_address == ip_address,
+            cls.success == False,
+            cls.attempted_at >= cutoff
+        ).count()
+    
+    @classmethod
+    def cleanup_old_attempts(cls, days=30):
+        """Clean up login attempts older than specified days."""
+        from datetime import datetime, timedelta
+        cutoff = datetime.utcnow() - timedelta(days=days)
+        old_attempts = cls.query.filter(cls.attempted_at < cutoff).delete()
+        db.session.commit()
+        return old_attempts
 
 
 class VatRate(db.Model):
@@ -536,6 +663,35 @@ class CompanySettings(db.Model):
         
         # Fallback to old system (deprecated but maintained for backward compatibility)
         return self.get_logo_for_template(template_name)
+    
+    def get_logo_for_template_absolute(self, template_name):
+        """Get absolute file path for template logo (for WeasyPrint PDF generation)."""
+        import os
+        from flask import current_app
+        
+        def convert_to_absolute(logo_url):
+            """Convert relative URL to absolute file path."""
+            if not logo_url:
+                return None
+            
+            if logo_url.startswith('http'):
+                return logo_url  # Already absolute URL
+            elif logo_url.startswith('/static/'):
+                # Convert relative static URL to absolute file path
+                static_folder = current_app.static_folder
+                logo_path = logo_url[8:]  # Remove '/static/' prefix
+                absolute_path = os.path.join(static_folder, logo_path)
+                
+                if os.path.exists(absolute_path):
+                    return f"file://{absolute_path}"
+            return None
+        
+        # Get template-specific logo only (no fallback)
+        template_logo_url = self.get_logo_for_template_new(template_name)
+        if template_logo_url:
+            return convert_to_absolute(template_logo_url)
+        
+        return None
     
     def set_logo_for_template_new(self, template_name, logo_id):
         """Set logo for specific template using new centralized system."""

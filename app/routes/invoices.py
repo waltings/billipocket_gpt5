@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
+from flask_login import login_required
 from app.models import db, Invoice, Client, InvoiceLine, VatRate, CompanySettings, PaymentTerms, NoteLabel
 from app.forms import InvoiceForm, InvoiceSearchForm, InvoiceLineForm
 from app.services.numbering import generate_invoice_number
@@ -15,6 +16,7 @@ invoices_bp = Blueprint('invoices', __name__)
 
 
 @invoices_bp.route('/invoices')
+@login_required
 def invoices():
     """Invoices management page with filtering."""
     search_form = InvoiceSearchForm()
@@ -206,6 +208,7 @@ def invoices():
 
 
 @invoices_bp.route('/invoices/new', methods=['GET', 'POST'])
+@login_required
 def new_invoice():
     """Create new invoice."""
     form = InvoiceForm()
@@ -447,6 +450,7 @@ def new_invoice():
 
 
 @invoices_bp.route('/invoices/<int:invoice_id>')
+@login_required
 def view_invoice(invoice_id):
     """View invoice details."""
     invoice = Invoice.query.get_or_404(invoice_id)
@@ -477,6 +481,7 @@ def view_invoice(invoice_id):
 
 
 @invoices_bp.route('/invoices/<int:invoice_id>/edit', methods=['GET', 'POST'])
+@login_required
 def edit_invoice(invoice_id):
     """Edit invoice."""
     # For GET requests, ensure we get fresh data by expunging any cached instances
@@ -925,6 +930,7 @@ def edit_invoice(invoice_id):
 
 
 @invoices_bp.route('/invoices/<int:invoice_id>/delete', methods=['POST'])
+@login_required
 def delete_invoice(invoice_id):
     """Delete invoice."""
     invoice = Invoice.query.get_or_404(invoice_id)
@@ -945,6 +951,7 @@ def delete_invoice(invoice_id):
 
 
 @invoices_bp.route('/invoices/<int:invoice_id>/status/<new_status>', methods=['POST'])
+@login_required
 def change_status(invoice_id, new_status):
     """Change invoice status using the status transition service.
     
@@ -1005,6 +1012,7 @@ def change_status(invoice_id, new_status):
 
 
 @invoices_bp.route('/invoices/<int:invoice_id>/duplicate', methods=['POST'])
+@login_required
 def duplicate_invoice(invoice_id):
     """Duplicate invoice."""
     original = Invoice.query.get_or_404(invoice_id)
@@ -1067,6 +1075,7 @@ def duplicate_invoice(invoice_id):
 
 
 @invoices_bp.route('/invoices/<int:invoice_id>/email', methods=['POST'])
+@login_required
 def email_invoice(invoice_id):
     """Send invoice via email."""
     invoice = Invoice.query.get_or_404(invoice_id)

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, DecimalField, DateField, SelectField, FieldList, FormField, HiddenField, IntegerField, BooleanField
-from wtforms.validators import DataRequired, Email, Optional, NumberRange, Length, ValidationError
+from wtforms import StringField, TextAreaField, DecimalField, DateField, SelectField, FieldList, FormField, HiddenField, IntegerField, BooleanField, PasswordField
+from wtforms.validators import DataRequired, Email, Optional, NumberRange, Length, ValidationError, EqualTo
 from datetime import date, timedelta
 
 
@@ -408,3 +408,126 @@ class NoteLabelForm(FlaskForm):
                 else:
                     # Another label is already default
                     raise ValidationError(f'Vaikimisi märkuse silt on juba määratud: "{existing_default.name}".')
+
+
+class LoginForm(FlaskForm):
+    """Form for user login."""
+    username = StringField('Kasutajanimi', validators=[
+        DataRequired(message='Kasutajanimi on kohustuslik')
+    ])
+    password = PasswordField('Parool', validators=[
+        DataRequired(message='Parool on kohustuslik')
+    ])
+    remember_me = BooleanField('Jäta mind meelde')
+    
+    def validate_username(self, field):
+        """Validate that user exists and is active."""
+        from app.models import User
+        user = User.get_by_username(field.data)
+        if not user:
+            raise ValidationError('Vigane kasutajanimi või parool.')
+    
+    def validate_login(self):
+        """Validate entire login form."""
+        from app.models import User
+        
+        if not self.validate():
+            return False
+        
+        user = User.get_by_username(self.username.data)
+        if not user or not user.check_password(self.password.data):
+            self.password.errors.append('Vigane kasutajanimi või parool.')
+            return False
+        
+        self.user = user
+        return True
+
+
+class RegistrationForm(FlaskForm):
+    """Form for user registration."""
+    username = StringField('Kasutajanimi', validators=[
+        DataRequired(message='Kasutajanimi on kohustuslik'),
+        Length(min=3, max=80, message='Kasutajanimi peab olema 3-80 tähemärki')
+    ])
+    email = StringField('E-post', validators=[
+        DataRequired(message='E-posti aadress on kohustuslik'),
+        Email(message='Vigane e-posti aadress')
+    ])
+    password = PasswordField('Parool', validators=[
+        DataRequired(message='Parool on kohustuslik'),
+        Length(min=8, message='Parool peab olema vähemalt 8 tähemärki')
+    ])
+    password2 = PasswordField('Korda parooli', validators=[
+        DataRequired(message='Palun korda parooli'),
+        EqualTo('password', message='Paroolid ei kattu')
+    ])
+    
+    def validate_username(self, field):
+        """Ensure username is unique."""
+        from app.models import User
+        user = User.query.filter_by(username=field.data).first()
+        if user:
+            raise ValidationError(f'Kasutajanimi "{field.data}" on juba kasutusel.')
+    
+    def validate_email(self, field):
+        """Ensure email is unique."""
+        from app.models import User
+        user = User.query.filter_by(email=field.data).first()
+        if user:
+            raise ValidationError(f'E-posti aadress "{field.data}" on juba kasutusel.')
+
+
+class ChangePasswordForm(FlaskForm):
+    """Form for changing password."""
+    current_password = PasswordField('Praegune parool', validators=[
+        DataRequired(message='Praegune parool on kohustuslik')
+    ])
+    new_password = PasswordField('Uus parool', validators=[
+        DataRequired(message='Uus parool on kohustuslik'),
+        Length(min=8, message='Parool peab olema vähemalt 8 tähemärki')
+    ])
+    new_password2 = PasswordField('Korda uut parooli', validators=[
+        DataRequired(message='Palun korda uut parooli'),
+        EqualTo('new_password', message='Paroolid ei kattu')
+    ])
+    
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = user
+    
+    def validate_current_password(self, field):
+        """Validate current password."""
+        if not self.user.check_password(field.data):
+            raise ValidationError('Praegune parool on vale.')
+
+
+class UserProfileForm(FlaskForm):
+    """Form for editing user profile."""
+    username = StringField('Kasutajanimi', validators=[
+        DataRequired(message='Kasutajanimi on kohustuslik'),
+        Length(min=3, max=80, message='Kasutajanimi peab olema 3-80 tähemärki')
+    ])
+    email = StringField('E-post', validators=[
+        DataRequired(message='E-posti aadress on kohustuslik'),
+        Email(message='Vigane e-posti aadress')
+    ])
+    
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = user
+    
+    def validate_username(self, field):
+        """Ensure username is unique (except for current user)."""
+        from app.models import User
+        if field.data != self.user.username:
+            user = User.query.filter_by(username=field.data).first()
+            if user:
+                raise ValidationError(f'Kasutajanimi "{field.data}" on juba kasutusel.')
+    
+    def validate_email(self, field):
+        """Ensure email is unique (except for current user)."""
+        from app.models import User
+        if field.data != self.user.email:
+            user = User.query.filter_by(email=field.data).first()
+            if user:
+                raise ValidationError(f'E-posti aadress "{field.data}" on juba kasutusel.')

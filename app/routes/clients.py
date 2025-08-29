@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
+from flask_login import login_required
 from app.models import db, Client, Invoice
 from app.forms import ClientForm, ClientSearchForm
 from app.logging_config import get_logger
-from sqlalchemy import or_
+from sqlalchemy import or_, func
 
 logger = get_logger(__name__)
 
@@ -10,6 +11,7 @@ clients_bp = Blueprint('clients', __name__)
 
 
 @clients_bp.route('/clients')
+@login_required
 def clients():
     """Clients management page with search and filtering."""
     search_form = ClientSearchForm()
@@ -29,6 +31,10 @@ def clients():
     except (ValueError, TypeError):
         page = 1
     
+    # Sorting parameters
+    sort_by = request.args.get('sort', 'name')
+    sort_dir = request.args.get('dir', 'asc')
+    
     # Build query
     query = Client.query
     
@@ -41,8 +47,61 @@ def clients():
             )
         )
     
-    # Order by name
-    query = query.order_by(Client.name.asc())
+    # Apply sorting
+    if sort_by == 'name':
+        if sort_dir == 'desc':
+            query = query.order_by(Client.name.desc())
+        else:
+            query = query.order_by(Client.name.asc())
+    elif sort_by == 'registry_code':
+        if sort_dir == 'desc':
+            query = query.order_by(Client.registry_code.desc().nulls_last())
+        else:
+            query = query.order_by(Client.registry_code.asc().nulls_first())
+    elif sort_by == 'email':
+        if sort_dir == 'desc':
+            query = query.order_by(Client.email.desc().nulls_last())
+        else:
+            query = query.order_by(Client.email.asc().nulls_first())
+    elif sort_by == 'invoices':
+        # Sort by invoice count using subquery
+        invoice_count_subquery = db.session.query(
+            Invoice.client_id,
+            func.count(Invoice.id).label('invoice_count')
+        ).group_by(Invoice.client_id).subquery()
+        
+        query = query.outerjoin(invoice_count_subquery, Client.id == invoice_count_subquery.c.client_id)
+        if sort_dir == 'desc':
+            query = query.order_by(func.coalesce(invoice_count_subquery.c.invoice_count, 0).desc())
+        else:
+            query = query.order_by(func.coalesce(invoice_count_subquery.c.invoice_count, 0).asc())
+    elif sort_by == 'last_invoice':
+        # Sort by last invoice date using subquery
+        last_invoice_subquery = db.session.query(
+            Invoice.client_id,
+            func.max(Invoice.date).label('last_invoice_date')
+        ).group_by(Invoice.client_id).subquery()
+        
+        query = query.outerjoin(last_invoice_subquery, Client.id == last_invoice_subquery.c.client_id)
+        if sort_dir == 'desc':
+            query = query.order_by(last_invoice_subquery.c.last_invoice_date.desc().nulls_last())
+        else:
+            query = query.order_by(last_invoice_subquery.c.last_invoice_date.asc().nulls_first())
+    elif sort_by == 'revenue':
+        # Sort by total revenue using subquery
+        revenue_subquery = db.session.query(
+            Invoice.client_id,
+            func.sum(Invoice.total).label('total_revenue')
+        ).group_by(Invoice.client_id).subquery()
+        
+        query = query.outerjoin(revenue_subquery, Client.id == revenue_subquery.c.client_id)
+        if sort_dir == 'desc':
+            query = query.order_by(func.coalesce(revenue_subquery.c.total_revenue, 0).desc())
+        else:
+            query = query.order_by(func.coalesce(revenue_subquery.c.total_revenue, 0).asc())
+    else:
+        # Default to name sorting
+        query = query.order_by(Client.name.asc())
     
     # Get total count before pagination
     total_count = query.count()
@@ -77,6 +136,9 @@ def clients():
                          clients=clients_data, 
                          search_form=search_form,
                          search_query=search_query,
+                         # Sorting data
+                         current_sort=sort_by,
+                         current_dir=sort_dir,
                          # Pagination data
                          current_page=page,
                          per_page=per_page,
@@ -89,6 +151,7 @@ def clients():
 
 
 @clients_bp.route('/clients/new', methods=['GET', 'POST'])
+@login_required
 def new_client():
     """Create new client."""
     if request.method == 'POST':
@@ -148,6 +211,7 @@ def new_client():
 
 
 @clients_bp.route('/clients/<int:client_id>')
+@login_required
 def view_client(client_id):
     """View client details."""
     client = Client.query.get_or_404(client_id)
@@ -159,6 +223,7 @@ def view_client(client_id):
 
 
 @clients_bp.route('/clients/<int:client_id>/edit', methods=['GET', 'POST'])
+@login_required
 def edit_client(client_id):
     """Edit client."""
     client = Client.query.get_or_404(client_id)
@@ -183,6 +248,7 @@ def edit_client(client_id):
 
 
 @clients_bp.route('/clients/<int:client_id>/delete', methods=['POST'])
+@login_required
 def delete_client(client_id):
     """Delete client."""
     client = Client.query.get_or_404(client_id)
@@ -205,6 +271,7 @@ def delete_client(client_id):
 
 
 @clients_bp.route('/api/clients')
+@login_required
 def api_clients():
     """API endpoint for client list (for dropdowns etc)."""
     clients_list = Client.query.order_by(Client.name.asc()).all()

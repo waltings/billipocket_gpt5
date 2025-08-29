@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, send_file, abort
+from flask_login import login_required
 from datetime import date
 from io import BytesIO
 from weasyprint import HTML, CSS
@@ -12,6 +13,7 @@ pdf_bp = Blueprint('pdf', __name__)
 
 @pdf_bp.route('/invoice/<int:id>/pdf')
 @pdf_bp.route('/invoice/<int:id>/pdf/<template>')
+@login_required
 def invoice_pdf(id, template=None):
     """Generate PDF for invoice with specified template."""
     invoice = Invoice.query.get_or_404(id)
@@ -39,27 +41,6 @@ def invoice_pdf(id, template=None):
     template_file = f'pdf/invoice_{template}.html'
     
     try:
-        # Convert relative logo URL to absolute for WeasyPrint
-        company_logo_absolute = None
-        if company_settings.company_logo_url:
-            if company_settings.company_logo_url.startswith('http'):
-                # Already absolute URL
-                company_logo_absolute = company_settings.company_logo_url
-            elif company_settings.company_logo_url.startswith('/static/'):
-                # Convert relative static URL to absolute file path
-                import os
-                from flask import current_app
-                
-                # Get the static folder path
-                static_folder = current_app.static_folder
-                # Remove /static/ prefix and create absolute path
-                logo_path = company_settings.company_logo_url[8:]  # Remove '/static/'
-                absolute_logo_path = os.path.join(static_folder, logo_path)
-                
-                # Check if file exists
-                if os.path.exists(absolute_logo_path):
-                    company_logo_absolute = f"file://{absolute_logo_path}"
-                    logger.info(f"Converting logo path for PDF: {company_settings.company_logo_url} -> {company_logo_absolute}")
         
         # Get note label for the invoice
         try:
@@ -82,12 +63,16 @@ def invoice_pdf(id, template=None):
             logger.error(f"PDF route - Error getting note label: {e}")
             note_label_text = None
         
+        # For PDF generation, we need absolute logo URLs for WeasyPrint
+        # Add template-specific absolute logo URL
+        template_logo_absolute = company_settings.get_logo_for_template_absolute(template)
+        
         # Render HTML with invoice data and company settings
         html = render_template(
             template_file, 
             invoice=invoice, 
             company=company_settings,
-            company_logo_absolute=company_logo_absolute,
+            template_logo_absolute=template_logo_absolute,  # For PDF (absolute URL)
             note_label=note_label_text,
             today=date.today()
         )
@@ -116,6 +101,7 @@ def invoice_pdf(id, template=None):
 
 @pdf_bp.route('/invoice/<int:id>/preview')
 @pdf_bp.route('/invoice/<int:id>/preview/<template>')
+@login_required
 def invoice_preview(id, template=None):
     """Preview invoice HTML before PDF generation."""
     invoice = Invoice.query.get_or_404(id)
@@ -171,6 +157,7 @@ def invoice_preview(id, template=None):
 
 
 @pdf_bp.route('/invoice/<int:id>/pdf/all')
+@login_required
 def invoice_pdf_all_templates(id):
     """Generate PDFs in all templates and return as zip file (future enhancement)."""
     # This could be implemented to generate all three templates

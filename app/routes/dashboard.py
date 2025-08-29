@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, request, jsonify
 from flask_wtf.csrf import CSRFProtect
+from flask_login import login_required
 from app.models import db, Invoice, Client, VatRate, PaymentTerms, PenaltyRate, NoteLabel, CompanySettings, Logo, TemplateLogoAssignment
 from app.logging_config import get_logger
 from sqlalchemy import func, case
@@ -15,6 +16,7 @@ dashboard_bp = Blueprint('dashboard', __name__)
 
 
 @dashboard_bp.route('/')
+@login_required
 def overview():
     """Overview/dashboard page with metrics from real data."""
     today = date.today()
@@ -203,12 +205,14 @@ def overview():
 
 
 @dashboard_bp.route('/reports')
+@login_required
 def reports():
     """Reports page."""
     return render_template('reports.html')
 
 
 @dashboard_bp.route('/settings', methods=['GET', 'POST'])
+@login_required
 def settings():
     """Settings page."""
     from app.models import CompanySettings
@@ -238,7 +242,18 @@ def settings():
     
     # Populate VAT rate choices
     vat_rates = VatRate.get_active_rates()
-    form.default_vat_rate_id.choices = [(rate.id, f"{rate.rate}%") for rate in vat_rates]
+    # Format VAT rate: show decimals only when needed
+    def format_vat_rate(rate_value):
+        try:
+            num = float(rate_value)
+            if num == int(num):
+                return str(int(num))
+            else:
+                return f"{num:.2f}".rstrip('0').rstrip('.')
+        except (ValueError, TypeError):
+            return str(rate_value)
+    
+    form.default_vat_rate_id.choices = [(rate.id, f"{format_vat_rate(rate.rate)}%") for rate in vat_rates]
     
     # Set current VAT rate selection (only on GET request)
     if request.method == 'GET':
@@ -411,6 +426,7 @@ def settings():
 
 
 @dashboard_bp.route('/settings/upload-logo', methods=['POST'])
+@login_required
 def upload_logo():
     """Handle logo file upload."""
     if 'logo' not in request.files:
@@ -463,6 +479,7 @@ def upload_logo():
 # New Centralized Logo Management API Endpoints
 
 @dashboard_bp.route('/settings/logos', methods=['GET'])
+@login_required
 def get_logos():
     """Get all active logos."""
     try:
@@ -497,6 +514,7 @@ def get_logos():
 
 
 @dashboard_bp.route('/settings/logos/upload', methods=['POST'])
+@login_required
 def upload_logo_new():
     """Handle new logo file upload to centralized system."""
     if 'logo' not in request.files:
@@ -563,6 +581,7 @@ def upload_logo_new():
 
 
 @dashboard_bp.route('/settings/logos/<int:logo_id>', methods=['DELETE', 'POST'])
+@login_required
 def delete_logo(logo_id):
     """Delete a logo."""
     try:
@@ -594,6 +613,7 @@ def delete_logo(logo_id):
 
 
 @dashboard_bp.route('/settings/templates/<template>/logo/<int:logo_id>', methods=['POST'])
+@login_required
 def assign_template_logo(template, logo_id):
     """Assign logo to specific template."""
     try:
@@ -619,6 +639,7 @@ def assign_template_logo(template, logo_id):
                 'logo': {
                     'id': logo.id,
                     'filename': logo.filename,
+                    'original_name': logo.original_name,
                     'url': logo.get_url()
                 }
             })
@@ -631,6 +652,7 @@ def assign_template_logo(template, logo_id):
 
 
 @dashboard_bp.route('/settings/templates/<template>/logo', methods=['DELETE'])
+@login_required
 def remove_template_logo_new(template):
     """Remove logo assignment from specific template."""
     try:
@@ -657,6 +679,7 @@ def remove_template_logo_new(template):
 
 
 @dashboard_bp.route('/settings/logos/<int:logo_id>/rename', methods=['PATCH'])
+@login_required
 def rename_logo(logo_id):
     """Rename a logo."""
     try:
@@ -689,6 +712,7 @@ def rename_logo(logo_id):
 
 
 @dashboard_bp.route('/settings/logos/migrate', methods=['POST'])
+@login_required
 def migrate_old_logos():
     """Migrate old logo system to new centralized system."""
     try:
@@ -707,6 +731,7 @@ def migrate_old_logos():
 
 
 @dashboard_bp.route('/settings/vat-rates')
+@login_required
 def vat_rates():
     """VAT rates management page."""
     vat_rates = VatRate.query.order_by(VatRate.rate.asc()).all()
@@ -714,6 +739,7 @@ def vat_rates():
 
 
 @dashboard_bp.route('/settings/vat-rates/new', methods=['GET', 'POST'])
+@login_required
 def new_vat_rate():
     """Create new VAT rate."""
     if request.method == 'POST' and request.is_json:
@@ -785,6 +811,7 @@ def new_vat_rate():
 
 
 @dashboard_bp.route('/settings/vat-rates/<int:vat_rate_id>/edit', methods=['GET', 'POST'])
+@login_required
 def edit_vat_rate(vat_rate_id):
     """Edit VAT rate."""
     vat_rate = VatRate.query.get_or_404(vat_rate_id)
@@ -851,6 +878,7 @@ def edit_vat_rate(vat_rate_id):
 
 
 @dashboard_bp.route('/settings/vat-rates/<int:vat_rate_id>/delete', methods=['POST'])
+@login_required
 def delete_vat_rate(vat_rate_id):
     """Delete VAT rate."""
     vat_rate = VatRate.query.get_or_404(vat_rate_id)
@@ -898,6 +926,7 @@ def delete_vat_rate(vat_rate_id):
 
 
 @dashboard_bp.route('/settings/vat-rates/init-defaults', methods=['POST'])
+@login_required
 def init_default_vat_rates():
     """Initialize default Estonian VAT rates."""
     try:
@@ -911,6 +940,7 @@ def init_default_vat_rates():
 
 # Payment Terms Management Routes
 @dashboard_bp.route('/settings/payment-terms', methods=['POST'])
+@login_required
 def create_payment_term():
     """Create a new payment term."""
     try:
@@ -961,6 +991,7 @@ def create_payment_term():
 
 
 @dashboard_bp.route('/settings/payment-terms/<int:term_id>', methods=['PUT'])
+@login_required
 def update_payment_term(term_id):
     """Update a payment term."""
     try:
@@ -1012,6 +1043,7 @@ def update_payment_term(term_id):
 
 
 @dashboard_bp.route('/settings/payment-terms/<int:term_id>', methods=['DELETE'])
+@login_required
 def delete_payment_term(term_id):
     """Delete a payment term."""
     try:
@@ -1039,6 +1071,7 @@ def delete_payment_term(term_id):
 
 
 @dashboard_bp.route('/settings/payment-terms/init-defaults', methods=['POST'])
+@login_required
 def init_default_payment_terms():
     """Initialize default payment terms."""
     try:
@@ -1052,6 +1085,7 @@ def init_default_payment_terms():
 
 
 @dashboard_bp.route('/settings/vat-rates-list')
+@login_required
 def get_vat_rates_list():
     """Get VAT rates list for management modal."""
     vat_rates = VatRate.query.order_by(VatRate.rate.asc()).all()
@@ -1070,6 +1104,7 @@ def get_vat_rates_list():
 
 
 @dashboard_bp.route('/settings/payment-terms-list')
+@login_required
 def get_payment_terms_list():
     """Get payment terms list for management modal."""
     try:
@@ -1092,6 +1127,7 @@ def get_payment_terms_list():
 
 # PDF Templates Management Routes
 @dashboard_bp.route('/settings/pdf-templates')
+@login_required
 def pdf_templates():
     """PDF templates management page."""
     import os
@@ -1141,12 +1177,21 @@ def pdf_templates():
     company_settings = CompanySettings.get_settings()
     default_template = company_settings.default_pdf_template
     
-    # Add logo information to each template
-    template_logos = company_settings.get_all_template_logos()
+    # Add logo information to each template using new system
     for template in templates:
-        template['logo_url'] = template_logos.get(template['id'], '')
-        template['has_logo'] = bool(template['logo_url'])
-        template['fallback_logo'] = company_settings.company_logo_url
+        template_logo_url = company_settings.get_logo_for_template_new(template['id'])
+        template['logo_url'] = template_logo_url or ''
+        template['has_logo'] = bool(template_logo_url)
+        
+        # Get logo name for display
+        if template_logo_url:
+            logo = TemplateLogoAssignment.get_logo_for_template(company_settings.id, template['id'])
+            if logo:
+                template['logo_name'] = logo.original_name
+            else:
+                template['logo_name'] = 'Logo määratud'
+        else:
+            template['logo_name'] = ''
     
     return render_template('pdf_templates.html', 
                          templates=templates,
@@ -1155,6 +1200,7 @@ def pdf_templates():
 
 
 @dashboard_bp.route('/settings/pdf-templates/<template_id>/upload-logo', methods=['POST'])
+@login_required
 def upload_template_logo(template_id):
     """Handle template-specific logo file upload."""
     # Validate template ID
@@ -1216,6 +1262,7 @@ def upload_template_logo(template_id):
 
 
 @dashboard_bp.route('/settings/pdf-templates/<template_id>/remove-logo', methods=['POST'])
+@login_required
 def remove_template_logo(template_id):
     """Remove template-specific logo."""
     # Validate template ID
@@ -1242,6 +1289,7 @@ def remove_template_logo(template_id):
 
 
 @dashboard_bp.route('/settings/pdf-templates/<template_id>')
+@login_required
 def view_pdf_template(template_id):
     """View/edit a specific PDF template (code editor)."""
     import os
@@ -1284,6 +1332,7 @@ def view_pdf_template(template_id):
 
 
 @dashboard_bp.route('/settings/pdf-templates/<template_id>/visual')
+@login_required
 def visual_pdf_template(template_id):
     """Visual drag & drop PDF template editor."""
     import os
@@ -1397,6 +1446,7 @@ def visual_pdf_template(template_id):
 
 
 @dashboard_bp.route('/settings/pdf-templates/<template_id>/save', methods=['POST'])
+@login_required
 def save_pdf_template(template_id):
     """Save PDF template changes."""
     import os
@@ -1440,6 +1490,7 @@ def save_pdf_template(template_id):
 
 
 @dashboard_bp.route('/settings/pdf-templates/<template_id>/reset', methods=['POST'])
+@login_required
 def reset_pdf_template(template_id):
     """Reset PDF template to backup."""
     import os
@@ -1468,6 +1519,7 @@ def reset_pdf_template(template_id):
 
 # Penalty Rates Management Routes
 @dashboard_bp.route('/settings/penalty-rates', methods=['POST'])
+@login_required
 def create_penalty_rate():
     """Create a new penalty rate."""
     try:
@@ -1489,13 +1541,14 @@ def create_penalty_rate():
         if existing_rate:
             return jsonify({'success': False, 'message': f'Viivise määr "{rate_per_day}%" on juba kasutusel'})
         
-        # Auto-generate name based on rate
+        # Auto-generate name based on rate - preserve exact input without rounding
         if rate_per_day == 0:
             name = "0% päevas"
         elif rate_per_day == int(rate_per_day):
             name = f"{int(rate_per_day)}% päevas"
         else:
-            name = f"{rate_per_day:.1f}% päevas".replace('.', ',')
+            # Use the exact input value, remove trailing zeros, and replace decimal point
+            name = f"{rate_per_day:g}% päevas".replace('.', ',')
         
         # If setting as default, remove default from others
         if is_default:
@@ -1523,6 +1576,7 @@ def create_penalty_rate():
 
 
 @dashboard_bp.route('/settings/penalty-rates/<int:rate_id>', methods=['PUT'])
+@login_required
 def update_penalty_rate(rate_id):
     """Update a penalty rate."""
     try:
@@ -1548,13 +1602,14 @@ def update_penalty_rate(rate_id):
         if existing_rate:
             return jsonify({'success': False, 'message': f'Viivise määr "{rate_per_day}%" on juba kasutusel'})
         
-        # Auto-generate name based on rate
+        # Auto-generate name based on rate - preserve exact input without rounding
         if rate_per_day == 0:
             name = "0% päevas"
         elif rate_per_day == int(rate_per_day):
             name = f"{int(rate_per_day)}% päevas"
         else:
-            name = f"{rate_per_day:.1f}% päevas".replace('.', ',')
+            # Use the exact input value, remove trailing zeros, and replace decimal point
+            name = f"{rate_per_day:g}% päevas".replace('.', ',')
         
         # If setting as default, remove default from others
         if is_default:
@@ -1579,6 +1634,7 @@ def update_penalty_rate(rate_id):
 
 
 @dashboard_bp.route('/settings/penalty-rates/<int:rate_id>', methods=['DELETE'])
+@login_required
 def delete_penalty_rate(rate_id):
     """Delete a penalty rate."""
     try:
@@ -1601,6 +1657,7 @@ def delete_penalty_rate(rate_id):
 
 
 @dashboard_bp.route('/settings/penalty-rates/init-defaults', methods=['POST'])
+@login_required
 def init_default_penalty_rates():
     """Initialize default penalty rates."""
     try:
@@ -1614,6 +1671,7 @@ def init_default_penalty_rates():
 
 
 @dashboard_bp.route('/settings/penalty-rates-list')
+@login_required
 def get_penalty_rates_list():
     """Get penalty rates list for management modal."""
     try:
@@ -1636,6 +1694,7 @@ def get_penalty_rates_list():
 
 # Note Labels Management Routes
 @dashboard_bp.route('/settings/note-labels', methods=['POST'])
+@login_required
 def create_note_label():
     """Create a new note label."""
     try:
@@ -1685,6 +1744,7 @@ def create_note_label():
 
 
 @dashboard_bp.route('/settings/note-labels/<int:label_id>', methods=['DELETE'])
+@login_required
 def delete_note_label(label_id):
     """Delete a note label."""
     try:
@@ -1714,6 +1774,7 @@ def delete_note_label(label_id):
 
 
 @dashboard_bp.route('/settings/note-labels-list')
+@login_required
 def get_note_labels_list():
     """Get note labels list for management modal."""
     try:
